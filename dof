@@ -432,7 +432,7 @@ function install_dnfserver() {
     log_info "install DNF Server($server_ip)..."
 
     cd /
-    tar -zxvf DnfServer.tar.gz
+    tar -zxvf Game.tar.gz
     chmod -R 777 /dp2
     chmod -R 777 /home/neople
     chmod -R 777 /root

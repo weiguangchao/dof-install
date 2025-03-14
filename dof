@@ -364,7 +364,7 @@ function set_swap() {
     echo "$swap_file swap swap defaults 0 0" >>/etc/fstab
 
     if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness=.*/vm.swappiness=70/' /etc/sysctl.conf
+        sed -i 's/^vm.swappiness=.*/vm.swappiness=85/' /etc/sysctl.conf
     else
         echo "vm.swappiness=85" >>/etc/sysctl.conf
     fi

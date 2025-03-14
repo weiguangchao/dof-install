@@ -546,28 +546,6 @@ function install_dnf_gate() {
     log_success "dnf gate installed!!!"
 }
 
-function check_dir() {
-    if [ ! -f /dof ]; then
-        log_error "please upload dof to / directory"
-        exit
-    fi
-
-    if [ ! -f /Game.tar.gz ]; then
-        log_error "please upload Game.tar.gz to / directory"
-        exit
-    fi
-
-    if [ ! -f /Gateway.tar.gz ]; then
-        log_error "please upload Gateway.tar.gz to / directory"
-        exit
-    fi
-
-    if [ ! -f /MySQL.tar.gz ]; then
-        log_error "please upload MySQL.tar.gz to / directory"
-        exit
-    fi
-}
-
 function echo_banner() {
     clear
     output_error "
@@ -583,7 +561,6 @@ function echo_banner() {
 function prepare() {
     check_system
     check_root_user
-    check_dir
 
     disable_selinux
     set_swap

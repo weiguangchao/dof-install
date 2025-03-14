@@ -570,8 +570,8 @@ function prepare() {
 
     disable_selinux
     set_swap
-
     download_files
+
     touch /root/prepare_dof
     log_success "dof prepared!!!"
 }

@@ -2,4 +2,4 @@
 Game/*
 Gateway/*
 MySQL/*
-build
+build.sh

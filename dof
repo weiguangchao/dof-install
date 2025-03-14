@@ -14,7 +14,7 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
-BASE_DIR="/root/dof"
+BASE_DIR="/"
 
 output_error() {
     echo -e "${RED}$1${NC}"
@@ -489,14 +489,24 @@ function reinstall_gateway() {
     log_success "Gateway installed successfully!!!"
 }
 
-function check_dof() {
-    if [ ! -d $BASE_DIR ]; then
-        log_error "please upload all files to $BASE_DIR directory"
+function check_dir() {
+    if [ ! -f $BASE_DIR/dof ]; then
+        log_error "please upload dof to $BASE_DIR directory"
         exit
     fi
 
-    if [ ! -f $BASE_DIR/DOF.tar.gz ]; then
-        log_error "please upload DOF.tar.gz to $BASE_DIR directory"
+    if [ ! -f $BASE_DIR/Game.tar.gz ]; then
+        log_error "please upload Game.tar.gz to $BASE_DIR directory"
+        exit
+    fi
+
+    if [ ! -f $BASE_DIR/Gateway.tar.gz ]; then
+        log_error "please upload Gateway.tar.gz to $BASE_DIR directory"
+        exit
+    fi
+
+    if [ ! -f $BASE_DIR/MySQL.tar.gz ]; then
+        log_error "please upload MySQL.tar.gz to $BASE_DIR directory"
         exit
     fi
 }
@@ -525,7 +535,7 @@ function echo_banner() {
 function prepare() {
     check_system
     check_root_user
-    check_dof
+    check_dir
 
     disable_selinux
     set_swap

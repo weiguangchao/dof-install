@@ -124,6 +124,13 @@ function download_mysql() {
     cd /
     if [ ! -f MySQL.tar.gz ]; then
         curl -o MySQL.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/MySQL.tar.gz"
+
+        error_code=$?
+        if [ ! $error_code -eq 0 ]; then
+            log_error "MySQL download failed!!!"
+            exit
+        fi
+
         log_success "MySQL downloaded!!!"
     else
         log_warning "MySQL already downloaded!!!"
@@ -401,6 +408,13 @@ function download_dnfserver() {
     cd /
     if [ ! -f DnfServer.tar.gz ]; then
         curl -o DnfServer.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/DnfServer.tar.gz"
+
+        error_code=$?
+        if [ ! $error_code -eq 0 ]; then
+            log_error "DNF Server download failed!!!"
+            exit
+        fi
+
         log_success "DNF Server downloaded!!!"
     else
         log_warning "DNF Server already downloaded!!!"
@@ -517,6 +531,13 @@ function download_dnf_gate() {
     cd /
     if [ ! -f Gateway.tar.gz ]; then
         curl -o Gateway.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/Gateway.tar.gz"
+
+        error_code=$?
+        if [ ! $error_code -eq 0 ]; then
+            log_error "DNF Gate download failed!!!"
+            exit
+        fi
+
         log_success "dnf gate downloaded!!!"
     else
         log_warning "dnf gate already downloaded!!!"

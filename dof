@@ -579,7 +579,7 @@ function echo_banner() {
 "
 }
 
-function prepare() {
+function prepare_dof() {
     if [ -f /root/prepare_dof ]; then
         log_warning "dof already prepared"
         return
@@ -591,6 +591,8 @@ function prepare() {
 
     disable_selinux
     set_swap
+    replace_yum_repo
+    install_library
     download_files
 
     touch /root/prepare_dof
@@ -598,9 +600,7 @@ function prepare() {
 }
 
 function install_all() {
-    prepare
-    replace_yum_repo
-    install_library
+    prepare_dof
     reinstall_database
     reinstall_dnfserver
 }

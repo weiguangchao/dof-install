@@ -1,0 +1,608 @@
+#!/bin/bash
+
+# console color
+RED='\033[0;31m'    # RED
+GREEN='\033[0;32m'  # GREEN
+YELLOW='\033[0;33m' # YELLOW
+BLUE='\033[0;34m'   # BLUE
+NC='\033[0m'        # NC
+
+MYSQL_DIR="/opt/mysql"
+MYSQL_IP="127.0.0.1"
+MYSQL_PORT="3306"
+ROOT_PASSWORD="123456"
+GAME_PASSWORD="uu5!^%jg"
+DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
+
+BASE_DIR="/root/dof"
+
+output_error() {
+    echo -e "${RED}$1${NC}"
+}
+
+output_success() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+output_warning() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+output_info() {
+    echo -e "${BLUE}$1${NC}"
+}
+
+# log
+log_error() {
+    echo -e "${RED}[SYSTEM] $1${NC}"
+}
+
+log_success() {
+    echo -e "${GREEN}[SYSTEM] $1${NC}"
+}
+
+log_warning() {
+    echo -e "${YELLOW}[SYSTEM] $1${NC}"
+}
+
+log_info() {
+    echo -e "${BLUE}[SYSTEM] $1${NC}"
+}
+
+function replace_yum_repo() {
+    log_info "replace yum repo..."
+
+    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
+    curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
+
+    mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.backup
+    curl -o /etc/yum.repos.d/epel.repo https://mirrors.aliyun.com/repo/epel-7.repo
+
+    yum clean all
+    yum makecache
+}
+
+function install_library() {
+    log_info "install library..."
+
+    yum update -y
+    yum install -y \
+        epel-release \
+        perl \
+        autoconf \
+        psmisc \
+        glibc.i686 \
+        zlib.i686 \
+        libstdc++.i686 \
+        net-tools \
+        htop \
+        GeoIP.i686
+}
+
+function check_system() {
+    # check if CentOS
+    if [ ! -f /etc/redhat-release ]; then
+        log_error "current system is not CentOS"
+        exit
+    fi
+
+    # get system version
+    if grep -q "CentOS Linux release 7" /etc/redhat-release; then
+        local system_version=$(cat /etc/redhat-release)
+        log_success "system version: $system_version"
+    else
+        log_error "current system version: $(cat /etc/redhat-release)"
+        exit
+    fi
+}
+
+function remove_mysql() {
+    log_info "remove MySQL..."
+
+    service mysql stop
+
+    rpm -qa | grep mariadb | xargs rpm -e --nodeps
+    rpm -qa | grep MariaDB | xargs rpm -e --nodeps
+    rpm -qa | grep mysql | xargs rpm -e --nodeps
+    rpm -qa | grep MySQL | xargs rpm -e --nodeps
+
+    log_info "remove MySQL data files..."
+    rm -rf /etc/my.cnf
+    rm -rf /var/lib/mysql
+    rm -rf $MYSQL_DIR
+
+    log_info "remove MySQL user and group..."
+    userdel -f mysql
+    groupdel -f mysql
+
+    log_success "MySQL removed!!!"
+}
+
+function install_mysql() {
+    log_info "install MySQL..."
+
+    if command -v mysql >/dev/null 2>&1; then
+        mysql --version | grep "5.5"
+        if [ $? -eq 0 ]; then
+            log_warning "MySQL installed..."
+            return
+        fi
+    fi
+
+    rpm -ivh $BASE_DIR/MySQL-client-5.5.62-1.el6.x86_64.rpm
+    rpm -ivh $BASE_DIR/MySQL-server-5.5.62-1.el6.x86_64.rpm
+
+    # enable mysql service
+    chkconfig mysql on
+
+    error_code=$?
+    if [ ! $error_code -eq 0 ]; then
+        log_error "MySQL install failed!!!"
+        exit
+    fi
+
+    log_success "MySQL installed!!!"
+}
+
+function init_game_database() {
+    log_info "init game database..."
+
+    local admin_password=""
+    read -p "please input [dnf_admin] user password: " admin_password
+    # check if password is empty
+    if [ -z "$admin_password" ]; then
+        log_warning "password can't be empty"
+        exit
+    fi
+
+    # init game database
+    mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
+CREATE SCHEMA d_channel DEFAULT CHARACTER SET latin1 ;
+USE d_channel;
+SOURCE $BASE_DIR/MySQL/d_channel.sql;
+CREATE SCHEMA d_guild DEFAULT CHARACTER SET latin1 ;
+USE d_guild;
+SOURCE /root/MySQL/d_guild.sql;
+CREATE SCHEMA d_taiwan_secu DEFAULT CHARACTER SET latin1 ;
+USE d_taiwan_secu;
+SOURCE /root/MySQL/d_taiwan_secu.sql;
+CREATE SCHEMA d_taiwan DEFAULT CHARACTER SET latin1 ;
+USE d_taiwan;
+SOURCE /root/MySQL/d_taiwan.sql;
+CREATE SCHEMA d_technical_report DEFAULT CHARACTER SET latin1 ;
+USE d_technical_report;
+SOURCE /root/MySQL/d_technical_report.sql;
+CREATE SCHEMA taiwan_billing DEFAULT CHARACTER SET latin1 ;
+USE taiwan_billing;
+SOURCE /root/MySQL/taiwan_billing.sql;
+CREATE SCHEMA taiwan_cain_2nd DEFAULT CHARACTER SET latin1 ;
+USE taiwan_cain_2nd;
+SOURCE /root/MySQL/taiwan_cain_2nd.sql;
+CREATE SCHEMA taiwan_cain_auction_cera DEFAULT CHARACTER SET latin1 ;
+USE taiwan_cain_auction_cera;
+SOURCE /root/MySQL/taiwan_cain_auction_cera.sql;
+CREATE SCHEMA taiwan_cain_auction_gold DEFAULT CHARACTER SET latin1 ;
+USE taiwan_cain_auction_gold;
+SOURCE /root/MySQL/taiwan_cain_auction_gold.sql;
+CREATE SCHEMA taiwan_cain_log DEFAULT CHARACTER SET latin1 ;
+USE taiwan_cain_log;
+SOURCE /root/MySQL/taiwan_cain_log.sql;
+CREATE SCHEMA taiwan_cain_web DEFAULT CHARACTER SET latin1 ;
+USE taiwan_cain_web;
+SOURCE /root/MySQL/taiwan_cain_web.sql;
+CREATE SCHEMA taiwan_cain DEFAULT CHARACTER SET latin1 ;
+USE taiwan_cain;
+SOURCE /root/MySQL/taiwan_cain.sql;
+CREATE SCHEMA taiwan_game_event DEFAULT CHARACTER SET latin1 ;
+USE taiwan_game_event;
+SOURCE /root/MySQL/taiwan_game_event.sql;
+CREATE SCHEMA taiwan_login_play DEFAULT CHARACTER SET latin1 ;
+USE taiwan_login_play;
+SOURCE /root/MySQL/taiwan_login_play.sql;
+CREATE SCHEMA taiwan_login DEFAULT CHARACTER SET latin1 ;
+USE taiwan_login;
+SOURCE /root/MySQL/taiwan_login.sql;
+CREATE SCHEMA taiwan_main_web DEFAULT CHARACTER SET latin1 ;
+USE taiwan_main_web;
+SOURCE /root/MySQL/taiwan_main_web.sql;
+CREATE SCHEMA taiwan_mng_manager DEFAULT CHARACTER SET latin1 ;
+USE taiwan_mng_manager;
+SOURCE /root/MySQL/taiwan_mng_manager.sql;
+CREATE SCHEMA taiwan_prod DEFAULT CHARACTER SET latin1 ;
+USE taiwan_prod;
+SOURCE /root/MySQL/taiwan_prod.sql;
+CREATE SCHEMA taiwan_pvp DEFAULT CHARACTER SET latin1 ;
+USE taiwan_pvp;
+SOURCE /root/MySQL/taiwan_pvp.sql;
+CREATE SCHEMA taiwan_se_event DEFAULT CHARACTER SET latin1 ;
+USE taiwan_se_event;
+SOURCE /root/MySQL/taiwan_se_event.sql;
+CREATE SCHEMA taiwan_siroco DEFAULT CHARACTER SET latin1 ;
+USE taiwan_siroco;
+SOURCE /root/MySQL/taiwan_siroco.sql;
+
+UPDATE d_taiwan.db_connect SET db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
+
+USE d_taiwan;
+delimiter $
+
+DROP TRIGGER IF EXISTS update_limit_create_character;
+
+CREATE TRIGGER update_limit_create_character 
+BEFORE UPDATE ON limit_create_character 
+FOR EACH ROW
+BEGIN
+    IF new.count = 2 THEN
+        SET new.count = 0;
+    END IF;
+END
+$
+
+delimiter ;
+
+USE mysql;
+GRANT ALL PRIVILEGES ON *.* TO 'game'@'localhost' IDENTIFIED BY "$GAME_PASSWORD";
+GRANT ALL PRIVILEGES ON *.* TO 'game'@'127.0.0.1' IDENTIFIED BY "$GAME_PASSWORD";
+GRANT ALL PRIVILEGES ON *.* TO 'dnf_admin'@'%' IDENTIFIED BY "$admin_password";
+FLUSH PRIVILEGES;
+EOF
+
+    # test game user login
+    mysql -h$MYSQL_IP -P$MYSQL_PORT -ugame -p$GAME_PASSWORD <<EOF
+    SELECT db_ip, db_port, db_passwd FROM d_taiwan.db_connect;
+EOF
+
+    error_code=$?
+    if [ ! $error_code -eq 0 ]; then
+        log_error "game database initialize failed!!!"
+        exit
+    fi
+
+    log_success "game database initialized!!!"
+}
+
+function init_database() {
+    # init database
+    if [ ! -d /var/lib/mysql/d_taiwan ]; then
+        log_info "init database..."
+
+        service mysql stop
+
+        chmod -R 777 $MYSQL_DIR
+        rm -rf $MYSQL_DIR
+        mkdir -p $MYSQL_DIR/data
+        mkdir -p $MYSQL_DIR/base
+        chown -R mysql.mysql $MYSQL_DIR
+
+        cd /root
+        rm -rf /root/my.cnf
+        rm -rf /root/MySQL
+        tar -zxvf ./MySQL.tar.gz
+
+        chmod 777 /etc/my.cnf
+        rm -rf /etc/my.cnf
+        cp /root/my.cnf /etc/my.cnf
+        chmod 644 /etc/my.cnf
+        chown mysql.mysql /etc/my.cnf
+
+        # init database
+        mysql_install_db --defaults-file=/etc/my.cnf \
+            --user=mysql
+
+        service mysql start
+        mysqladmin -h$MYSQL_IP -P$MYSQL_PORT -uroot password $ROOT_PASSWORD
+
+        mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
+DROP DATABASE IF EXISTS test;
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';
+GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$ROOT_PASSWORD';
+FLUSH PRIVILEGES;
+EOF
+
+        error_code=$?
+        if [ ! $error_code -eq 0 ]; then
+            log_error "MySQL install failed!!!"
+            exit
+        fi
+
+        log_success "database initialized!!! root password: $ROOT_PASSWORD"
+
+        init_game_database
+    else
+        log_warning "database already initialized, no need to set"
+    fi
+
+}
+
+function check_root_user() {
+    if [ "$EUID" -ne 0 ]; then
+        log_error "please use root user to execute this script"
+        exit
+    fi
+    log_success "current user: root"
+}
+
+function set_swap() {
+    log_info "set swap..."
+
+    # check if swap exists
+    local swap_exists=$(swapon --show)
+    if [ ! -z "$swap_exists" ]; then
+        local current_swap=$(free -m | awk '/Swap:/ {print $2}')
+        log_warning "swap space ${current_swap}MB already exists, no need to add"
+        return
+    fi
+
+    local swap_size=4096
+    local swap_file="/swapfile"
+
+    log_info "create swap file $swap_file, size ${swap_size}MB..."
+    dd if=/dev/zero of=$swap_file bs=1M count=$swap_size status=progress
+
+    chmod 600 $swap_file
+    mkswap $swap_file
+    swapon $swap_file
+    echo "$swap_file swap swap defaults 0 0" >>/etc/fstab
+
+    if grep -q "^vm.swappiness" /etc/sysctl.conf; then
+        sed -i 's/^vm.swappiness=.*/vm.swappiness=70/' /etc/sysctl.conf
+    else
+        echo "vm.swappiness=85" >>/etc/sysctl.conf
+    fi
+
+    sysctl -p
+    log_success "swap set successfully!!! $(sysctl vm.swappiness)"
+    free -h
+}
+
+function disable_selinux() {
+    setenforce 0
+    sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+
+    local config_status=$(grep "^SELINUX=" /etc/selinux/config)
+    log_success "SELinux disabled!!! $config_status"
+}
+
+function remove_dnfserver() {
+    log_info "remove DNF Server..."
+    rm -rf /home/neople
+    rm -rf /root/PUBLIC_IP
+    rm -rf /root/run
+    rm -rf /root/stop
+    rm -rf /dp2
+
+    log_success "DNF Server removed!!!"
+}
+
+function install_dnfserver() {
+    local server_ip=""
+    read -p "please input Server IP: " server_ip
+    if [ -z "$server_ip" ]; then
+        log_error "Server IP can't be empty!!!"
+        exit
+    fi
+
+    log_info "install DNF Server($server_ip)..."
+
+    cd /
+    tar -zxvf /root/DnfServer.tar.gz
+    chmod -R 777 /dp2
+
+    log_info "replace environment variables..."
+    cd /home/neople
+    sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
+    sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.tbl")
+
+    chmod +x /root/run
+    chmod +x /root/stop
+    echo $server_ip >/root/PUBLIC_IP
+
+    log_success "DNF Server installed!!!"
+}
+
+function init_siroco() {
+    local channel_no=$1
+    local process_sequence=$2
+    local channel_name="siroco$channel_no"
+
+    log_info "init Siroco channel $channel_no, process_sequence $process_sequence..."
+
+    cd /home/neople/game
+    rm -rf ./cfg/$channel_name.cfg
+    cp ./cfg/siroco.template ./cfg/$channel_name.cfg
+
+    PUBLIC_IP=$(cat /root/PUBLIC_IP 2>/dev/null || true)
+    if [ -z "$PUBLIC_IP" ]; then
+        log_error "PUBLIC_IP is empty"
+        exit
+    fi
+
+    log_info "PUBLIC_IP is $PUBLIC_IP"
+    sed -i "s/CHANNEL_NO/$channel_no/g" ./cfg/$channel_name.cfg
+    sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" ./cfg/$channel_name.cfg
+    sed -i "s/PUBLIC_IP/$PUBLIC_IP/g" ./cfg/$channel_name.cfg
+    log_success "generate $channel_name.cfg success"
+}
+
+function init_channel() {
+    log_info "init channel..."
+
+    # init siroco 11 channel
+    init_siroco 11 11
+
+    log_success "Siroco channel initialized!!!"
+}
+
+function backup_database() {
+    log_info "backup database..."
+    local databases=$(mysql -h $MYSQL_IP -P $MYSQL_PORT -u root -p$ROOT_PASSWORD -N -e "
+        SELECT GROUP_CONCAT(schema_name SEPARATOR ' ')
+        FROM information_schema.schemata
+        WHERE schema_name NOT IN (
+            'information_schema',
+            'mysql',
+            'performance_schema',
+            'sys',
+            'test'
+        );
+    ")
+
+    log_warning "backup databases: $databases"
+
+    mysqldump -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD \
+        --databases $databases \
+        >/root/dof_bakup.sql
+    log_success "database backup success!!!"
+}
+
+function restore_database() {
+    log_info "restore database..."
+    mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
+    log_success "database restore success!!!"
+}
+
+function reinstall_gateway() {
+    log_info "install gateway..."
+
+    yum install -y libssl.so.6
+    ln -sf /usr/lib64/libssl.so.10 /usr/lib64/libssl.so.6
+    ln -sf /usr/lib64/libcrypto.so.10 /usr/lib64/libcrypto.so.6
+
+    cd /root
+    rm -rf /root/Gateway
+    rm -rf /root/Config.ini
+    rm -rf /root/DnfGateServer
+    rm -rf /root/GateRestart
+    rm -rf /root/GateStop
+
+    tar -zxvf /root/Gateway.tar.gz
+
+    mv /root/Gateway/Config.ini /root/Config.ini
+    mv /root/Gateway/DnfGateServer /root/DnfGateServer
+    mv /root/Gateway/GateRestart /root/GateRestart
+    mv /root/Gateway/GateStop /root/GateStop
+
+    chmod +x /root/DnfGateServer
+    chmod +x /root/GateRestart
+    chmod +x /root/GateStop
+
+    log_success "Gateway installed successfully!!!"
+}
+
+function check_dof() {
+    if [ ! -d $BASE_DIR ]; then
+        log_error "please upload all files to $BASE_DIR directory"
+        exit
+    fi
+
+    if [ ! -f $BASE_DIR/DOF.tar.gz ]; then
+        log_error "please upload DOF.tar.gz to $BASE_DIR directory"
+        exit
+    fi
+}
+
+function prepare_dof() {
+    log_info "prepare DOF..."
+
+    cd $BASE_DIR
+    tar -zxvf $BASE_DIR/DOF.tar.gz
+
+    log_success "prepare success!!!"
+}
+
+function echo_banner() {
+    clear
+    output_error "
+██████╗  ██████╗ ███████╗
+██╔══██╗██╔═══██╗██╔════╝
+██║  ██║██║   ██║█████╗  
+██║  ██║██║   ██║██╔══╝  
+██████╔╝╚██████╔╝██║     
+╚═════╝  ╚═════╝ ╚═╝     by https://github.com/weiguangchao
+"
+}
+
+function prepare() {
+    check_system
+    check_root_user
+    check_dof
+
+    disable_selinux
+    set_swap
+    prepare_dof
+}
+
+function install_all() {
+    prepare
+    replace_yum_repo
+    install_library
+    reinstall_database
+    reinstall_dnfserver
+}
+
+function reinstall_database() {
+    remove_mysql
+    install_mysql
+    init_database
+}
+
+function reinstall_dnfserver() {
+    remove_dnfserver
+    install_dnfserver
+    init_channel
+}
+
+function echo_menu() {
+    output_warning "————————————服务端搭建————————————"
+    output_success "1) 一键搭建(推荐), 多次可重装"
+    output_success "2) 网关安装"
+    output_success "3) 数据库清档"
+    output_success "4) 重装服务端"
+    output_warning "———————————————其他———————————————"
+    output_success "5) 备份数据库"
+    output_success "6) 恢复数据库"
+    output_warning "——————————————————————————————————"
+    output_success "0) 退出脚本"
+}
+
+function read_menu_command() {
+    read -p "请输入数字 [0-6]:" num
+    case "${num}" in
+    1)
+        install_all
+        exit
+        ;;
+    2)
+        reinstall_gateway
+        exit
+        ;;
+    3)
+        reinstall_database
+        exit
+        ;;
+    4)
+        reinstall_dnfserver
+        exit
+        ;;
+    5)
+        backup_database
+        exit
+        ;;
+    6)
+        read -n 1 -s -r -p "将dof_bakup.sql文件上传到/root目录下, 按任意键继续..."
+        restore_database
+        exit
+        ;;
+    *)
+        exit
+        ;;
+    esac
+}
+
+function start_menu_command() {
+    echo_menu
+    read_menu_command
+}
+
+echo_banner
+start_menu_command

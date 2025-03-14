@@ -14,7 +14,7 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
-GITHUB_PROXY="https://ghfast.top"
+GITHUB_PROXY="https://ghfast.top/"
 
 output_error() {
     echo -e "${RED}$1${NC}"
@@ -123,7 +123,7 @@ function download_mysql() {
 
     cd /
     if [ ! -f MySQL.tar.gz ]; then
-        curl -o MySQL.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/MySQL.tar.gz"
+        curl -o MySQL.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/MySQL.tar.gz"
 
         error_code=$?
         if [ ! $error_code -eq 0 ]; then
@@ -407,7 +407,7 @@ function download_dnfserver() {
 
     cd /
     if [ ! -f Game.tar.gz ]; then
-        curl -o Game.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/Game.tar.gz"
+        curl -o Game.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Game.tar.gz"
 
         error_code=$?
         if [ ! $error_code -eq 0 ]; then
@@ -530,7 +530,7 @@ function download_dnf_gate() {
 
     cd /
     if [ ! -f Dnf_Gate.tar.gz ]; then
-        curl -o Dnf_Gate.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/Dnf_Gate.tar.gz"
+        curl -o Dnf_Gate.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Dnf_Gate.tar.gz"
 
         error_code=$?
         if [ ! $error_code -eq 0 ]; then

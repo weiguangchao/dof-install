@@ -559,6 +559,12 @@ function echo_banner() {
 }
 
 function prepare() {
+    if [ -f /root/prepare_dof ]; then
+        log_warning "dof already prepared"
+        return
+    fi
+
+    log_info "prepare dof..."
     check_system
     check_root_user
 
@@ -566,6 +572,8 @@ function prepare() {
     set_swap
 
     download_files
+    touch /root/prepare_dof
+    log_success "dof prepared!!!"
 }
 
 function install_all() {

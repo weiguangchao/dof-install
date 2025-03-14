@@ -14,6 +14,8 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
+GITHUB_PROXY="https://ghfast.top/"
+
 output_error() {
     echo -e "${RED}$1${NC}"
 }
@@ -116,6 +118,18 @@ function remove_mysql() {
     log_success "MySQL removed!!!"
 }
 
+function download_mysql() {
+    log_info "download MySQL..."
+
+    cd /
+    if [ ! -f MySQL.tar.gz ]; then
+        curl -o MySQL.tar.gz $GITHUB_PROXY"https://github.com/weiguangchao/dof-install/raw/refs/heads/master/MySQL.tar.gz"
+        log_success "MySQL downloaded!!!"
+    else
+        log_warning "MySQL already downloaded!!!"
+    fi
+}
+
 function install_mysql() {
     log_info "install MySQL..."
 
@@ -126,6 +140,8 @@ function install_mysql() {
             return
         fi
     fi
+
+    download_mysql
 
     cd /
     tar -zxvf MySQL.tar.gz
@@ -381,6 +397,18 @@ function remove_dnfserver() {
     log_success "DNF Server removed!!!"
 }
 
+function download_dnfserver() {
+    log_info "download DNF Server..."
+
+    cd /
+    if [ ! -f DnfServer.tar.gz ]; then
+        curl -o DnfServer.tar.gz $GITHUB_PROXY"https://github.com/weiguangchao/dof-install/raw/refs/heads/master/DnfServer.tar.gz"
+        log_success "DNF Server downloaded!!!"
+    else
+        log_warning "DNF Server already downloaded!!!"
+    fi
+}
+
 function install_dnfserver() {
     local server_ip=""
     read -p "please input Server IP: " server_ip
@@ -390,6 +418,8 @@ function install_dnfserver() {
     fi
 
     log_info "install DNF Server($server_ip)..."
+
+    download_dnfserver
 
     cd /
     tar -zxvf DnfServer.tar.gz
@@ -474,7 +504,7 @@ function restore_database() {
 }
 
 function remove_dnf_gate() {
-    log_info "remove gateway..."
+    log_info "remove dnf gate..."
     rm -rf /root/Config.ini
     rm -rf /root/DnfGateServer
     rm -rf /root/GateRestart
@@ -482,15 +512,29 @@ function remove_dnf_gate() {
     rm -rf /root/privatekey.pem
     rm -rf /home/neople/game/publickey.pem
 
-    log_success "gateway removed!!!"
+    log_success "dnf gate removed!!!"
+}
+
+function download_dnf_gate() {
+    log_info "download dnf gate..."
+
+    cd /
+    if [ ! -f Gateway.tar.gz ]; then
+        curl -o Gateway.tar.gz $GITHUB_PROXY"https://github.com/weiguangchao/dof-install/raw/refs/heads/master/Gateway.tar.gz"
+        log_success "dnf gate downloaded!!!"
+    else
+        log_warning "dnf gate already downloaded!!!"
+    fi
 }
 
 function install_dnf_gate() {
-    log_info "install gateway..."
+    log_info "install dnf gate..."
 
     yum install -y libssl.so.6
     ln -sf /usr/lib64/libssl.so.10 /usr/lib64/libssl.so.6
     ln -sf /usr/lib64/libcrypto.so.10 /usr/lib64/libcrypto.so.6
+
+    download_dnf_gate
 
     cd /
     tar -zxvf ./Gateway.tar.gz
@@ -499,7 +543,7 @@ function install_dnf_gate() {
     chmod +x /root/GateRestart
     chmod +x /root/GateStop
 
-    log_success "Gateway installed successfully!!!"
+    log_success "dnf gate installed!!!"
 }
 
 function check_dir() {

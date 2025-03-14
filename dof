@@ -406,18 +406,18 @@ function download_dnfserver() {
     log_info "download DNF Server..."
 
     cd /
-    if [ ! -f DnfServer.tar.gz ]; then
-        curl -o DnfServer.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/DnfServer.tar.gz"
+    if [ ! -f Game.tar.gz ]; then
+        curl -o Game.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/Game.tar.gz"
 
         error_code=$?
         if [ ! $error_code -eq 0 ]; then
-            log_error "DNF Server download failed!!!"
+            log_error "Game download failed!!!"
             exit
         fi
 
-        log_success "DNF Server downloaded!!!"
+        log_success "Game downloaded!!!"
     else
-        log_warning "DNF Server already downloaded!!!"
+        log_warning "Game already downloaded!!!"
     fi
 }
 
@@ -529,8 +529,8 @@ function download_dnf_gate() {
     log_info "download dnf gate..."
 
     cd /
-    if [ ! -f Gateway.tar.gz ]; then
-        curl -o Gateway.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/Gateway.tar.gz"
+    if [ ! -f Dnf_Gate.tar.gz ]; then
+        curl -o Dnf_Gate.tar.gz "$GITHUB_PROXY/https://github.com/weiguangchao/dof-install/raw/refs/heads/master/Dnf_Gate.tar.gz"
 
         error_code=$?
         if [ ! $error_code -eq 0 ]; then
@@ -538,9 +538,9 @@ function download_dnf_gate() {
             exit
         fi
 
-        log_success "dnf gate downloaded!!!"
+        log_success "DNF Gate downloaded!!!"
     else
-        log_warning "dnf gate already downloaded!!!"
+        log_warning "DNF Gate already downloaded!!!"
     fi
 }
 
@@ -558,13 +558,13 @@ function install_dnf_gate() {
     ln -sf /usr/lib64/libcrypto.so.10 /usr/lib64/libcrypto.so.6
 
     cd /
-    tar -zxvf ./Gateway.tar.gz
+    tar -zxvf ./Dnf_Gate.tar.gz
 
     chmod +x /root/DnfGateServer
     chmod +x /root/GateRestart
     chmod +x /root/GateStop
 
-    log_success "dnf gate installed!!!"
+    log_success "DNF Gate installed!!!"
 }
 
 function echo_banner() {

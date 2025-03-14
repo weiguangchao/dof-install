@@ -7,39 +7,18 @@
 ## 功能特性
 
 1. 一键搭建, 多次可重装
-2. 数据库清档
-3. 重装服务端
-4. 备份数据库
-5. 恢复数据库
+2. 安装统一网关，多次可重装
+3. 数据库清档
+4. 重装服务端
+5. 备份数据库
+6. 恢复数据库
 
 ## 食用指南
 
-### 安装服务端
-
-打包服务端，会自动生成`MySQL.tar.gz`、`DnfServer.tar.gz`
+终端执行下面这段命令
 
 ```bash
-chmod +x build; ./build
-```
-
-将`MySQL.tar.gz`、`DnfServer.tar.gz`、`MySQL-client-5.5.62-1.el6.x86_64.rpm`、`MySQL-server-5.5.62-1.el6.x86_64.rpm`、`dof`上传到`/root`目录下
-
-执行安装脚本
-
-```bash
-chmod +x dof; ./dof
-```
-
-### 启动 MySQL
-
-```bash
-./dof mysql_start
-```
-
-### 停止 MySQL
-
-```bash
-./dof mysql_stop
+curl -o /dof https://ghfast.top/https://raw.githubusercontent.com/weiguangchao/dof-install/refs/heads/master/dof && chmod +x /dof && /dof
 ```
 
 ## 感谢

@@ -14,8 +14,6 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
-BASE_DIR="/"
-
 output_error() {
     echo -e "${RED}$1${NC}"
 }
@@ -129,8 +127,11 @@ function install_mysql() {
         fi
     fi
 
-    rpm -ivh $BASE_DIR/MySQL-client-5.5.62-1.el6.x86_64.rpm
-    rpm -ivh $BASE_DIR/MySQL-server-5.5.62-1.el6.x86_64.rpm
+    cd /
+    tar -zxvf MySQL.tar.gz
+    cd /root
+    rpm -ivh MySQL-client-5.5.62-1.el6.x86_64.rpm
+    rpm -ivh MySQL-server-5.5.62-1.el6.x86_64.rpm
 
     # enable mysql service
     chkconfig mysql on
@@ -159,67 +160,67 @@ function init_game_database() {
     mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
 CREATE SCHEMA d_channel DEFAULT CHARACTER SET latin1 ;
 USE d_channel;
-SOURCE $BASE_DIR/MySQL/d_channel.sql;
+SOURCE /root/init_sql/d_channel.sql;
 CREATE SCHEMA d_guild DEFAULT CHARACTER SET latin1 ;
 USE d_guild;
-SOURCE /root/MySQL/d_guild.sql;
+SOURCE /root/init_sql/d_guild.sql;
 CREATE SCHEMA d_taiwan_secu DEFAULT CHARACTER SET latin1 ;
 USE d_taiwan_secu;
-SOURCE /root/MySQL/d_taiwan_secu.sql;
+SOURCE /root/init_sql/d_taiwan_secu.sql;
 CREATE SCHEMA d_taiwan DEFAULT CHARACTER SET latin1 ;
 USE d_taiwan;
-SOURCE /root/MySQL/d_taiwan.sql;
+SOURCE /root/init_sql/d_taiwan.sql;
 CREATE SCHEMA d_technical_report DEFAULT CHARACTER SET latin1 ;
 USE d_technical_report;
-SOURCE /root/MySQL/d_technical_report.sql;
+SOURCE /root/init_sql/d_technical_report.sql;
 CREATE SCHEMA taiwan_billing DEFAULT CHARACTER SET latin1 ;
 USE taiwan_billing;
-SOURCE /root/MySQL/taiwan_billing.sql;
+SOURCE /root/init_sql/taiwan_billing.sql;
 CREATE SCHEMA taiwan_cain_2nd DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_2nd;
-SOURCE /root/MySQL/taiwan_cain_2nd.sql;
+SOURCE /root/init_sql/taiwan_cain_2nd.sql;
 CREATE SCHEMA taiwan_cain_auction_cera DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_auction_cera;
-SOURCE /root/MySQL/taiwan_cain_auction_cera.sql;
+SOURCE /root/init_sql/taiwan_cain_auction_cera.sql;
 CREATE SCHEMA taiwan_cain_auction_gold DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_auction_gold;
-SOURCE /root/MySQL/taiwan_cain_auction_gold.sql;
+SOURCE /root/init_sql/taiwan_cain_auction_gold.sql;
 CREATE SCHEMA taiwan_cain_log DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_log;
-SOURCE /root/MySQL/taiwan_cain_log.sql;
+SOURCE /root/init_sql/taiwan_cain_log.sql;
 CREATE SCHEMA taiwan_cain_web DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_web;
-SOURCE /root/MySQL/taiwan_cain_web.sql;
+SOURCE /root/init_sql/taiwan_cain_web.sql;
 CREATE SCHEMA taiwan_cain DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain;
-SOURCE /root/MySQL/taiwan_cain.sql;
+SOURCE /root/init_sql/taiwan_cain.sql;
 CREATE SCHEMA taiwan_game_event DEFAULT CHARACTER SET latin1 ;
 USE taiwan_game_event;
-SOURCE /root/MySQL/taiwan_game_event.sql;
+SOURCE /root/init_sql/taiwan_game_event.sql;
 CREATE SCHEMA taiwan_login_play DEFAULT CHARACTER SET latin1 ;
 USE taiwan_login_play;
-SOURCE /root/MySQL/taiwan_login_play.sql;
+SOURCE /root/init_sql/taiwan_login_play.sql;
 CREATE SCHEMA taiwan_login DEFAULT CHARACTER SET latin1 ;
 USE taiwan_login;
-SOURCE /root/MySQL/taiwan_login.sql;
+SOURCE /root/init_sql/taiwan_login.sql;
 CREATE SCHEMA taiwan_main_web DEFAULT CHARACTER SET latin1 ;
 USE taiwan_main_web;
-SOURCE /root/MySQL/taiwan_main_web.sql;
+SOURCE /root/init_sql/taiwan_main_web.sql;
 CREATE SCHEMA taiwan_mng_manager DEFAULT CHARACTER SET latin1 ;
 USE taiwan_mng_manager;
-SOURCE /root/MySQL/taiwan_mng_manager.sql;
+SOURCE /root/init_sql/taiwan_mng_manager.sql;
 CREATE SCHEMA taiwan_prod DEFAULT CHARACTER SET latin1 ;
 USE taiwan_prod;
-SOURCE /root/MySQL/taiwan_prod.sql;
+SOURCE /root/init_sql/taiwan_prod.sql;
 CREATE SCHEMA taiwan_pvp DEFAULT CHARACTER SET latin1 ;
 USE taiwan_pvp;
-SOURCE /root/MySQL/taiwan_pvp.sql;
+SOURCE /root/init_sql/taiwan_pvp.sql;
 CREATE SCHEMA taiwan_se_event DEFAULT CHARACTER SET latin1 ;
 USE taiwan_se_event;
-SOURCE /root/MySQL/taiwan_se_event.sql;
+SOURCE /root/init_sql/taiwan_se_event.sql;
 CREATE SCHEMA taiwan_siroco DEFAULT CHARACTER SET latin1 ;
 USE taiwan_siroco;
-SOURCE /root/MySQL/taiwan_siroco.sql;
+SOURCE /root/init_sql/taiwan_siroco.sql;
 
 UPDATE d_taiwan.db_connect SET db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
 
@@ -263,24 +264,14 @@ EOF
 
 function init_database() {
     # init database
-    if [ ! -d /var/lib/mysql/d_taiwan ]; then
+    if [ ! -d $MYSQL_DIR/data/d_taiwan ]; then
         log_info "init database..."
 
         service mysql stop
 
-        chmod -R 777 $MYSQL_DIR
-        rm -rf $MYSQL_DIR
         mkdir -p $MYSQL_DIR/data
-        mkdir -p $MYSQL_DIR/base
         chown -R mysql.mysql $MYSQL_DIR
 
-        cd /root
-        rm -rf /root/my.cnf
-        rm -rf /root/MySQL
-        tar -zxvf ./MySQL.tar.gz
-
-        chmod 777 /etc/my.cnf
-        rm -rf /etc/my.cnf
         cp /root/my.cnf /etc/my.cnf
         chmod 644 /etc/my.cnf
         chown mysql.mysql /etc/my.cnf
@@ -308,10 +299,22 @@ EOF
         log_success "database initialized!!! root password: $ROOT_PASSWORD"
 
         init_game_database
+        clean_database_install_files
     else
         log_warning "database already initialized, no need to set"
     fi
 
+}
+
+function clean_database_install_files() {
+    log_info "clean database install files..."
+
+    rm -rf /root/my.cnf
+    rm -rf /root/init_sql
+    rm -rf /root/MySQL-client-5.5.62-1.el6.x86_64.rpm
+    rm -rf /root/MySQL-server-5.5.62-1.el6.x86_64.rpm
+
+    log_success "database install files cleaned!!!"
 }
 
 function check_root_user() {
@@ -365,6 +368,10 @@ function disable_selinux() {
 
 function remove_dnfserver() {
     log_info "remove DNF Server..."
+    chmod -R 777 /dp2
+    chmod -R 777 /home/neople
+    chmod -R 777 /root
+
     rm -rf /home/neople
     rm -rf /root/PUBLIC_IP
     rm -rf /root/run
@@ -385,16 +392,16 @@ function install_dnfserver() {
     log_info "install DNF Server($server_ip)..."
 
     cd /
-    tar -zxvf /root/DnfServer.tar.gz
+    tar -zxvf DnfServer.tar.gz
     chmod -R 777 /dp2
+    chmod -R 777 /home/neople
+    chmod -R 777 /root
 
     log_info "replace environment variables..."
     cd /home/neople
     sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
     sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.tbl")
 
-    chmod +x /root/run
-    chmod +x /root/stop
     echo $server_ip >/root/PUBLIC_IP
 
     log_success "DNF Server installed!!!"
@@ -456,31 +463,37 @@ function backup_database() {
 }
 
 function restore_database() {
+    if [ ! -f /root/dof_bakup.sql ]; then
+        log_error "dof_bakup.sql not found on /root directory"
+        exit
+    fi
+
     log_info "restore database..."
     mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
     log_success "database restore success!!!"
 }
 
-function reinstall_gateway() {
+function remove_dnf_gate() {
+    log_info "remove gateway..."
+    rm -rf /root/Config.ini
+    rm -rf /root/DnfGateServer
+    rm -rf /root/GateRestart
+    rm -rf /root/GateStop
+    rm -rf /root/privatekey.pem
+    rm -rf /home/neople/game/publickey.pem
+
+    log_success "gateway removed!!!"
+}
+
+function install_dnf_gate() {
     log_info "install gateway..."
 
     yum install -y libssl.so.6
     ln -sf /usr/lib64/libssl.so.10 /usr/lib64/libssl.so.6
     ln -sf /usr/lib64/libcrypto.so.10 /usr/lib64/libcrypto.so.6
 
-    cd /root
-    rm -rf /root/Gateway
-    rm -rf /root/Config.ini
-    rm -rf /root/DnfGateServer
-    rm -rf /root/GateRestart
-    rm -rf /root/GateStop
-
-    tar -zxvf /root/Gateway.tar.gz
-
-    mv /root/Gateway/Config.ini /root/Config.ini
-    mv /root/Gateway/DnfGateServer /root/DnfGateServer
-    mv /root/Gateway/GateRestart /root/GateRestart
-    mv /root/Gateway/GateStop /root/GateStop
+    cd /
+    tar -zxvf ./Gateway.tar.gz
 
     chmod +x /root/DnfGateServer
     chmod +x /root/GateRestart
@@ -490,34 +503,25 @@ function reinstall_gateway() {
 }
 
 function check_dir() {
-    if [ ! -f $BASE_DIR/dof ]; then
-        log_error "please upload dof to $BASE_DIR directory"
+    if [ ! -f /dof ]; then
+        log_error "please upload dof to / directory"
         exit
     fi
 
-    if [ ! -f $BASE_DIR/Game.tar.gz ]; then
-        log_error "please upload Game.tar.gz to $BASE_DIR directory"
+    if [ ! -f /Game.tar.gz ]; then
+        log_error "please upload Game.tar.gz to / directory"
         exit
     fi
 
-    if [ ! -f $BASE_DIR/Gateway.tar.gz ]; then
-        log_error "please upload Gateway.tar.gz to $BASE_DIR directory"
+    if [ ! -f /Gateway.tar.gz ]; then
+        log_error "please upload Gateway.tar.gz to / directory"
         exit
     fi
 
-    if [ ! -f $BASE_DIR/MySQL.tar.gz ]; then
-        log_error "please upload MySQL.tar.gz to $BASE_DIR directory"
+    if [ ! -f /MySQL.tar.gz ]; then
+        log_error "please upload MySQL.tar.gz to / directory"
         exit
     fi
-}
-
-function prepare_dof() {
-    log_info "prepare DOF..."
-
-    cd $BASE_DIR
-    tar -zxvf $BASE_DIR/DOF.tar.gz
-
-    log_success "prepare success!!!"
 }
 
 function echo_banner() {
@@ -539,7 +543,6 @@ function prepare() {
 
     disable_selinux
     set_swap
-    prepare_dof
 }
 
 function install_all() {
@@ -562,10 +565,15 @@ function reinstall_dnfserver() {
     init_channel
 }
 
+function reinstall_dnf_gate() {
+    remove_dnf_gate
+    install_dnf_gate
+}
+
 function echo_menu() {
     output_warning "————————————服务端搭建————————————"
     output_success "1) 一键搭建(推荐), 多次可重装"
-    output_success "2) 网关安装"
+    output_success "2) 安装统一网关, 多次可重装"
     output_success "3) 数据库清档"
     output_success "4) 重装服务端"
     output_warning "———————————————其他———————————————"
@@ -583,7 +591,7 @@ function read_menu_command() {
         exit
         ;;
     2)
-        reinstall_gateway
+        reinstall_dnf_gate
         exit
         ;;
     3)

@@ -134,12 +134,6 @@ function install_mysql() {
 
     chkconfig mysql on
 
-    error_code=$?
-    if [ ! $error_code -eq 0 ]; then
-        log_error "MySQL install failed!!!"
-        exit
-    fi
-
     log_success "MySQL installed!!!"
 }
 

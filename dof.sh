@@ -643,12 +643,12 @@ function read_menu_command() {
 function is_ready() {
     log_error "即将准备安装环境，请按回车键继续..."
     read -n 1 -s -r
-
-    init_dof
 }
 
 function main() {
     is_ready
+
+    init_dof
     echo_banner
     echo_menu
     read_menu_command

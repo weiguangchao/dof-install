@@ -549,11 +549,10 @@ function echo_banner() {
 
 function init_dof() {
     if [ -f /root/init_dof ]; then
-        log_warning "dof already prepared"
         return
     fi
 
-    log_info "prepare dof..."
+    log_info "init dof..."
     check_system
     check_root_user
     check_dir
@@ -565,7 +564,7 @@ function init_dof() {
     download_files
 
     touch /root/init_dof
-    log_success "dof prepared!!!"
+    log_success "dof initialized!!!"
 }
 
 function check_dir() {

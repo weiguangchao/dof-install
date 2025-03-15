@@ -568,18 +568,21 @@ function install_all() {
 }
 
 function reinstall_database() {
+    prepare_dof
     remove_mysql
     install_mysql
     init_database
 }
 
 function reinstall_dnfserver() {
+    prepare_dof
     remove_dnfserver
     install_dnfserver
     init_channel
 }
 
 function reinstall_dnf_gate() {
+    prepare_dof
     remove_dnf_gate
     install_dnf_gate
 }

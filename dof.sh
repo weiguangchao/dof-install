@@ -68,6 +68,8 @@ function install_library() {
         net-tools \
         htop \
         GeoIP.i686
+
+    log_success "library installed!!!"
 }
 
 function check_system() {

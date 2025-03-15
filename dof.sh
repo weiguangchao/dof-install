@@ -83,6 +83,7 @@ function check_system() {
 function remove_mysql() {
     log_info "remove MySQL..."
 
+    chkconfig mysql off
     service mysql stop
 
     rpm -qa | grep mariadb | xargs rpm -e --nodeps
@@ -124,21 +125,12 @@ function download_mysql() {
 function install_mysql() {
     log_info "install MySQL..."
 
-    if command -v mysql >/dev/null 2>&1; then
-        mysql --version | grep "5.5"
-        if [ $? -eq 0 ]; then
-            log_warning "MySQL installed..."
-            return
-        fi
-    fi
-
     cd /
     tar -zxvf MySQL.tar.gz
     cd /root
     rpm -ivh MySQL-client-5.5.62-1.el6.x86_64.rpm
     rpm -ivh MySQL-server-5.5.62-1.el6.x86_64.rpm
 
-    # enable mysql service
     chkconfig mysql on
 
     error_code=$?
@@ -268,47 +260,41 @@ EOF
 }
 
 function init_database() {
+    log_info "init database..."
+
+    service mysql stop
+
+    mkdir -p $MYSQL_DIR/data
+    chown -R mysql.mysql $MYSQL_DIR
+
+    cp /root/my.cnf /etc/my.cnf
+    chmod 644 /etc/my.cnf
+    chown mysql.mysql /etc/my.cnf
+
     # init database
-    if [ ! -d $MYSQL_DIR/data/d_taiwan ]; then
-        log_info "init database..."
+    mysql_install_db --defaults-file=/etc/my.cnf \
+        --user=mysql
 
-        service mysql stop
+    service mysql start
+    mysqladmin -h$MYSQL_IP -P$MYSQL_PORT -uroot password $ROOT_PASSWORD
 
-        mkdir -p $MYSQL_DIR/data
-        chown -R mysql.mysql $MYSQL_DIR
-
-        cp /root/my.cnf /etc/my.cnf
-        chmod 644 /etc/my.cnf
-        chown mysql.mysql /etc/my.cnf
-
-        # init database
-        mysql_install_db --defaults-file=/etc/my.cnf \
-            --user=mysql
-
-        service mysql start
-        mysqladmin -h$MYSQL_IP -P$MYSQL_PORT -uroot password $ROOT_PASSWORD
-
-        mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
+    mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
 DROP DATABASE IF EXISTS test;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$ROOT_PASSWORD';
 FLUSH PRIVILEGES;
 EOF
 
-        error_code=$?
-        if [ ! $error_code -eq 0 ]; then
-            log_error "MySQL install failed!!!"
-            exit
-        fi
-
-        log_success "database initialized!!! root password: $ROOT_PASSWORD"
-
-        init_game_database
-        clean_database_install_files
-    else
-        log_warning "database already initialized, no need to set"
+    error_code=$?
+    if [ ! $error_code -eq 0 ]; then
+        log_error "MySQL install failed!!!"
+        exit
     fi
 
+    log_success "database initialized!!! root password: $ROOT_PASSWORD"
+
+    init_game_database
+    clean_database_install_files
 }
 
 function clean_database_install_files() {

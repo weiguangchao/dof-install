@@ -547,8 +547,8 @@ function echo_banner() {
 "
 }
 
-function prepare_dof() {
-    if [ -f /root/prepare_dof ]; then
+function init_dof() {
+    if [ -f /root/init_dof ]; then
         log_warning "dof already prepared"
         return
     fi
@@ -564,7 +564,7 @@ function prepare_dof() {
     install_library
     download_files
 
-    touch /root/prepare_dof
+    touch /root/init_dof
     log_success "dof prepared!!!"
 }
 
@@ -630,7 +630,8 @@ function read_menu_command() {
         backup_database
         ;;
     6)
-        read -n 1 -s -r -p "将dof_bakup.sql文件上传到/root目录下, 按任意键继续..."
+        log_error "将dof_bakup.sql文件上传到/root目录下, 按回车键继续..."
+        read -n 1 -s -r
         restore_database
         ;;
     *)
@@ -639,15 +640,15 @@ function read_menu_command() {
     esac
 }
 
-function init_dof() {
+function is_ready() {
     log_error "即将准备安装环境，请按回车键继续..."
-    read -r
+    read -n 1 -s -r
 
-    prepare_dof
+    init_dof
 }
 
 function main() {
-    init_dof
+    is_ready
     echo_banner
     echo_menu
     read_menu_command

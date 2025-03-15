@@ -16,37 +16,21 @@ DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
 GITHUB_PROXY="https://ghfast.top/"
 
-output_error() {
+# log
+log_error() {
     echo -e "${RED}$1${NC}"
 }
 
-output_success() {
+log_success() {
     echo -e "${GREEN}$1${NC}"
 }
 
-output_warning() {
+log_warning() {
     echo -e "${YELLOW}$1${NC}"
 }
 
-output_info() {
-    echo -e "${BLUE}$1${NC}"
-}
-
-# log
-log_error() {
-    echo -e "${RED}[SYSTEM] $1${NC}"
-}
-
-log_success() {
-    echo -e "${GREEN}[SYSTEM] $1${NC}"
-}
-
-log_warning() {
-    echo -e "${YELLOW}[SYSTEM] $1${NC}"
-}
-
 log_info() {
-    echo -e "${BLUE}[SYSTEM] $1${NC}"
+    echo -e "${BLUE}$1${NC}"
 }
 
 function replace_yum_repo() {
@@ -565,7 +549,7 @@ function install_dnf_gate() {
 
 function echo_banner() {
     clear
-    output_error "
+    log_error "
 ██████╗  ██████╗ ███████╗
 ██╔══██╗██╔═══██╗██╔════╝
 ██║  ██║██║   ██║█████╗  
@@ -619,16 +603,16 @@ function reinstall_dnf_gate() {
 }
 
 function echo_menu() {
-    output_warning "————————————服务端搭建————————————"
-    output_success "1) 一键搭建(推荐), 多次可重装"
-    output_success "2) 安装统一网关, 多次可重装"
-    output_success "3) 数据库清档"
-    output_success "4) 重装服务端"
-    output_warning "———————————————其他———————————————"
-    output_success "5) 备份数据库"
-    output_success "6) 恢复数据库"
-    output_warning "——————————————————————————————————"
-    output_success "0) 退出脚本"
+    log_warning "————————————服务端搭建————————————"
+    log_success "1) 一键搭建(推荐), 多次可重装"
+    log_success "2) 安装统一网关, 多次可重装"
+    log_success "3) 数据库清档"
+    log_success "4) 重装服务端"
+    log_warning "———————————————其他———————————————"
+    log_success "5) 备份数据库"
+    log_success "6) 恢复数据库"
+    log_warning "——————————————————————————————————"
+    log_success "0) 退出脚本"
 }
 
 function read_menu_command() {

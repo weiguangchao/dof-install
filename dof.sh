@@ -373,9 +373,6 @@ function disable_selinux() {
 
 function remove_dnfserver() {
     log_info "remove DNF Server..."
-    chmod -R 777 /dp2
-    chmod -R 777 /home/neople
-    chmod -R 777 /root
 
     rm -rf /home/neople
     rm -rf /root/PUBLIC_IP

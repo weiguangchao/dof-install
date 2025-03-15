@@ -589,10 +589,11 @@ function reinstall_dnf_gate() {
 
 function echo_menu() {
     log_warning "————————————服务端搭建————————————"
-    log_success "1) 一键搭建(推荐), 多次可重装"
-    log_success "2) 安装统一网关, 多次可重装"
-    log_success "3) 数据库清档"
-    log_success "4) 重装服务端"
+    log_success "1) 一键搭建(推荐)"
+    log_success "2) 安装统一网关"
+    log_success "3) 安装数据库"
+    log_success "4) 安装服务端"
+    log_success "以上命令均可重复执行, 多次可重装"
     log_warning "———————————————其他———————————————"
     log_success "5) 备份数据库"
     log_success "6) 恢复数据库"

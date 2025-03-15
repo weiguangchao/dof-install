@@ -341,7 +341,7 @@ function set_swap() {
         return
     fi
 
-    local swap_size=4096
+    local swap_size=$((1024 * 6))
     local swap_file="/swapfile"
 
     log_info "create swap file $swap_file, size ${swap_size}MB..."

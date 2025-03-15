@@ -576,41 +576,33 @@ function check_dir() {
 }
 
 function install_all() {
-    prepare_dof
-
     reinstall_database
     reinstall_dnfserver
 }
 
 function reinstall_database() {
-    prepare_dof
-
     remove_mysql
     install_mysql
     init_database
 }
 
 function reinstall_dnfserver() {
-    prepare_dof
-
     remove_dnfserver
     install_dnfserver
     init_channel
 }
 
 function reinstall_gate() {
-    prepare_dof
-
     remove_gate
     install_gate
 }
 
 function echo_menu() {
     log_warning "————————————服务端搭建————————————"
-    log_success "1) 一键搭建(3,4)"
-    log_success "2) 安装统一网关"
+    log_success "1) 一键搭建(2,3)"
+    log_success "2) 安装服务端"
     log_success "3) 安装数据库"
-    log_success "4) 安装服务端"
+    log_success "4) 安装统一网关"
     log_info "以上命令均可重复执行, 多次可重装"
     log_warning "———————————————其他———————————————"
     log_success "5) 备份数据库"
@@ -627,7 +619,7 @@ function read_menu_command() {
         exit
         ;;
     2)
-        reinstall_gate
+        reinstall_dnfserver
         exit
         ;;
     3)
@@ -635,7 +627,7 @@ function read_menu_command() {
         exit
         ;;
     4)
-        reinstall_dnfserver
+        reinstall_gate
         exit
         ;;
     5)
@@ -653,7 +645,15 @@ function read_menu_command() {
     esac
 }
 
+function init_dof() {
+    log_error "将准备安装环境，请按回车键继续..."
+    read -r
+
+    prepare_dof
+}
+
 function start_menu_command() {
+    init_dof
     echo_menu
     read_menu_command
 }

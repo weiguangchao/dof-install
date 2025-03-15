@@ -274,12 +274,6 @@ GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$ROOT_PASSWORD'
 FLUSH PRIVILEGES;
 EOF
 
-    error_code=$?
-    if [ ! $error_code -eq 0 ]; then
-        log_error "MySQL install failed!!!"
-        exit
-    fi
-
     log_success "database initialized!!! root password: $ROOT_PASSWORD"
 
     init_game_database

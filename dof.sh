@@ -646,7 +646,7 @@ function read_menu_command() {
 }
 
 function init_dof() {
-    log_error "将准备安装环境，请按回车键继续..."
+    log_error "即将准备安装环境，请按回车键继续..."
     read -r
 
     prepare_dof

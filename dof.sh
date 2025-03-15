@@ -652,11 +652,11 @@ function init_dof() {
     prepare_dof
 }
 
-function start_menu_command() {
+function main() {
     init_dof
+    echo_banner
     echo_menu
     read_menu_command
 }
 
-echo_banner
-start_menu_command
+main

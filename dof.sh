@@ -607,7 +607,7 @@ function reinstall_gate() {
 
 function echo_menu() {
     log_warning "————————————服务端搭建————————————"
-    log_success "1) 一键搭建(推荐)"
+    log_success "1) 一键搭建(3,4)"
     log_success "2) 安装统一网关"
     log_success "3) 安装数据库"
     log_success "4) 安装服务端"

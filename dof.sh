@@ -416,7 +416,6 @@ function install_dnfserver() {
     tar -zxvf Game.tar.gz
     chmod -R 777 /dp2
     chmod -R 777 /home/neople
-    chmod -R 777 /root
 
     log_info "replace environment variables..."
     cd /home/neople

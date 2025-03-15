@@ -21,8 +21,8 @@ tar -czvf Game.tar.gz \
 mv Game.tar.gz ../
 cd ../
 
-cd ./Dnf_Gate
-tar -czvf Dnf_Gate.tar.gz \
+cd ./Gate
+tar -czvf Gate.tar.gz \
     ./home \
     ./usr \
     ./Config.ini \
@@ -30,5 +30,5 @@ tar -czvf Dnf_Gate.tar.gz \
     ./GateRestart \
     ./GateStop \
     ./privatekey.pem
-mv Dnf_Gate.tar.gz ../
+mv Gate.tar.gz ../
 cd ../

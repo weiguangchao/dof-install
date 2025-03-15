@@ -16,6 +16,10 @@ DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
 GITHUB_PROXY="https://ghfast.top/"
 
+SWAP_FILE="/swapfile"
+SWAP_SIZE=$((1024 * 6))
+VM_SWAPPINESS="100"
+
 # upload all install files
 BASE_DIR="/root"
 
@@ -119,8 +123,6 @@ function download_mysql() {
         fi
 
         log_success "MySQL downloaded!!!"
-    else
-        log_warning "MySQL already downloaded!!!"
     fi
 }
 
@@ -309,21 +311,18 @@ function set_swap() {
         return
     fi
 
-    local swap_size=$((1024 * 6))
-    local swap_file="/swapfile"
+    log_info "create swap file $SWAP_FILE, size ${SWAP_SIZE}MB..."
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$SWAP_SIZE status=progress
 
-    log_info "create swap file $swap_file, size ${swap_size}MB..."
-    dd if=/dev/zero of=$swap_file bs=1M count=$swap_size status=progress
-
-    chmod 600 $swap_file
-    mkswap $swap_file
-    swapon $swap_file
-    echo "$swap_file swap swap defaults 0 0" >>/etc/fstab
+    chmod 600 $SWAP_FILE
+    mkswap $SWAP_FILE
+    swapon $SWAP_FILE
+    echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
 
     if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness=.*/vm.swappiness=85/' /etc/sysctl.conf
+        sed -i 's/^vm.swappiness=.*/vm.swappiness=$VM_SWAPPINESS/' /etc/sysctl.conf
     else
-        echo "vm.swappiness=85" >>/etc/sysctl.conf
+        echo "vm.swappiness=$VM_SWAPPINESS" >>/etc/sysctl.conf
     fi
 
     sysctl -p
@@ -364,8 +363,6 @@ function download_dnfserver() {
         fi
 
         log_success "Game downloaded!!!"
-    else
-        log_warning "Game already downloaded!!!"
     fi
 }
 
@@ -381,12 +378,13 @@ function install_dnfserver() {
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz
+
     mv ./dp2 /
-    mv ./home /
-    mv ./usr /
+    mv ./home/neople /home
+    mv ./usr/lib/* /usr/lib
+
     chmod -R 777 /dp2
     chmod -R 777 /home/neople
-
     chmod +x ./run
     chmod +x ./stop
 
@@ -398,6 +396,16 @@ function install_dnfserver() {
     echo $server_ip >/root/PUBLIC_IP
 
     log_success "DNF Server installed!!!"
+}
+
+function remove_dnfserver_install_files() {
+    log_info "remove dnf server install files..."
+
+    rm -rf ./dp2
+    rm -rf ./home
+    rm -rf ./usr
+
+    log_success "dnf server install files removed!!!"
 }
 
 function init_siroco() {
@@ -466,7 +474,7 @@ function restore_database() {
     log_success "database restore success!!!"
 }
 
-function remove_dnf_gate() {
+function remove_gate() {
     log_info "remove dnf gate..."
     rm -rf /root/Config.ini
     rm -rf /root/DnfGateServer
@@ -478,41 +486,53 @@ function remove_dnf_gate() {
     log_success "dnf gate removed!!!"
 }
 
-function download_dnf_gate() {
+function download_gate() {
     log_info "download dnf gate..."
 
     cd $BASE_DIR
-    if [ ! -f Dnf_Gate.tar.gz ]; then
-        curl -o Dnf_Gate.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Dnf_Gate.tar.gz"
+    if [ ! -f Gate.tar.gz ]; then
+        curl -o Gate.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Gate.tar.gz"
 
-        if [ ! -f Dnf_Gate.tar.gz ]; then
-            log_error "DNF Gate download failed!!!"
+        if [ ! -f Gate.tar.gz ]; then
+            log_error "Gate download failed!!!"
             exit
         fi
 
-        log_success "DNF Gate downloaded!!!"
-    else
-        log_warning "DNF Gate already downloaded!!!"
+        log_success "Gate downloaded!!!"
     fi
 }
 
 function download_files() {
     download_mysql
     download_dnfserver
-    download_dnf_gate
+    download_gate
 }
 
-function install_dnf_gate() {
+function install_gate() {
     log_info "install dnf gate..."
 
     cd $BASE_DIR
-    tar -zxvf ./Dnf_Gate.tar.gz
+    tar -zxvf ./Gate.tar.gz
+
+    mv ./home/neople/game/publickey.pem /home/neople/game/publickey.pem
+    mv ./usr/lib64/* /usr/lib64
 
     chmod +x $BASE_DIR/DnfGateServer
     chmod +x $BASE_DIR/GateRestart
     chmod +x $BASE_DIR/GateStop
 
+    remove_gate_install_files
+
     log_success "DNF Gate installed!!!"
+}
+
+function remove_gate_install_files() {
+    log_info "remove dnf gate install files..."
+
+    rm -rf ./home
+    rm -rf ./usr
+
+    log_success "dnf gate install files removed!!!"
 }
 
 function echo_banner() {
@@ -536,6 +556,7 @@ function prepare_dof() {
     log_info "prepare dof..."
     check_system
     check_root_user
+    check_dir
 
     disable_selinux
     set_swap
@@ -547,13 +568,18 @@ function prepare_dof() {
     log_success "dof prepared!!!"
 }
 
+function check_dir() {
+    if [ ! -d "$BASE_DIR" ]; then
+        log_error "please cd to $BASE_DIR directory"
+        exit
+    fi
+}
+
 function install_all() {
     prepare_dof
 
     reinstall_database
     reinstall_dnfserver
-
-    post_dof
 }
 
 function reinstall_database() {
@@ -562,8 +588,6 @@ function reinstall_database() {
     remove_mysql
     install_mysql
     init_database
-
-    post_dof
 }
 
 function reinstall_dnfserver() {
@@ -572,22 +596,13 @@ function reinstall_dnfserver() {
     remove_dnfserver
     install_dnfserver
     init_channel
-
-    post_dof
 }
 
-function reinstall_dnf_gate() {
+function reinstall_gate() {
     prepare_dof
-    remove_dnf_gate
-    install_dnf_gate
 
-    post_dof
-}
-
-function post_dof() {
-    log_info "post dof..."
-    chown -R root.root /root
-    log_success "post dof success!!!"
+    remove_gate
+    install_gate
 }
 
 function echo_menu() {
@@ -612,7 +627,7 @@ function read_menu_command() {
         exit
         ;;
     2)
-        reinstall_dnf_gate
+        reinstall_gate
         exit
         ;;
     3)

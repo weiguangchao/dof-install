@@ -553,10 +553,6 @@ function download_files() {
 function install_dnf_gate() {
     log_info "install dnf gate..."
 
-    yum install -y libssl.so.6
-    ln -sf /usr/lib64/libssl.so.10 /usr/lib64/libssl.so.6
-    ln -sf /usr/lib64/libcrypto.so.10 /usr/lib64/libcrypto.so.6
-
     cd /
     tar -zxvf ./Dnf_Gate.tar.gz
 

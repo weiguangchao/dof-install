@@ -560,6 +560,7 @@ function prepare_dof() {
 
 function install_all() {
     prepare_dof
+
     reinstall_database
     reinstall_dnfserver
 
@@ -568,6 +569,7 @@ function install_all() {
 
 function reinstall_database() {
     prepare_dof
+
     remove_mysql
     install_mysql
     init_database
@@ -577,6 +579,7 @@ function reinstall_database() {
 
 function reinstall_dnfserver() {
     prepare_dof
+
     remove_dnfserver
     install_dnfserver
     init_channel

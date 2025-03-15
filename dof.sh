@@ -616,28 +616,22 @@ function read_menu_command() {
     case "${num}" in
     1)
         install_all
-        exit
         ;;
     2)
         reinstall_dnfserver
-        exit
         ;;
     3)
         reinstall_database
-        exit
         ;;
     4)
         reinstall_gate
-        exit
         ;;
     5)
         backup_database
-        exit
         ;;
     6)
         read -n 1 -s -r -p "将dof_bakup.sql文件上传到/root目录下, 按任意键继续..."
         restore_database
-        exit
         ;;
     *)
         exit

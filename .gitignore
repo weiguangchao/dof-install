@@ -1,5 +1,5 @@
 .DS_Store
 Game/*
-Gateway/*
+Dnf_Gate/*
 MySQL/*
 build.sh

@@ -110,8 +110,7 @@ function download_mysql() {
     if [ ! -f MySQL.tar.gz ]; then
         curl -o MySQL.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/MySQL.tar.gz"
 
-        error_code=$?
-        if [ ! $error_code -eq 0 ]; then
+        if [ ! -f MySQL.tar.gz ]; then
             log_error "MySQL download failed!!!"
             exit
         fi
@@ -376,8 +375,7 @@ function download_dnfserver() {
     if [ ! -f Game.tar.gz ]; then
         curl -o Game.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Game.tar.gz"
 
-        error_code=$?
-        if [ ! $error_code -eq 0 ]; then
+        if [ ! -f Game.tar.gz ]; then
             log_error "Game download failed!!!"
             exit
         fi
@@ -498,8 +496,7 @@ function download_dnf_gate() {
     if [ ! -f Dnf_Gate.tar.gz ]; then
         curl -o Dnf_Gate.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Dnf_Gate.tar.gz"
 
-        error_code=$?
-        if [ ! $error_code -eq 0 ]; then
+        if [ ! -f Dnf_Gate.tar.gz ]; then
             log_error "DNF Gate download failed!!!"
             exit
         fi

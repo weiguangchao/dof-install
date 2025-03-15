@@ -16,6 +16,8 @@ DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
 GITHUB_PROXY="https://ghfast.top/"
 
+BASE_DIR="/root"
+
 # log
 log_error() {
     echo -e "${RED}$1${NC}"
@@ -106,7 +108,7 @@ function remove_mysql() {
 function download_mysql() {
     log_info "download MySQL..."
 
-    cd /
+    cd $BASE_DIR
     if [ ! -f MySQL.tar.gz ]; then
         curl -o MySQL.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/MySQL.tar.gz"
 
@@ -124,9 +126,8 @@ function download_mysql() {
 function install_mysql() {
     log_info "install MySQL..."
 
-    cd /
+    cd $BASE_DIR
     tar -zxvf MySQL.tar.gz
-    cd /root
     rpm -ivh MySQL-client-5.5.62-1.el6.x86_64.rpm
     rpm -ivh MySQL-server-5.5.62-1.el6.x86_64.rpm
 
@@ -156,67 +157,67 @@ function init_game_database() {
     mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
 CREATE SCHEMA d_channel DEFAULT CHARACTER SET latin1 ;
 USE d_channel;
-SOURCE /root/init_sql/d_channel.sql;
+SOURCE $BASE_DIR/init_sql/d_channel.sql;
 CREATE SCHEMA d_guild DEFAULT CHARACTER SET latin1 ;
 USE d_guild;
-SOURCE /root/init_sql/d_guild.sql;
+SOURCE $BASE_DIR/init_sql/d_guild.sql;
 CREATE SCHEMA d_taiwan_secu DEFAULT CHARACTER SET latin1 ;
 USE d_taiwan_secu;
-SOURCE /root/init_sql/d_taiwan_secu.sql;
+SOURCE $BASE_DIR/init_sql/d_taiwan_secu.sql;
 CREATE SCHEMA d_taiwan DEFAULT CHARACTER SET latin1 ;
 USE d_taiwan;
-SOURCE /root/init_sql/d_taiwan.sql;
+SOURCE $BASE_DIR/init_sql/d_taiwan.sql;
 CREATE SCHEMA d_technical_report DEFAULT CHARACTER SET latin1 ;
 USE d_technical_report;
-SOURCE /root/init_sql/d_technical_report.sql;
+SOURCE $BASE_DIR/init_sql/d_technical_report.sql;
 CREATE SCHEMA taiwan_billing DEFAULT CHARACTER SET latin1 ;
 USE taiwan_billing;
-SOURCE /root/init_sql/taiwan_billing.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_billing.sql;
 CREATE SCHEMA taiwan_cain_2nd DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_2nd;
-SOURCE /root/init_sql/taiwan_cain_2nd.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_cain_2nd.sql;
 CREATE SCHEMA taiwan_cain_auction_cera DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_auction_cera;
-SOURCE /root/init_sql/taiwan_cain_auction_cera.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_cain_auction_cera.sql;
 CREATE SCHEMA taiwan_cain_auction_gold DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_auction_gold;
-SOURCE /root/init_sql/taiwan_cain_auction_gold.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_cain_auction_gold.sql;
 CREATE SCHEMA taiwan_cain_log DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_log;
-SOURCE /root/init_sql/taiwan_cain_log.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_cain_log.sql;
 CREATE SCHEMA taiwan_cain_web DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain_web;
-SOURCE /root/init_sql/taiwan_cain_web.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_cain_web.sql;
 CREATE SCHEMA taiwan_cain DEFAULT CHARACTER SET latin1 ;
 USE taiwan_cain;
-SOURCE /root/init_sql/taiwan_cain.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_cain.sql;
 CREATE SCHEMA taiwan_game_event DEFAULT CHARACTER SET latin1 ;
 USE taiwan_game_event;
-SOURCE /root/init_sql/taiwan_game_event.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_game_event.sql;
 CREATE SCHEMA taiwan_login_play DEFAULT CHARACTER SET latin1 ;
 USE taiwan_login_play;
-SOURCE /root/init_sql/taiwan_login_play.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_login_play.sql;
 CREATE SCHEMA taiwan_login DEFAULT CHARACTER SET latin1 ;
 USE taiwan_login;
-SOURCE /root/init_sql/taiwan_login.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_login.sql;
 CREATE SCHEMA taiwan_main_web DEFAULT CHARACTER SET latin1 ;
 USE taiwan_main_web;
-SOURCE /root/init_sql/taiwan_main_web.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_main_web.sql;
 CREATE SCHEMA taiwan_mng_manager DEFAULT CHARACTER SET latin1 ;
 USE taiwan_mng_manager;
-SOURCE /root/init_sql/taiwan_mng_manager.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_mng_manager.sql;
 CREATE SCHEMA taiwan_prod DEFAULT CHARACTER SET latin1 ;
 USE taiwan_prod;
-SOURCE /root/init_sql/taiwan_prod.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_prod.sql;
 CREATE SCHEMA taiwan_pvp DEFAULT CHARACTER SET latin1 ;
 USE taiwan_pvp;
-SOURCE /root/init_sql/taiwan_pvp.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_pvp.sql;
 CREATE SCHEMA taiwan_se_event DEFAULT CHARACTER SET latin1 ;
 USE taiwan_se_event;
-SOURCE /root/init_sql/taiwan_se_event.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_se_event.sql;
 CREATE SCHEMA taiwan_siroco DEFAULT CHARACTER SET latin1 ;
 USE taiwan_siroco;
-SOURCE /root/init_sql/taiwan_siroco.sql;
+SOURCE $BASE_DIR/init_sql/taiwan_siroco.sql;
 
 UPDATE d_taiwan.db_connect SET db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
 
@@ -266,7 +267,7 @@ function init_database() {
     mkdir -p $MYSQL_DIR/data
     chown -R mysql.mysql $MYSQL_DIR
 
-    cp /root/my.cnf /etc/my.cnf
+    mv $BASE_DIR/my.cnf /etc/my.cnf
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf
 
@@ -299,10 +300,9 @@ EOF
 function clean_database_install_files() {
     log_info "clean database install files..."
 
-    rm -rf /root/my.cnf
-    rm -rf /root/init_sql
-    rm -rf /root/MySQL-client-5.5.62-1.el6.x86_64.rpm
-    rm -rf /root/MySQL-server-5.5.62-1.el6.x86_64.rpm
+    rm -rf $BASE_DIR/init_sql
+    rm -rf $BASE_DIR/MySQL-client-5.5.62-1.el6.x86_64.rpm
+    rm -rf $BASE_DIR/MySQL-server-5.5.62-1.el6.x86_64.rpm
 
     log_success "database install files cleaned!!!"
 }
@@ -371,7 +371,7 @@ function remove_dnfserver() {
 function download_dnfserver() {
     log_info "download DNF Server..."
 
-    cd /
+    cd $BASE_DIR
     if [ ! -f Game.tar.gz ]; then
         curl -o Game.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Game.tar.gz"
 
@@ -396,10 +396,16 @@ function install_dnfserver() {
 
     log_info "install DNF Server($server_ip)..."
 
-    cd /
+    cd $BASE_DIR
     tar -zxvf Game.tar.gz
+    mv ./dp2 /dp2
+    mv ./home /home
+    mv ./usr /usr
     chmod -R 777 /dp2
-    chmod -R 777 /home/neople
+    chmod -R 777 /home
+
+    chmod +x ./run
+    chmod +x ./stop
 
     log_info "replace environment variables..."
     cd /home/neople
@@ -492,7 +498,7 @@ function remove_dnf_gate() {
 function download_dnf_gate() {
     log_info "download dnf gate..."
 
-    cd /
+    cd $BASE_DIR
     if [ ! -f Dnf_Gate.tar.gz ]; then
         curl -o Dnf_Gate.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Dnf_Gate.tar.gz"
 
@@ -516,12 +522,12 @@ function download_files() {
 function install_dnf_gate() {
     log_info "install dnf gate..."
 
-    cd /
+    cd $BASE_DIR
     tar -zxvf ./Dnf_Gate.tar.gz
 
-    chmod +x /root/DnfGateServer
-    chmod +x /root/GateRestart
-    chmod +x /root/GateStop
+    chmod +x $BASE_DIR/DnfGateServer
+    chmod +x $BASE_DIR/GateRestart
+    chmod +x $BASE_DIR/GateStop
 
     log_success "DNF Gate installed!!!"
 }

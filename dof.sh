@@ -593,7 +593,9 @@ function reinstall_dnf_gate() {
 }
 
 function post_dof() {
+    log_info "post dof..."
     chown -R root.root /root
+    log_success "post dof success!!!"
 }
 
 function echo_menu() {

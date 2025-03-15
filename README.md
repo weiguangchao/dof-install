@@ -18,7 +18,7 @@
 终端执行下面这段命令
 
 ```bash
-curl -o /dof.sh https://ghfast.top/https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x /dof.sh && /dof.sh
+rm -rf /dof.sh && curl -o /dof.sh https://ghfast.top/https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x /dof.sh && /dof.sh
 ```
 
 ## 感谢

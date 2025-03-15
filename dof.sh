@@ -562,6 +562,8 @@ function install_all() {
     prepare_dof
     reinstall_database
     reinstall_dnfserver
+
+    post_dof
 }
 
 function reinstall_database() {
@@ -569,6 +571,8 @@ function reinstall_database() {
     remove_mysql
     install_mysql
     init_database
+
+    post_dof
 }
 
 function reinstall_dnfserver() {
@@ -576,12 +580,20 @@ function reinstall_dnfserver() {
     remove_dnfserver
     install_dnfserver
     init_channel
+
+    post_dof
 }
 
 function reinstall_dnf_gate() {
     prepare_dof
     remove_dnf_gate
     install_dnf_gate
+
+    post_dof
+}
+
+function post_dof() {
+    chown -R root.root /root
 }
 
 function echo_menu() {

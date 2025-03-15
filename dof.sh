@@ -245,12 +245,6 @@ EOF
     SELECT db_ip, db_port, db_passwd FROM d_taiwan.db_connect;
 EOF
 
-    error_code=$?
-    if [ ! $error_code -eq 0 ]; then
-        log_error "game database initialize failed!!!"
-        exit
-    fi
-
     log_success "game database initialized!!!"
 }
 

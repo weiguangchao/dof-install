@@ -4,7 +4,7 @@
 
 目前已在 CentOS7.9 上完成搭建，其他 CentOS 版本尚未进行测试
 
-此脚本不提供 Script.pvf、df_game_r 以及 dp 配套，有相关配套需要自行上传
+此脚本不提供 Script.pvf、df_game_r 以及 dp 配套，有相关配套需自行上传
 
 脚本内置统一网关，要使用其他网关，需自行上传
 

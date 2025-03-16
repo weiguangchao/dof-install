@@ -605,10 +605,6 @@ function reinstall_database() {
     init_database
     init_game_database
     clean_database_install_files
-
-    sleep 2
-    service mysql stop
-    service mysql start
 }
 
 function reinstall_dnfserver() {

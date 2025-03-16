@@ -19,10 +19,18 @@
 
 ## 食用指南
 
-终端执行下面这段命令
+服务器内存推荐>=4G，2G 内存也可以，不过有时需要多跑几次`./run`
+
+安装一键端
 
 ```bash
 cd /root && rm -rf dof.sh && curl -o dof.sh https://ghfast.top/https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
+```
+
+启动
+
+```bash
+cd /root && ./run
 ```
 
 需要开放的端口

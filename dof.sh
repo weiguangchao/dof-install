@@ -631,7 +631,7 @@ function read_menu_command() {
         backup_database
         ;;
     6)
-        log_error "将dof_bakup.sql文件上传到/root目录下, 按回车键继续..."
+        log_error "将dof_bakup.sql文件上传到/root目录下, 按任意键继续..."
         read -n 1 -s -r
         restore_database
         ;;
@@ -642,7 +642,7 @@ function read_menu_command() {
 }
 
 function is_ready() {
-    log_error "即将准备安装环境，请按回车键继续..."
+    log_error "即将准备安装环境，按任意键继续..."
     read -n 1 -s -r
 }
 

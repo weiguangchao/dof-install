@@ -605,6 +605,18 @@ function reinstall_database() {
     init_database
     init_game_database
     clean_database_install_files
+    restart_mysql
+}
+
+function restart_mysql() {
+    log_info "restart mysql..."
+
+    sleep 1
+    service mysql stop
+    service mysql start
+    sleep 1
+
+    log_success "mysql restarted!!!"
 }
 
 function reinstall_dnfserver() {

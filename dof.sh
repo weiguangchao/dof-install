@@ -327,7 +327,7 @@ function set_swap() {
         vm_swappiness=75
     fi
 
-    log_info "create swap file $swap_size, size ${swap_size}MB..."
+    log_info "create swap file $SWAP_FILE, size ${swap_size}MB..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE

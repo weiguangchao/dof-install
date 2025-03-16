@@ -554,6 +554,9 @@ function init_dof() {
         return
     fi
 
+    log_error "即将准备安装环境，按任意键继续..."
+    read -n 1 -s -r
+
     log_info "init dof..."
     check_system
     check_root_user
@@ -641,14 +644,7 @@ function read_menu_command() {
     esac
 }
 
-function is_ready() {
-    log_error "即将准备安装环境，按任意键继续..."
-    read -n 1 -s -r
-}
-
 function main() {
-    is_ready
-
     init_dof
     echo_banner
     echo_menu

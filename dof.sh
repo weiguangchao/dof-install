@@ -14,7 +14,8 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
-GITHUB_PROXY="https://ghfast.top/"
+# https://ghfast.top/
+GITHUB_PROXY=""
 
 SWAP_FILE="/swapfile"
 

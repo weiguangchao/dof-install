@@ -24,7 +24,7 @@
 安装一键端
 
 ```bash
-cd /root && rm -rf dof.sh && curl -o dof.sh https://ghfast.top/https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
+cd /root && rm -rf dof.sh && curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
 启动

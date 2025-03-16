@@ -17,8 +17,6 @@ DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 GITHUB_PROXY="https://ghfast.top/"
 
 SWAP_FILE="/swapfile"
-SWAP_SIZE=$((1024 * 6))
-VM_SWAPPINESS="100"
 
 # upload all install files
 BASE_DIR="/root"
@@ -306,13 +304,29 @@ function set_swap() {
     # check if swap exists
     local swap_exists=$(swapon --show)
     if [ ! -z "$swap_exists" ]; then
-        local current_swap=$(free -m | awk '/Swap:/ {print $2}')
-        log_warning "swap space ${current_swap}MB already exists, no need to add"
         return
     fi
 
-    log_info "create swap file $SWAP_FILE, size ${SWAP_SIZE}MB..."
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$SWAP_SIZE status=progress
+    local total_mem=$(grep MemTotal /proc/meminfo | awk '{print $2}')
+    local total_mem_gb=$((total_mem / 1024 / 1024))
+
+    # memory >= 8GB
+    if [ $total_mem_gb -ge 8 ]; then
+        return
+    fi
+
+    # memory <= 2GB
+    local swap_size=$((1024 * 6))
+    local vm_swappiness=100
+
+    # memory >= 4GB
+    if [ $total_mem_gb -ge 4 ]; then
+        swap_size=$((1024 * $total_mem_gb))
+        vm_swappiness=75
+    fi
+
+    log_info "create swap file $swap_size, size ${swap_size}MB..."
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
 
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
@@ -320,9 +334,9 @@ function set_swap() {
     echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
 
     if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness=.*/vm.swappiness=$VM_SWAPPINESS/' /etc/sysctl.conf
+        sed -i 's/^vm.swappiness=.*/vm.swappiness=$vm_swappiness/' /etc/sysctl.conf
     else
-        echo "vm.swappiness=$VM_SWAPPINESS" >>/etc/sysctl.conf
+        echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
     fi
 
     sysctl -p

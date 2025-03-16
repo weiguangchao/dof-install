@@ -242,13 +242,11 @@ GRANT ALL PRIVILEGES ON *.* TO 'game'@'localhost' IDENTIFIED BY "$GAME_PASSWORD"
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'127.0.0.1' IDENTIFIED BY "$GAME_PASSWORD";
 GRANT ALL PRIVILEGES ON *.* TO 'dnf_admin'@'%' IDENTIFIED BY "$admin_password";
 FLUSH PRIVILEGES;
-exit;
 EOF
 
     # test game user login
     mysql -h$MYSQL_IP -P$MYSQL_PORT -ugame -p$GAME_PASSWORD <<EOF
     SELECT db_ip, db_port, db_passwd FROM d_taiwan.db_connect;
-    exit;
 EOF
 
     log_success "game database initialized!!!"
@@ -278,13 +276,9 @@ DROP DATABASE IF EXISTS test;
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'localhost' IDENTIFIED BY '$ROOT_PASSWORD';
 GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$ROOT_PASSWORD';
 FLUSH PRIVILEGES;
-exit;
 EOF
 
     log_success "database initialized!!! root password: $ROOT_PASSWORD"
-
-    init_game_database
-    clean_database_install_files
 }
 
 function clean_database_install_files() {
@@ -591,6 +585,11 @@ function reinstall_database() {
     remove_mysql
     install_mysql
     init_database
+    init_game_database
+    clean_database_install_files
+
+    service mysql stop
+    service mysql start
 }
 
 function reinstall_dnfserver() {

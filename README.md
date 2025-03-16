@@ -4,7 +4,7 @@
 
 目前已在 CentOS7.9 上完成搭建，其他 CentOS 版本尚未进行测试
 
-此脚本不提供Script.pvf、df_game_r以及dp配套，有相关配套需要自行上传
+此脚本不提供 Script.pvf、df_game_r 以及 dp 配套，有相关配套需要自行上传
 
 脚本内置统一网关，要使用其他网关，需自行上传
 
@@ -24,6 +24,22 @@
 ```bash
 cd /root && rm -rf dof.sh && curl -o dof.sh https://ghfast.top/https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
+
+需要开放的端口
+| 端口 | 类型 | 描述 |
+| ----------- | ----------- |----------- |
+| 3306 | TCP | MySQL
+| 7001 | TCP | df_channel_r
+| 7001 | UDP | df_channel_r
+| 7200 | TCP | df_relay_r
+| 7200 | UDP | df_relay_r
+| 10011 | TCP | df_game_r[ch.11]
+| 11011 | UDP | df_game_r[ch.11]
+| 2311 | UDP | df_stun_r
+| 2312 | UDP | df_stun_r
+| 2313 | UDP | df_stun_r
+| 7600 | TCP | 统一登录器
+| 881 | TCP | 统一网关
 
 ## 感谢
 

@@ -304,6 +304,7 @@ function set_swap() {
     # check if swap exists
     local swap_exists=$(swapon --show)
     if [ ! -z "$swap_exists" ]; then
+        log_warning "swap already exists"
         return
     fi
 
@@ -312,6 +313,7 @@ function set_swap() {
 
     # memory >= 8GB
     if [ $total_mem_gb -ge 8 ]; then
+        log_warning "memory >= 8GB, no need to set swap"
         return
     fi
 
@@ -326,8 +328,8 @@ function set_swap() {
     fi
 
     log_info "create swap file $swap_size, size ${swap_size}MB..."
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
 
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE

@@ -552,7 +552,7 @@ function prepare_dof() {
         return
     fi
 
-    log_error "prepare to install environment, press any key to continue..."
+    log_error "NOTE: prepare to install environment, press any key to continue..."
     read -n 1 -s -r
 
     log_info "init dof..."

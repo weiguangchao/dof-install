@@ -638,7 +638,7 @@ function read_menu_command() {
         backup_database
         ;;
     6)
-        log_error "upload dof_bakup.sql to /root directory, press any key to continue..."
+        log_error "NOTE: restore database from /root/dof_bakup.sql, press any key to continue..."
         read -n 1 -s -r
         restore_database
         ;;

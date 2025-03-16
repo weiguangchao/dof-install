@@ -145,6 +145,7 @@ function init_game_database() {
     log_info "init game database..."
 
     local admin_password=""
+    log_error "NOTE: use dnf_admin user to connect database!!!"
     read -p "please input [dnf_admin] user password: " admin_password
     # check if password is empty
     if [ -z "$admin_password" ]; then
@@ -546,12 +547,12 @@ function echo_banner() {
 "
 }
 
-function init_dof() {
-    if [ -f /root/init_dof ]; then
+function prepare_dof() {
+    if [ -f /root/prepare_dof ]; then
         return
     fi
 
-    log_error "即将准备安装环境，按任意键继续..."
+    log_error "prepare to install environment, press any key to continue..."
     read -n 1 -s -r
 
     log_info "init dof..."
@@ -565,7 +566,7 @@ function init_dof() {
     install_library
     download_files
 
-    touch /root/init_dof
+    touch /root/prepare_dof
     log_success "dof initialized!!!"
 }
 
@@ -637,7 +638,7 @@ function read_menu_command() {
         backup_database
         ;;
     6)
-        log_error "将dof_bakup.sql文件上传到/root目录下, 按任意键继续..."
+        log_error "upload dof_bakup.sql to /root directory, press any key to continue..."
         read -n 1 -s -r
         restore_database
         ;;
@@ -648,7 +649,7 @@ function read_menu_command() {
 }
 
 function main() {
-    init_dof
+    prepare_dof
     echo_banner
     echo_menu
     read_menu_command

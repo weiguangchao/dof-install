@@ -396,10 +396,11 @@ function install_dnfserver() {
     cd $BASE_DIR
     tar -zxvf Game.tar.gz
 
+    mv ./dp2 /
     mv ./home/neople /home
     mv ./usr/lib/* /usr/lib
 
-    chmod -R 777 ./dp2
+    chmod -R 777 /dp2
     chmod -R 777 /home/neople
     chmod +x ./run
     chmod +x ./stop

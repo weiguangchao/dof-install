@@ -575,7 +575,6 @@ function prepare_dof() {
     log_info "init dof..."
     check_system
     check_root_user
-    check_dir
 
     disable_selinux
     set_swap
@@ -585,13 +584,6 @@ function prepare_dof() {
 
     touch /root/prepare_dof
     log_success "dof initialized!!!"
-}
-
-function check_dir() {
-    if [ ! -d "$BASE_DIR" ]; then
-        log_error "please cd to $BASE_DIR directory"
-        exit
-    fi
 }
 
 function install_all() {

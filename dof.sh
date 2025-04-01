@@ -355,7 +355,7 @@ function disable_selinux() {
     log_success "SELinux disabled!!! $config_status"
 }
 
-function remove_dnfserver() {
+function remove_dof_server() {
     log_info "remove DNF Server..."
 
     rm -rf /home/neople
@@ -367,7 +367,7 @@ function remove_dnfserver() {
     log_success "DNF Server removed!!!"
 }
 
-function download_dnfserver() {
+function download_dof_server() {
     log_info "download DNF Server..."
 
     cd $BASE_DIR
@@ -383,7 +383,7 @@ function download_dnfserver() {
     fi
 }
 
-function install_dnfserver() {
+function install_dof_server() {
     local server_ip=""
     read -p "please input Server IP: " server_ip
     if [ -z "$server_ip" ]; then
@@ -398,6 +398,7 @@ function install_dnfserver() {
 
     mv ./dp2 /
     mv ./home/neople /home
+    rm -rf ./home
     mv ./usr/lib/* /usr/lib
 
     chmod -R 777 /dp2
@@ -415,7 +416,7 @@ function install_dnfserver() {
     log_success "DNF Server installed!!!"
 }
 
-function remove_dnfserver_install_files() {
+function remove_dof_server_install_files() {
     log_info "remove dnf server install files..."
 
     rm -rf ./dp2
@@ -521,7 +522,7 @@ function download_gate() {
 
 function download_files() {
     download_mysql
-    download_dnfserver
+    download_dof_server
     download_gate
 }
 
@@ -588,7 +589,7 @@ function prepare_dof() {
 
 function install_all() {
     reinstall_database
-    reinstall_dnfserver
+    reinstall_dof_server
 }
 
 function reinstall_database() {
@@ -611,9 +612,9 @@ function restart_mysql() {
     log_success "mysql restarted!!!"
 }
 
-function reinstall_dnfserver() {
-    remove_dnfserver
-    install_dnfserver
+function reinstall_dof_server() {
+    remove_dof_server
+    install_dof_server
     init_channel
 }
 
@@ -643,7 +644,7 @@ function read_menu_command() {
         install_all
         ;;
     2)
-        reinstall_dnfserver
+        reinstall_dof_server
         ;;
     3)
         reinstall_database

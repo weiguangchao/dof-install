@@ -570,7 +570,7 @@ function prepare_dof() {
         return
     fi
 
-    log_error "NOTE: prepare to install environment, press any key to continue..."
+    log_error "注意: 准备安装环境, 按任意键继续..."
     read -n 1 -s -r
 
     log_info "init dof..."
@@ -656,7 +656,7 @@ function read_menu_command() {
         backup_database
         ;;
     6)
-        log_error "NOTE: restore database from /root/dof_bakup.sql, press any key to continue..."
+        log_error "注意: 将备份文件(dof_bakup.sql)放到 /root 目录下, 按任意键继续..."
         read -n 1 -s -r
         restore_database
         ;;

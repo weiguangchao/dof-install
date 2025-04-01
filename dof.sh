@@ -398,7 +398,6 @@ function install_dof_server() {
 
     mv ./dp2 /
     mv ./home/neople /home
-    rm -rf ./home
     mv ./usr/lib/* /usr/lib
 
     chmod -R 777 /dp2
@@ -414,6 +413,8 @@ function install_dof_server() {
     echo $server_ip >/root/PUBLIC_IP
 
     log_success "DNF Server installed!!!"
+
+    remove_dof_server_install_files
 }
 
 function remove_dof_server_install_files() {

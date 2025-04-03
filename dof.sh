@@ -244,6 +244,7 @@ $
 
 delimiter ;
 
+-- set user privileges
 USE mysql;
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'localhost' IDENTIFIED BY "$GAME_PASSWORD";
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'127.0.0.1' IDENTIFIED BY "$GAME_PASSWORD";

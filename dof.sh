@@ -221,9 +221,9 @@ SOURCE $BASE_DIR/init_sql/taiwan_siroco.sql;
 UPDATE d_taiwan.db_connect SET db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
 
 USE d_taiwan;
-delimiter $
-
 DROP TRIGGER IF EXISTS update_limit_create_character;
+
+delimiter $
 
 CREATE TRIGGER update_limit_create_character 
 BEFORE UPDATE ON limit_create_character 

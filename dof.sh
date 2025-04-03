@@ -154,6 +154,7 @@ function init_game_database() {
 
     # init game database
     mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
+-- init database
 CREATE SCHEMA d_channel DEFAULT CHARACTER SET latin1 ;
 USE d_channel;
 SOURCE $BASE_DIR/init_sql/d_channel.sql;
@@ -218,8 +219,14 @@ CREATE SCHEMA taiwan_siroco DEFAULT CHARACTER SET latin1 ;
 USE taiwan_siroco;
 SOURCE $BASE_DIR/init_sql/taiwan_siroco.sql;
 
+-- set db connect config
 UPDATE d_taiwan.db_connect SET db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
 
+-- 自动尊10
+ALTER TABLE taiwan_cain.pvp_result 
+MODIFY COLUMN pvp_grade int(11) NOT NULL DEFAULT 29;
+
+-- 解除创建角色数量限制
 USE d_taiwan;
 DROP TRIGGER IF EXISTS update_limit_create_character;
 

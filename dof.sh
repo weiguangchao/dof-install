@@ -584,6 +584,17 @@ function prepare_dof() {
     log_success "dof initialized!!!"
 }
 
+function restart_mysql() {
+    log_info "restart mysql..."
+
+    sleep 1
+    service mysql stop
+    service mysql start
+    sleep 1
+
+    log_success "mysql restarted!!!"
+}
+
 function install_all() {
     reinstall_database
     reinstall_dof_server
@@ -596,17 +607,6 @@ function reinstall_database() {
     init_game_database
     clean_database_install_files
     restart_mysql
-}
-
-function restart_mysql() {
-    log_info "restart mysql..."
-
-    sleep 1
-    service mysql stop
-    service mysql start
-    sleep 1
-
-    log_success "mysql restarted!!!"
 }
 
 function reinstall_dof_server() {

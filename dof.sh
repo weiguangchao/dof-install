@@ -244,6 +244,14 @@ $
 
 delimiter ;
 
+-- 修复晶体契约重新登陆后消失
+USE taiwan_cain;
+CREATE TABLE cube_premium (
+charac_no INT,
+selected INT,
+cube_type INT
+);
+
 -- set user privileges
 USE mysql;
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'localhost' IDENTIFIED BY "$GAME_PASSWORD";

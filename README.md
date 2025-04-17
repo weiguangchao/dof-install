@@ -24,7 +24,7 @@
 安装一键端
 
 ```bash
-curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
+cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
 启动
@@ -59,7 +59,7 @@ cd /root && ./run
 
 ## 免责声明
 
-```bash
+```
 本软件完全免费且仅供学习交流，如作他用所承受的法律责任应由使用者本人独自承担，与作者无关（下载使用即代表你同意上述观点）。源文件发布之初安全无病毒，使用者在经任何渠道下载与使用本软件进行学习前请仔细甄别文件是否安全。
 
 虽然支持外网，但是千万别拿来开服。只能拿来学习使用!!!

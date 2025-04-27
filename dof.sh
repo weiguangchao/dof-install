@@ -538,26 +538,9 @@ function download_gate() {
     fi
 }
 
-function download_frida() {
-    log_info "下载Frida..."
-
-    cd $BASE_DIR
-    if [ ! -f Frida.tar.gz ]; then
-        curl -o Frida.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-frida/master/Frida.tar.gz"
-
-        if [ ! -f Frida.tar.gz ]; then
-            log_error "Frida下载失败!!!"
-            exit
-        fi
-
-        log_success "Frida下载成功!!!"
-    fi
-}
-
 function download_files() {
     download_mysql
     download_dof_server
-    download_frida
     download_gate
 }
 

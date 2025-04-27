@@ -401,9 +401,9 @@ function download_dof_server() {
 
 function install_dof_server() {
     local server_ip=""
-    read -p "please input Server IP: " server_ip
+    read -p "输入服务器 IP: " server_ip
     if [ -z "$server_ip" ]; then
-        log_error "Server IP不能为空!!!"
+        log_error "服务器 IP不能为空!!!"
         exit
     fi
 

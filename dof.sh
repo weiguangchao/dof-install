@@ -68,22 +68,22 @@ function install_library() {
         htop \
         GeoIP.i686
 
-    log_success "library installed!!!"
+    log_success "库安装成功!!!"
 }
 
 function check_system() {
     # check if CentOS
     if [ ! -f /etc/redhat-release ]; then
-        log_error "current system is not CentOS"
+        log_error "请使用CentOS系统!!!"
         exit
     fi
 
     # get system version
     if grep -q "CentOS Linux release 7" /etc/redhat-release; then
         local system_version=$(cat /etc/redhat-release)
-        log_success "system version: $system_version"
+        log_success "系统版本: $system_version"
     else
-        log_error "current system version: $(cat /etc/redhat-release)"
+        log_error "请使用CentOS7系统, 当前系统版本: $(cat /etc/redhat-release)"
         exit
     fi
 }

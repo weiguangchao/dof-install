@@ -294,7 +294,7 @@ GRANT ALL PRIVILEGES ON *.* TO 'root'@'127.0.0.1' IDENTIFIED BY '$ROOT_PASSWORD'
 FLUSH PRIVILEGES;
 EOF
 
-    log_success "database initialized!!! root password: $ROOT_PASSWORD"
+    log_success "数据库初始化成功!!! root密码: $ROOT_PASSWORD"
 }
 
 function clean_database_install_files() {

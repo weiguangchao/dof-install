@@ -144,7 +144,7 @@ function init_game_database() {
     log_info "初始化游戏数据库..."
 
     local admin_password=""
-    log_error "注意: 使用dnf_admin用户连接数据库!!!"
+    log_error "使用dnf_admin用户连接数据库!!!"
     read -p "请输入[dnf_admin]用户密码: " admin_password
     # check if password is empty
     if [ -z "$admin_password" ]; then
@@ -593,7 +593,7 @@ function prepare_dof() {
         return
     fi
 
-    log_error "注意: 准备安装环境, 按任意键继续..."
+    log_error "准备安装环境, 按任意键继续..."
     read -n 1 -s -r
 
     log_info "初始化DNF..."
@@ -691,7 +691,7 @@ function read_menu_command() {
         backup_database
         ;;
     6)
-        log_error "注意: 将备份文件(dof_bakup.sql)放到 /root 目录下, 按任意键继续..."
+        log_error "将备份文件(dof_bakup.sql)放到 /root 目录下, 按任意键继续..."
         read -n 1 -s -r
         restore_database
         ;;

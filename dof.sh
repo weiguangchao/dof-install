@@ -465,7 +465,7 @@ function init_siroco() {
     sed -i "s/CHANNEL_NO/$channel_no/g" ./cfg/$channel_name.cfg
     sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" ./cfg/$channel_name.cfg
     sed -i "s/PUBLIC_IP/$PUBLIC_IP/g" ./cfg/$channel_name.cfg
-    log_success "生成$channel_name.cfg成功"
+    log_success "生成$channel_name.cfg"
 }
 
 function init_channel() {

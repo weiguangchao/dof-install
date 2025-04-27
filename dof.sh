@@ -436,6 +436,7 @@ function install_dof_server() {
 function remove_dof_server_install_files() {
     log_info "remove dnf server install files..."
 
+    cd $BASE_DIR
     rm -rf ./dp2
     rm -rf ./home
     rm -rf ./usr

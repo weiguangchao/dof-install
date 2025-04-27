@@ -40,7 +40,7 @@ log_info() {
 }
 
 function replace_yum_repo() {
-    log_info "replace yum repo..."
+    log_info "替换yum源..."
 
     mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
     curl -o /etc/yum.repos.d/CentOS-Base.repo http://mirrors.aliyun.com/repo/Centos-7.repo
@@ -53,7 +53,7 @@ function replace_yum_repo() {
 }
 
 function install_library() {
-    log_info "install library..."
+    log_info "安装库..."
 
     yum update -y
     yum install -y \
@@ -89,7 +89,7 @@ function check_system() {
 }
 
 function remove_mysql() {
-    log_info "remove MySQL..."
+    log_info "卸载MySQL..."
 
     chkconfig mysql off
     service mysql stop
@@ -99,20 +99,20 @@ function remove_mysql() {
     rpm -qa | grep mysql | xargs rpm -e --nodeps
     rpm -qa | grep MySQL | xargs rpm -e --nodeps
 
-    log_info "remove MySQL data files..."
+    log_info "删除MySQL数据文件..."
     rm -rf /etc/my.cnf
     rm -rf /var/lib/mysql
     rm -rf $MYSQL_DIR
 
-    log_info "remove MySQL user and group..."
+    log_info "删除MySQL用户和组..."
     userdel -f mysql
     groupdel -f mysql
 
-    log_success "MySQL removed!!!"
+    log_success "MySQL卸载成功!!!"
 }
 
 function download_mysql() {
-    log_info "download MySQL..."
+    log_info "下载MySQL..."
 
     cd $BASE_DIR
     if [ ! -f MySQL.tar.gz ]; then
@@ -128,7 +128,7 @@ function download_mysql() {
 }
 
 function install_mysql() {
-    log_info "install MySQL..."
+    log_info "安装MySQL..."
 
     cd $BASE_DIR
     tar -zxvf MySQL.tar.gz
@@ -141,11 +141,11 @@ function install_mysql() {
 }
 
 function init_game_database() {
-    log_info "init game database..."
+    log_info "初始化游戏数据库..."
 
     local admin_password=""
-    log_error "NOTE: use dnf_admin user to connect database!!!"
-    read -p "please input [dnf_admin] user password: " admin_password
+    log_error "注意: 使用dnf_admin用户连接数据库!!!"
+    read -p "请输入[dnf_admin]用户密码: " admin_password
     # check if password is empty
     if [ -z "$admin_password" ]; then
         log_warning "password can't be empty"
@@ -265,11 +265,11 @@ EOF
     SELECT db_ip, db_port, db_passwd FROM d_taiwan.db_connect;
 EOF
 
-    log_success "game database initialized!!!"
+    log_success "游戏数据库初始化成功!!!"
 }
 
 function init_database() {
-    log_info "init database..."
+    log_info "初始化数据库..."
 
     service mysql stop
 
@@ -298,13 +298,13 @@ EOF
 }
 
 function clean_database_install_files() {
-    log_info "clean database install files..."
+    log_info "清理数据库安装文件..."
 
     rm -rf $BASE_DIR/init_sql
     rm -rf $BASE_DIR/MySQL-client-5.5.62-1.el6.x86_64.rpm
     rm -rf $BASE_DIR/MySQL-server-5.5.62-1.el6.x86_64.rpm
 
-    log_success "database install files cleaned!!!"
+    log_success "数据库安装文件清理成功!!!"
 }
 
 function check_root_user() {
@@ -316,12 +316,12 @@ function check_root_user() {
 }
 
 function set_swap() {
-    log_info "set swap..."
+    log_info "设置交换分区..."
 
     # check if swap exists
     local swap_exists=$(swapon --show)
     if [ ! -z "$swap_exists" ]; then
-        log_warning "swap already exists"
+        log_warning "交换分区已存在"
         return
     fi
 
@@ -330,7 +330,7 @@ function set_swap() {
 
     # memory >= 8GB
     if [ $total_mem_gb -ge 8 ]; then
-        log_warning "memory >= 8GB, no need to set swap"
+        log_warning "内存 >= 8GB, 无需设置交换分区"
         return
     fi
 
@@ -344,7 +344,7 @@ function set_swap() {
         vm_swappiness=75
     fi
 
-    log_info "create swap file $SWAP_FILE, size ${swap_size}MB..."
+    log_info "创建交换分区文件 $SWAP_FILE, 大小 ${swap_size}MB..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
@@ -359,7 +359,7 @@ function set_swap() {
     fi
 
     sysctl -p
-    log_success "swap set successfully!!! $(sysctl vm.swappiness)"
+    log_success "交换分区设置成功!!! $(sysctl vm.swappiness)"
     free -h
 }
 
@@ -368,11 +368,11 @@ function disable_selinux() {
     sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
 
     local config_status=$(grep "^SELINUX=" /etc/selinux/config)
-    log_success "SELinux disabled!!! $config_status"
+    log_success "SELinux已禁用!!! $config_status"
 }
 
 function remove_dof_server() {
-    log_info "remove DNF Server..."
+    log_info "卸载DNF Server..."
 
     rm -rf /home/neople
     rm -rf /root/PUBLIC_IP
@@ -380,22 +380,22 @@ function remove_dof_server() {
     rm -rf /root/stop
     rm -rf /dp2
 
-    log_success "DNF Server removed!!!"
+    log_success "DNF Server卸载成功!!!"
 }
 
 function download_dof_server() {
-    log_info "download DNF Server..."
+    log_info "下载DNF Server..."
 
     cd $BASE_DIR
     if [ ! -f Game.tar.gz ]; then
         curl -o Game.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Game.tar.gz"
 
         if [ ! -f Game.tar.gz ]; then
-            log_error "Game download failed!!!"
+            log_error "Game下载失败!!!"
             exit
         fi
 
-        log_success "Game downloaded!!!"
+        log_success "Game下载成功!!!"
     fi
 }
 
@@ -403,11 +403,11 @@ function install_dof_server() {
     local server_ip=""
     read -p "please input Server IP: " server_ip
     if [ -z "$server_ip" ]; then
-        log_error "Server IP can't be empty!!!"
+        log_error "Server IP不能为空!!!"
         exit
     fi
 
-    log_info "install DNF Server($server_ip)..."
+    log_info "安装DNF Server($server_ip)..."
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz
@@ -421,27 +421,27 @@ function install_dof_server() {
     chmod +x ./run
     chmod +x ./stop
 
-    log_info "replace environment variables..."
+    log_info "替换环境变量..."
     cd /home/neople
     sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
     sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.tbl")
 
     echo $server_ip >/root/PUBLIC_IP
 
-    log_success "DNF Server installed!!!"
+    log_success "DNF Server安装成功!!!"
 
     remove_dof_server_install_files
 }
 
 function remove_dof_server_install_files() {
-    log_info "remove dnf server install files..."
+    log_info "删除DNF Server安装文件..."
 
     cd $BASE_DIR
     rm -rf ./dp2
     rm -rf ./home
     rm -rf ./usr
 
-    log_success "dnf server install files removed!!!"
+    log_success "DNF Server安装文件删除成功!!!"
 }
 
 function init_siroco() {
@@ -449,7 +449,7 @@ function init_siroco() {
     local process_sequence=$2
     local channel_name="siroco$channel_no"
 
-    log_info "init Siroco channel $channel_no, process_sequence $process_sequence..."
+    log_info "初始化Siroco频道 $channel_no, 进程序号 $process_sequence..."
 
     cd /home/neople/game
     rm -rf ./cfg/$channel_name.cfg
@@ -457,28 +457,28 @@ function init_siroco() {
 
     PUBLIC_IP=$(cat /root/PUBLIC_IP 2>/dev/null || true)
     if [ -z "$PUBLIC_IP" ]; then
-        log_error "PUBLIC_IP is empty"
+        log_error "PUBLIC_IP为空"
         exit
     fi
 
-    log_info "PUBLIC_IP is $PUBLIC_IP"
+    log_info "PUBLIC_IP为 $PUBLIC_IP"
     sed -i "s/CHANNEL_NO/$channel_no/g" ./cfg/$channel_name.cfg
     sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" ./cfg/$channel_name.cfg
     sed -i "s/PUBLIC_IP/$PUBLIC_IP/g" ./cfg/$channel_name.cfg
-    log_success "generate $channel_name.cfg success"
+    log_success "生成$channel_name.cfg成功"
 }
 
 function init_channel() {
-    log_info "init channel..."
+    log_info "初始化频道..."
 
     # init siroco 11 channel
     init_siroco 11 11
 
-    log_success "Siroco channel initialized!!!"
+    log_success "Siroco频道初始化成功!!!"
 }
 
 function backup_database() {
-    log_info "backup database..."
+    log_info "备份数据库..."
     local databases=$(mysql -h $MYSQL_IP -P $MYSQL_PORT -u root -p$ROOT_PASSWORD -N -e "
         SELECT GROUP_CONCAT(schema_name SEPARATOR ' ')
         FROM information_schema.schemata
@@ -496,22 +496,22 @@ function backup_database() {
     mysqldump -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD \
         --databases $databases \
         >/root/dof_bakup.sql
-    log_success "database backup success!!!"
+    log_success "数据库备份成功!!!"
 }
 
 function restore_database() {
     if [ ! -f /root/dof_bakup.sql ]; then
-        log_error "dof_bakup.sql not found on /root directory"
+        log_error "dof_bakup.sql未找到在/root目录下"
         exit
     fi
 
-    log_info "restore database..."
+    log_info "恢复数据库..."
     mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
-    log_success "database restore success!!!"
+    log_success "数据库恢复成功!!!"
 }
 
 function remove_gate() {
-    log_info "remove dnf gate..."
+    log_info "卸载DNF网关..."
     rm -rf /root/Config.ini
     rm -rf /root/DnfGateServer
     rm -rf /root/GateRestart
@@ -519,38 +519,38 @@ function remove_gate() {
     rm -rf /root/privatekey.pem
     rm -rf /home/neople/game/publickey.pem
 
-    log_success "dnf gate removed!!!"
+    log_success "DNF网关卸载成功!!!"
 }
 
 function download_gate() {
-    log_info "download dnf gate..."
+    log_info "下载DNF网关..."
 
     cd $BASE_DIR
     if [ ! -f Gate.tar.gz ]; then
         curl -o Gate.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Gate.tar.gz"
 
         if [ ! -f Gate.tar.gz ]; then
-            log_error "Gate download failed!!!"
+            log_error "Gate下载失败!!!"
             exit
         fi
 
-        log_success "Gate downloaded!!!"
+        log_success "Gate下载成功!!!"
     fi
 }
 
 function download_frida() {
-    log_info "download frida..."
+    log_info "下载Frida..."
 
     cd $BASE_DIR
     if [ ! -f Frida.tar.gz ]; then
         curl -o Frida.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-frida/master/Frida.tar.gz"
 
         if [ ! -f Frida.tar.gz ]; then
-            log_error "Frida download failed!!!"
+            log_error "Frida下载失败!!!"
             exit
         fi
 
-        log_success "Frida downloaded!!!"
+        log_success "Frida下载成功!!!"
     fi
 }
 
@@ -562,7 +562,7 @@ function download_files() {
 }
 
 function install_gate() {
-    log_info "install dnf gate..."
+    log_info "安装统一网关..."
 
     cd $BASE_DIR
     tar -zxvf ./Gate.tar.gz
@@ -576,16 +576,16 @@ function install_gate() {
 
     remove_gate_install_files
 
-    log_success "DNF Gate installed!!!"
+    log_success "统一网关安装成功!!!"
 }
 
 function remove_gate_install_files() {
-    log_info "remove dnf gate install files..."
+    log_info "删除统一网关安装文件..."
 
     rm -rf ./home
     rm -rf ./usr
 
-    log_success "dnf gate install files removed!!!"
+    log_success "统一网关安装文件删除成功!!!"
 }
 
 function prepare_dof() {
@@ -596,7 +596,7 @@ function prepare_dof() {
     log_error "注意: 准备安装环境, 按任意键继续..."
     read -n 1 -s -r
 
-    log_info "init dof..."
+    log_info "初始化DNF..."
     check_system
     check_root_user
 
@@ -607,18 +607,18 @@ function prepare_dof() {
     download_files
 
     touch /root/prepare_dof
-    log_success "dof initialized!!!"
+    log_success "DNF初始化成功!!!"
 }
 
 function restart_mysql() {
-    log_info "restart mysql..."
+    log_info "重启MySQL..."
 
     sleep 1
     service mysql stop
     service mysql start
     sleep 1
 
-    log_success "mysql restarted!!!"
+    log_success "MySQL重启成功!!!"
 }
 
 function install_all() {

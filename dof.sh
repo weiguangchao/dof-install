@@ -491,7 +491,7 @@ function backup_database() {
         );
     ")
 
-    log_warning "backup databases: $databases"
+    log_warning "需要备份的数据库: $databases"
 
     mysqldump -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD \
         --databases $databases \

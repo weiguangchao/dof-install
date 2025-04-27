@@ -471,7 +471,7 @@ function init_siroco() {
 function init_channel() {
     log_info "初始化频道..."
 
-    # init siroco 11 channel
+    # 初始化希洛克11频道
     init_siroco 11 11
 
     log_success "Siroco频道初始化成功!!!"

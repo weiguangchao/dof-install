@@ -137,7 +137,11 @@ function install_mysql() {
     rpm -ivh MySQL-client-5.5.62-1.el6.x86_64.rpm
     rpm -ivh MySQL-server-5.5.62-1.el6.x86_64.rpm
 
-    $?
+    local mysql_install_status=$?
+    if [ $mysql_install_status -ne 0 ]; then
+        log_error "MySQL 安装失败, 请检查安装日志!!!"
+        exit
+    fi
 
     chkconfig mysql on
 

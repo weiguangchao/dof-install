@@ -435,20 +435,20 @@ function install_dofserver() {
 
     echo $server_ip >/root/PUBLIC_IP
 
-    log_success "DNF Server安装成功!!!"
+    log_success "DOF Server安装成功!!!"
 
     remove_dofserver_install_files
 }
 
 function remove_dofserver_install_files() {
-    log_info "删除DNF Server安装文件..."
+    log_info "删除DOF Server安装文件..."
 
     cd $BASE_DIR
     rm -rf ./dp2
     rm -rf ./home
     rm -rf ./usr
 
-    log_success "DNF Server安装文件删除成功!!!"
+    log_success "DOF Server安装文件删除成功!!!"
 }
 
 function init_siroco() {

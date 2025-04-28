@@ -382,9 +382,12 @@ function update_dns() {
 
     cp /etc/resolv.conf /etc/resolv.conf.bak
 
-    echo "nameserver 223.5.5.5" >>/etc/resolv.conf
-    echo "nameserver 119.29.29.29" >>/etc/resolv.conf
-    echo "nameserver 180.76.76.76" >>/etc/resolv.conf
+    # 设置新的DNS
+    bash -c 'cat > /etc/resolv.conf << EOF
+nameserver 223.5.5.5
+nameserver 119.29.29.29
+nameserver 180.76.76.76
+EOF'
 
     # 修改NetworkManager配置
     bash -c 'cat >> /etc/NetworkManager/NetworkManager.conf << EOF

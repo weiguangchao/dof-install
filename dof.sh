@@ -388,7 +388,7 @@ nameserver 180.76.76.76
 EOF'
 
     cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak
-    bash -c 'cat > /etc/resolv.conf << EOF
+    bash -c 'cat > /etc/NetworkManager/NetworkManager.conf << EOF
 [main]
 dns=none
 EOF'

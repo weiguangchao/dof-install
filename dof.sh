@@ -371,7 +371,7 @@ function disable_selinux() {
 }
 
 function remove_dofserver() {
-    log_info "卸载DNF Server..."
+    log_info "卸载DOF Server..."
 
     rm -rf /home/neople
     rm -rf /root/PUBLIC_IP
@@ -379,22 +379,22 @@ function remove_dofserver() {
     rm -rf /root/stop
     rm -rf /dp2
 
-    log_success "DNF Server卸载成功!!!"
+    log_success "DOF Server卸载成功!!!"
 }
 
 function download_dofserver() {
-    log_info "下载DNF Server..."
+    log_info "下载DOF Server..."
 
     cd $BASE_DIR
     if [ ! -f Game.tar.gz ]; then
         curl -o Game.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Game.tar.gz"
 
         if [ ! -f Game.tar.gz ]; then
-            log_error "Game下载失败!!!"
+            log_error "DOF Server下载失败!!!"
             exit
         fi
 
-        log_success "Game下载成功!!!"
+        log_success "DOF Server下载成功!!!"
     fi
 }
 

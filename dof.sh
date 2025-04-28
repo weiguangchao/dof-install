@@ -145,7 +145,7 @@ function init_game_database() {
     log_info "初始化游戏数据库..."
 
     local admin_password=""
-    log_error "GM请使用dof_admin用户连接数据库!!!"
+    log_error "GM 请使用[dof_admin]用户连接数据库!!!"
     read -p "请输入[dof_admin]用户密码: " admin_password
     if [ -z "$admin_password" ]; then
         log_warning "密码不能为空!!!"

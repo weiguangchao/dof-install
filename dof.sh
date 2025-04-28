@@ -147,13 +147,11 @@ function init_game_database() {
     local admin_password=""
     log_error "GM请使用dof_admin用户连接数据库!!!"
     read -p "请输入[dof_admin]用户密码: " admin_password
-    # check if password is empty
     if [ -z "$admin_password" ]; then
-        log_warning "password can't be empty"
+        log_warning "密码不能为空!!!"
         exit
     fi
 
-    # init game database
     mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
 -- init database
 CREATE SCHEMA d_channel DEFAULT CHARACTER SET latin1;

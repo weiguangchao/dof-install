@@ -50,6 +50,7 @@ function replace_yum_repo() {
 
     yum clean all
     yum makecache
+    log_success "yum源替换成功!!!"
 }
 
 function install_library() {

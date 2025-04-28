@@ -384,14 +384,14 @@ function update_dns() {
     log_info "更新DNS..."
 
     mv /etc/resolv.conf /etc/resolv.conf.bak
-    echo >/etc/resolv.conf <<EOF
+    cat >/etc/resolv.conf <<EOF
 nameserver 223.5.5.5
 nameserver 119.29.29.29
 nameserver 180.76.76.76
 EOF
 
     mv /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak
-    echo >/etc/NetworkManager/NetworkManager.conf <<EOF
+    cat >/etc/NetworkManager/NetworkManager.conf <<EOF
 [main]
 dns=none
 EOF

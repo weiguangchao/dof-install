@@ -315,12 +315,12 @@ function check_root_user() {
 }
 
 function set_swap() {
-    log_info "设置交换分区..."
+    log_info "设置swap..."
 
     # check if swap exists
     local swap_exists=$(swapon --show)
     if [ ! -z "$swap_exists" ]; then
-        log_warning "交换分区已存在"
+        log_warning "swap分区已存在, 无需进行设置!!!"
         return
     fi
 
@@ -329,7 +329,7 @@ function set_swap() {
 
     # memory >= 8GB
     if [ $total_mem_gb -ge 8 ]; then
-        log_warning "内存 >= 8GB, 无需设置交换分区"
+        log_warning "内存 >= 8GB, 无需设置swap分区!!!"
         return
     fi
 
@@ -343,7 +343,7 @@ function set_swap() {
         vm_swappiness=75
     fi
 
-    log_info "创建交换分区文件 $SWAP_FILE, 大小 ${swap_size}MB..."
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
@@ -358,7 +358,7 @@ function set_swap() {
     fi
 
     sysctl -p
-    log_success "交换分区设置成功!!! $(sysctl vm.swappiness)"
+    log_success "swap设置成功!!! $(sysctl vm.swappiness)"
     free -h
 }
 

@@ -70,6 +70,7 @@ function install_library() {
         net-tools \
         htop \
         libaio \
+        screen \
         GeoIP.i686
 
     log_success "库安装成功!!!"

@@ -370,7 +370,7 @@ function disable_selinux() {
     log_success "SELinux已禁用!!! $config_status"
 }
 
-function remove_dof_server() {
+function remove_dofserver() {
     log_info "卸载DNF Server..."
 
     rm -rf /home/neople
@@ -382,7 +382,7 @@ function remove_dof_server() {
     log_success "DNF Server卸载成功!!!"
 }
 
-function download_dof_server() {
+function download_dofserver() {
     log_info "下载DNF Server..."
 
     cd $BASE_DIR
@@ -398,7 +398,7 @@ function download_dof_server() {
     fi
 }
 
-function install_dof_server() {
+function install_dofserver() {
     local server_ip=""
     read -p "输入服务器 IP: " server_ip
     if [ -z "$server_ip" ]; then
@@ -429,10 +429,10 @@ function install_dof_server() {
 
     log_success "DNF Server安装成功!!!"
 
-    remove_dof_server_install_files
+    remove_dofserver_install_files
 }
 
-function remove_dof_server_install_files() {
+function remove_dofserver_install_files() {
     log_info "删除DNF Server安装文件..."
 
     cd $BASE_DIR
@@ -539,7 +539,7 @@ function download_gate() {
 
 function download_files() {
     download_mysql
-    download_dof_server
+    download_dofserver
     download_gate
 }
 
@@ -605,7 +605,7 @@ function restart_mysql() {
 
 function install_all() {
     reinstall_database
-    reinstall_dof_server
+    reinstall_dofserver
 }
 
 function reinstall_database() {
@@ -617,9 +617,9 @@ function reinstall_database() {
     restart_mysql
 }
 
-function reinstall_dof_server() {
-    remove_dof_server
-    install_dof_server
+function reinstall_dofserver() {
+    remove_dofserver
+    install_dofserver
     init_channel
 }
 
@@ -661,7 +661,7 @@ function read_menu_command() {
         install_all
         ;;
     2)
-        reinstall_dof_server
+        reinstall_dofserver
         ;;
     3)
         reinstall_database

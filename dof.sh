@@ -624,9 +624,9 @@ function prepare_dof() {
     log_info "初始化DOF安装环境..."
     check_system
     check_root_user
-    update_dns
     disable_selinux
     set_swap
+    update_dns
     replace_yum_repo
     install_library
 

@@ -716,7 +716,7 @@ function read_menu_command() {
         backup_database
         ;;
     6)
-        log_error "将备份文件(dof_bakup.sql)放到 /root 目录下, 按任意键继续..."
+        log_error "将备份文件(dof_bakup.sql)放到 $BASE_DIR 目录下, 按任意键继续..."
         read -n 1 -s -r
         restore_database
         ;;

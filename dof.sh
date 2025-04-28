@@ -381,16 +381,14 @@ function update_dns() {
     log_info "更新DNS..."
 
     cp /etc/resolv.conf /etc/resolv.conf.bak
-
-    # 设置新的DNS
     bash -c 'cat > /etc/resolv.conf << EOF
 nameserver 223.5.5.5
 nameserver 119.29.29.29
 nameserver 180.76.76.76
 EOF'
 
-    # 修改NetworkManager配置
-    bash -c 'cat >> /etc/NetworkManager/NetworkManager.conf << EOF
+    cp /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak
+    bash -c 'cat > /etc/resolv.conf << EOF
 [main]
 dns=none
 EOF'

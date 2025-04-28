@@ -602,7 +602,6 @@ function prepare_dof() {
     set_swap
     replace_yum_repo
     install_library
-    download_files
 
     touch /root/prepare_dof
     log_success "DOF安装环境初始化成功!!!"
@@ -701,6 +700,7 @@ function read_menu_command() {
 
 function main() {
     prepare_dof
+    download_files
     echo_banner
     echo_menu
     read_menu_command

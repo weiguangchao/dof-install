@@ -557,12 +557,20 @@ function install_gate() {
     cd $BASE_DIR
     tar -zxvf ./Gate.tar.gz
 
-    mv ./home/neople/game/publickey.pem /home/neople/game/publickey.pem
+    chmod -R 755 ./usr/lib64
+    chown -R root:root ./usr/lib64
     mv ./usr/lib64/* /usr/lib64
 
-    chmod +x $BASE_DIR/DnfGateServer
-    chmod +x $BASE_DIR/GateRestart
-    chmod +x $BASE_DIR/GateStop
+    chmod 777 ./home/neople/game/publickey.pem
+    chown -R root:root ./home/neople/game/publickey.pem
+    mv ./home/neople/game/publickey.pem /home/neople/game/publickey.pem
+
+    chown root:root ./DnfGateServer
+    chmod 777 ./DnfGateServer
+    chown root:root ./GateRestart
+    chmod 777 ./GateRestart
+    chown root:root ./GateStop
+    chmod 777 ./GateStop
 
     remove_gate_install_files
 

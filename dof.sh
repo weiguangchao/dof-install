@@ -453,8 +453,8 @@ function install_dofserver() {
 
     chmod -R 777 ./run
     chmod -R 777 ./stop
-    chmod +x ./run
-    chmod +x ./stop
+    chown root:root ./run
+    chown root:root ./stop
 
     log_info "替换环境变量..."
     cd /home/neople

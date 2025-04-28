@@ -145,8 +145,8 @@ function init_game_database() {
     log_info "初始化游戏数据库..."
 
     local admin_password=""
-    log_error "GM请使用dnf_admin用户连接数据库!!!"
-    read -p "请输入[dnf_admin]用户密码: " admin_password
+    log_error "GM请使用dof_admin用户连接数据库!!!"
+    read -p "请输入[dof_admin]用户密码: " admin_password
     # check if password is empty
     if [ -z "$admin_password" ]; then
         log_warning "password can't be empty"
@@ -257,7 +257,7 @@ cube_type INT
 USE mysql;
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'localhost' IDENTIFIED BY "$GAME_PASSWORD";
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'127.0.0.1' IDENTIFIED BY "$GAME_PASSWORD";
-GRANT ALL PRIVILEGES ON *.* TO 'dnf_admin'@'%' IDENTIFIED BY "$admin_password";
+GRANT ALL PRIVILEGES ON *.* TO 'dof_admin'@'%' IDENTIFIED BY "$admin_password";
 FLUSH PRIVILEGES;
 EOF
 

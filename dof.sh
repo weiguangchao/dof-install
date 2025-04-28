@@ -377,6 +377,26 @@ function disable_selinux() {
     log_success "SELinux已禁用!!! $config_status"
 }
 
+function update_dns() {
+    log_info "更新DNS..."
+
+    cp /etc/resolv.conf /etc/resolv.conf.bak
+
+    echo "nameserver 223.5.5.5" >>/etc/resolv.conf
+    echo "nameserver 119.29.29.29" >>/etc/resolv.conf
+    echo "nameserver 180.76.76.76" >>/etc/resolv.conf
+
+    # 修改NetworkManager配置
+    bash -c 'cat >> /etc/NetworkManager/NetworkManager.conf << EOF
+[main]
+dns=none
+EOF'
+
+    systemctl restart NetworkManager
+
+    log_success "DNS更新成功!!!"
+}
+
 function remove_dofserver() {
     log_info "卸载DOF Server..."
 
@@ -604,7 +624,7 @@ function prepare_dof() {
     log_info "初始化DOF安装环境..."
     check_system
     check_root_user
-
+    update_dns
     disable_selinux
     set_swap
     replace_yum_repo

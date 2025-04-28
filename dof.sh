@@ -411,12 +411,20 @@ function install_dofserver() {
     cd $BASE_DIR
     tar -zxvf Game.tar.gz
 
-    mv ./dp2 /
-    mv ./home/neople /home
+    chmod -R 755 ./usr/lib
+    chown -R root:root ./usr/lib
     mv ./usr/lib/* /usr/lib
 
-    chmod -R 777 /dp2
-    chmod -R 777 /home/neople
+    chmod -R 777 ./dp2
+    chown -R root:root ./dp2
+    mv ./dp2 /
+
+    chmod -R 777 ./home/neople
+    chown -R root:root ./home/neople
+    mv ./home/neople /home
+
+    chmod -R 777 ./run
+    chmod -R 777 ./stop
     chmod +x ./run
     chmod +x ./stop
 

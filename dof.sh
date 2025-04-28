@@ -586,7 +586,7 @@ function prepare_dof() {
     log_error "准备安装环境, 按任意键继续..."
     read -n 1 -s -r
 
-    log_info "初始化DNF..."
+    log_info "初始化DOF安装环境..."
     check_system
     check_root_user
 
@@ -597,7 +597,7 @@ function prepare_dof() {
     download_files
 
     touch /root/prepare_dof
-    log_success "DNF初始化成功!!!"
+    log_success "DOF安装环境初始化成功!!!"
 }
 
 function restart_mysql() {

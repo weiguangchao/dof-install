@@ -23,7 +23,7 @@
 
 服务器内存推荐>=4G，2G 内存也可以，不过有时需要多跑几次`./run`
 
-安装一键端
+入口
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh

@@ -2,7 +2,7 @@
 
 ## 概述
 
-基于 [1995chen/dnf](https://github.com/1995chen/dnf)
+基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化(手动[狗头])
 
 目前已在 CentOS7.9 上完成搭建，其他 CentOS 版本尚未进行测试
 

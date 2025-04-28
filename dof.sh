@@ -39,7 +39,7 @@ log_info() {
     echo -e "${BLUE}$1${NC}"
 }
 
-function replace_yum_repo() {
+function update_yum_repo() {
     log_info "替换yum源..."
 
     mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
@@ -631,7 +631,7 @@ function prepare_dof() {
     disable_selinux
     set_swap
     update_dns
-    replace_yum_repo
+    update_yum_repo
     install_library
 
     touch /root/prepare_dof

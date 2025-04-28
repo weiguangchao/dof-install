@@ -67,6 +67,7 @@ function install_library() {
         libstdc++.i686 \
         net-tools \
         htop \
+        libaio \
         GeoIP.i686
 
     log_success "库安装成功!!!"
@@ -135,6 +136,8 @@ function install_mysql() {
     tar -zxvf MySQL.tar.gz
     rpm -ivh MySQL-client-5.5.62-1.el6.x86_64.rpm
     rpm -ivh MySQL-server-5.5.62-1.el6.x86_64.rpm
+
+    $?
 
     chkconfig mysql on
 

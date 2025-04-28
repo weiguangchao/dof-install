@@ -406,7 +406,7 @@ function install_dofserver() {
         exit
     fi
 
-    log_info "安装DNF Server($server_ip)..."
+    log_info "安装DOF Server ($server_ip)..."
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz

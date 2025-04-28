@@ -50,13 +50,13 @@ function replace_yum_repo() {
 
     yum clean all
     yum makecache
+    yum update -y
     log_success "yum源替换成功!!!"
 }
 
 function install_library() {
     log_info "安装库..."
 
-    yum update -y
     yum install -y \
         epel-release \
         perl \

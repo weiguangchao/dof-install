@@ -391,8 +391,6 @@ EOF
     echo >/etc/NetworkManager/NetworkManager.conf <<EOF
 [main]
 dns=none
-
-[logging]
 EOF
 
     systemctl restart NetworkManager

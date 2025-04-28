@@ -8,7 +8,7 @@
 
 此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行上传
 
-脚本打包统一网关，未提供使用入口，有需要到 [1995chen/dnf](https://github.com/1995chen/dnf) 下载配套客户端使用
+脚本打包统一网关，默认不开启，配套客户端到 [1995chen/dnf](https://github.com/1995chen/dnf) 下载
 
 ## 功能特性
 

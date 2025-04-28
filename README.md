@@ -2,6 +2,8 @@
 
 ## 概述
 
+基于 [1995chen/dnf](https://github.com/1995chen/dnf)
+
 目前已在 CentOS7.9 上完成搭建，其他 CentOS 版本尚未进行测试
 
 此脚本不提供 Script.pvf、df_game_r 以及 dp 配套，有需要自行上传
@@ -48,14 +50,6 @@ cd /root && ./run
 | 2313 | UDP | df_stun_r
 | 7600 | TCP | 统一登录器
 | 881 | TCP | 统一网关
-
-## 感谢
-
-以下排名不分先后！！！
-
-[1995chen/dnf](https://github.com/1995chen/dnf)
-
-[台服 dnf 吧](https://tieba.baidu.com/f?kw=台服dnf)
 
 ## 免责声明
 

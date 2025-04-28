@@ -8,7 +8,7 @@
 
 此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行上传
 
-脚本打包统一网关，未提供使用入口，有需要自行使用
+脚本打包统一网关，未提供使用入口，有需要到 [1995chen/dnf](https://github.com/1995chen/dnf) 下载配套客户端使用
 
 ## 功能特性
 
@@ -29,10 +29,34 @@
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
-启动
+启动服务端
 
 ```bash
 cd /root && ./run
+```
+
+停止服务端
+
+```bash
+cd /root && ./stop
+```
+
+启动统一网关
+
+```bash
+cd /root && ./DnfGateServer
+```
+
+关闭统一网关
+
+```bash
+cd /root && ./GateStop
+```
+
+重启统一网关
+
+```bash
+cd /root && ./GateRestart
 ```
 
 需要开放的端口

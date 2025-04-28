@@ -518,7 +518,7 @@ function restore_database() {
 }
 
 function remove_gate() {
-    log_info "卸载DNF网关..."
+    log_info "卸载DOF网关..."
     rm -rf /root/Config.ini
     rm -rf /root/DnfGateServer
     rm -rf /root/GateRestart
@@ -526,22 +526,22 @@ function remove_gate() {
     rm -rf /root/privatekey.pem
     rm -rf /home/neople/game/publickey.pem
 
-    log_success "DNF网关卸载成功!!!"
+    log_success "DOF网关卸载成功!!!"
 }
 
 function download_gate() {
-    log_info "下载DNF网关..."
+    log_info "下载DOF网关..."
 
     cd $BASE_DIR
     if [ ! -f Gate.tar.gz ]; then
         curl -o Gate.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/Gate.tar.gz"
 
         if [ ! -f Gate.tar.gz ]; then
-            log_error "Gate下载失败!!!"
+            log_error "DOF网关下载失败!!!"
             exit
         fi
 
-        log_success "Gate下载成功!!!"
+        log_success "DOF网关下载成功!!!"
     fi
 }
 

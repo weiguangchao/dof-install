@@ -120,11 +120,11 @@ function download_mysql() {
         curl -o MySQL.tar.gz "${GITHUB_PROXY}https://raw.githubusercontent.com/weiguangchao/dof-install/master/MySQL.tar.gz"
 
         if [ ! -f MySQL.tar.gz ]; then
-            log_error "MySQL download failed!!!"
+            log_error "MySQL 下载失败!!!"
             exit
         fi
 
-        log_success "MySQL downloaded!!!"
+        log_success "MySQL 下载成功!!!"
     fi
 }
 
@@ -138,7 +138,7 @@ function install_mysql() {
 
     chkconfig mysql on
 
-    log_success "MySQL installed!!!"
+    log_success "MySQL 安装成功!!!"
 }
 
 function init_game_database() {

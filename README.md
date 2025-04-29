@@ -4,7 +4,7 @@
 
 基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化(手动[狗头])
 
-目前已在 CentOS7.9 上完成搭建，其他 CentOS 版本尚未进行测试
+目前已在 CentOS7.9 上完成搭建，其他 CentOS 版本尚未进行测试。服务器内存>=2G，太小的话我也没试过
 
 此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行上传
 
@@ -20,8 +20,6 @@
 6. 恢复数据库
 
 ## 食用指南
-
-服务器内存推荐>=4G，2G 内存也可以，不过有时需要多跑几次`./run`
 
 入口
 

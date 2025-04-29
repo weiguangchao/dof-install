@@ -163,7 +163,7 @@ function init_game_database() {
     fi
 
     mysql -h$MYSQL_IP -P$MYSQL_PORT -uroot -p$ROOT_PASSWORD <<EOF
--- init database
+-- 初始化数据库
 CREATE SCHEMA d_channel DEFAULT CHARACTER SET latin1;
 USE d_channel;
 SOURCE $BASE_DIR/init_sql/d_channel.sql;
@@ -228,7 +228,7 @@ CREATE SCHEMA taiwan_siroco DEFAULT CHARACTER SET latin1;
 USE taiwan_siroco;
 SOURCE $BASE_DIR/init_sql/taiwan_siroco.sql;
 
--- set db connect config
+-- 设置数据库连接配置
 UPDATE d_taiwan.db_connect SET db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
 
 -- 自动尊10
@@ -261,7 +261,7 @@ selected INT,
 cube_type INT
 );
 
--- set user privileges
+-- 设置用户权限
 USE mysql;
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'localhost' IDENTIFIED BY "$GAME_PASSWORD";
 GRANT ALL PRIVILEGES ON *.* TO 'game'@'127.0.0.1' IDENTIFIED BY "$GAME_PASSWORD";

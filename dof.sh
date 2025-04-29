@@ -45,7 +45,6 @@ function update_yum_repo() {
     mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
     mv /etc/yum.repos.d/CentOS-7.repo /etc/yum.repos.d/CentOS-7.repo.backup
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-    # curl -o /etc/yum.repos.d/CentOS-7.repo http://mirrors.aliyun.com/repo/Centos-7.repo
 
     mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.backup
     curl -o /etc/yum.repos.d/epel.repo https://mirrors.aliyun.com/repo/epel-7.repo

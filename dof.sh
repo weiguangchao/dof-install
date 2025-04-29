@@ -474,7 +474,7 @@ function remove_dofserver_install_files() {
     log_success "DOF Server安装文件删除成功!!!"
 }
 
-function init_siroco() {
+function init_siroco_channel() {
     local channel_no=$1
     local process_sequence=$2
     local channel_name="siroco$channel_no"
@@ -502,7 +502,7 @@ function init_channel() {
     log_info "初始化频道..."
 
     # 初始化希洛克11频道
-    init_siroco 11 11
+    init_siroco_channel 11 11
 
     log_success "Siroco频道初始化成功!!!"
 }

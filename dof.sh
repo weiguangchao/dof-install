@@ -406,7 +406,6 @@ function remove_dofserver() {
     rm -rf /root/PUBLIC_IP
     rm -rf /root/run
     rm -rf /root/stop
-    rm -rf /dp2
 
     log_success "DOF Server卸载成功!!!"
 }
@@ -444,10 +443,6 @@ function install_dofserver() {
     chown -R root:root ./usr/lib
     mv ./usr/lib/* /usr/lib
 
-    chmod -R 777 ./dp2
-    chown -R root:root ./dp2
-    mv ./dp2 /
-
     chmod -R 777 ./home/neople
     chown -R root:root ./home/neople
     mv ./home/neople /home
@@ -473,7 +468,6 @@ function remove_dofserver_install_files() {
     log_info "删除DOF Server安装文件..."
 
     cd $BASE_DIR
-    rm -rf ./dp2
     rm -rf ./home
     rm -rf ./usr
 

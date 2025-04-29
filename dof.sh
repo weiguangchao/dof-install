@@ -289,7 +289,6 @@ function init_database() {
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf
 
-    # init database
     mysql_install_db --defaults-file=/etc/my.cnf \
         --user=mysql
 

@@ -8,7 +8,7 @@ tar -czvf MySQL.tar.gz \
     ./my.cnf \
     ./MySQL-client-5.5.62-1.el6.x86_64.rpm \
     ./MySQL-server-5.5.62-1.el6.x86_64.rpm
-mv MySQL.tar.gz ../
+mv MySQL.tar.gz ../../dof-asset/
 cd ../
 
 cd ./Game
@@ -17,7 +17,7 @@ tar -czvf Game.tar.gz \
     ./usr \
     ./run \
     ./stop
-mv Game.tar.gz ../
+mv Game.tar.gz ../../dof-asset/
 cd ../
 
 cd ./Gate
@@ -29,5 +29,5 @@ tar -czvf Gate.tar.gz \
     ./GateRestart \
     ./GateStop \
     ./privatekey.pem
-mv Gate.tar.gz ../
+mv Gate.tar.gz ../../dof-asset/
 cd ../

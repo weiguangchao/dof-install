@@ -22,6 +22,7 @@
 ## 食用指南
 
 入口一
+直接执行下面这段命令
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh

@@ -21,10 +21,17 @@
 
 ## 食用指南
 
-入口
+入口一
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
+```
+
+入口二
+将 dof.sh, Game.tar.gz, MySQL.tar.gz 上传到/root 目录下, 执行下面这段命令
+
+```bash
+chmod +x ./dof.sh && ./dof.sh
 ```
 
 启动服务端

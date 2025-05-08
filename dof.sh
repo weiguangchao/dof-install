@@ -218,9 +218,9 @@ function init_game_database() {
 
     # 设置用户权限
     mysql -uroot -p$ROOT_PASSWORD <<EOF
-GRANT ALL PRIVILEGES ON *.* TO 'game'@'localhost' IDENTIFIED BY "$GAME_PASSWORD";
-GRANT ALL PRIVILEGES ON *.* TO '$gm_name'@'%' IDENTIFIED BY "$gm_password";
-FLUSH PRIVILEGES;
+grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD";
+grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
+flush privileges;
 EOF
     if [ $? -ne 0 ]; then
         log_error "初始化game用户失败!!!"

@@ -487,30 +487,6 @@ function remove_dofserver_install_files() {
     log_success "DOF Server安装文件删除成功!!!"
 }
 
-function init_siroco_server_group() {
-    local channel_no=$1
-    local process_sequence=$2
-    local channel_name="siroco$channel_no"
-
-    log_info "初始化Siroco频道 $channel_no, 进程序号 $process_sequence..."
-
-    cd /home/neople/game
-    rm -rf ./cfg/$channel_name.cfg
-    cp ./cfg/siroco.template ./cfg/$channel_name.cfg
-
-    local PUBLIC_IP=$(cat /root/PUBLIC_IP 2>/dev/null || true)
-    if [ -z "$PUBLIC_IP" ]; then
-        log_error "PUBLIC_IP为空"
-        exit
-    fi
-
-    log_info "PUBLIC_IP为 $PUBLIC_IP"
-    sed -i "s/CHANNEL_NO/$channel_no/g" ./cfg/$channel_name.cfg
-    sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" ./cfg/$channel_name.cfg
-    sed -i "s/PUBLIC_IP/$PUBLIC_IP/g" ./cfg/$channel_name.cfg
-    log_success "生成$channel_name.cfg"
-}
-
 function init_server_group() {
     log_info "初始化频道..."
 
@@ -525,10 +501,28 @@ function init_server_group() {
         exit
     fi
 
-    # 初始化希洛克大区 11频道
-    init_siroco_server_group 11 11
+    local channel_no=11
+    local process_sequence=$channel_no
+    local channel_name="${SERVER_GROUP_NAME}$channel_no"
+    log_info "初始化${SERVER_GROUP_NAME}频道 $channel_no, 进程序号 $process_sequence..."
 
-    log_success "Siroco频道初始化成功!!!"
+    cd /home/neople/game
+    rm -rf ./cfg/$channel_name.cfg
+    cp ./cfg/server.template ./cfg/$channel_name.cfg
+
+    local PUBLIC_IP=$(cat /root/PUBLIC_IP 2>/dev/null || true)
+    if [ -z "$PUBLIC_IP" ]; then
+        log_error "PUBLIC_IP为空"
+        exit
+    fi
+    log_info "PUBLIC_IP为 $PUBLIC_IP"
+
+    sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" ./cfg/$channel_name.cfg
+    sed -i "s/CHANNEL_NO/$channel_no/g" ./cfg/$channel_name.cfg
+    sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" ./cfg/$channel_name.cfg
+    sed -i "s/PUBLIC_IP/$PUBLIC_IP/g" ./cfg/$channel_name.cfg
+
+    log_success "${SERVER_GROUP_NAME}频道初始化成功!!!"
 }
 
 function backup_database() {

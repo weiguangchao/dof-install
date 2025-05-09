@@ -4,11 +4,12 @@
 
 基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化(手动[狗头])
 
-默认开启希洛克大区, 目前已在 CentOS7.9 上完成搭建，其他 CentOS 版本尚未进行测试。服务器内存>=2G，太小的话我也没试过
+默认开启卡恩大区，服务器内存>=2G，内存<8G 的话会创建 8G 的 swap。此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行上传
 
-此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行上传
+## 操作系统适配
 
-脚本打包统一网关，配套客户端到 [1995chen/dnf](https://github.com/1995chen/dnf) 下载
+- CentOS7.9 虚拟机 ✅
+- 京东云 CentOS7.9 轻量应用服务器 ✅
 
 ## 功能特性
 
@@ -21,15 +22,17 @@
 
 ## 食用指南
 
-入口一
+### 方案一
+
 直接执行下面这段命令
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
-入口二
-将 dof.sh, Game.tar.gz, MySQL.tar.gz 上传到/root 目录下, 执行下面这段命令
+### 方案二
+
+从网页下载 dof.sh, 从 Release 中下载 Game.tar.gz, MySQL.tar.gz 一并上传到/root 目录下, 执行下面这段命令
 
 ```bash
 chmod +x ./dof.sh && ./dof.sh
@@ -45,24 +48,6 @@ cd /root && ./run
 
 ```bash
 cd /root && ./stop
-```
-
-启动统一网关
-
-```bash
-cd /root && ./DnfGateServer
-```
-
-关闭统一网关
-
-```bash
-cd /root && ./GateStop
-```
-
-重启统一网关
-
-```bash
-cd /root && ./GateRestart
 ```
 
 需要开放的端口

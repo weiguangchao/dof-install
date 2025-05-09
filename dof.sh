@@ -610,12 +610,12 @@ function install_gate() {
     chown -R root:root ./home/neople/game/publickey.pem
     mv ./home/neople/game/publickey.pem /home/neople/game/publickey.pem
 
-    chown root:root ./DnfGateServer
     chmod 777 ./DnfGateServer
-    chown root:root ./GateRestart
+    chown root:root ./DnfGateServer
     chmod 777 ./GateRestart
-    chown root:root ./GateStop
+    chown root:root ./GateRestart
     chmod 777 ./GateStop
+    chown root:root ./GateStop
 
     remove_gate_install_files
 

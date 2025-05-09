@@ -6,7 +6,7 @@
 
 默认开启卡恩大区，服务器内存>=2G，内存<8G 的话会创建 8G 的 swap。此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行上传
 
-## 操作系统适配
+## 系统适配
 
 - CentOS7.9 虚拟机 ✅
 - 京东云 CentOS7.9 轻量应用服务器 ✅

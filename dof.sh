@@ -602,8 +602,8 @@ function install_gate() {
     cd $BASE_DIR
     tar -zxvf ./Gate.tar.gz
 
-    chmod -R 755 ./usr/lib64
-    chown -R root:root ./usr/lib64
+    chmod -R 755 ./usr/lib64/*
+    chown -R root:root ./usr/lib64/*
     mv ./usr/lib64/* /usr/lib64
 
     chmod 777 ./home/neople/game/publickey.pem

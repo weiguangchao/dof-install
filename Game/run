@@ -125,7 +125,7 @@ rm -f /home/neople/secsvr/zergsvr/*.pid
 ./secagent &
 ./zergsvr -t30 -i1 &
 
-# 游戏
+sleep 2
 cd /home/neople/game
 chmod -R 755 *
 rm -rf /home/neople/game/log/*

@@ -4,7 +4,7 @@
 
 基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化(手动[狗头])
 
-默认开启卡恩大区，服务器内存>=2G，内存<8G 的话会创建 8G 的 swap。此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行上传
+默认开启卡恩大区，服务器内存>=2G，内存<8G 的话会创建 8G 的 swap。此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行处理
 
 ## 系统适配
 

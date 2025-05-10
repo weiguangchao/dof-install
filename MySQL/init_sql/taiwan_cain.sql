@@ -1184,7 +1184,7 @@ CREATE TABLE `test_sooya` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = 'NO_ENGINE_SUBSTITUTION' */ ;
 DELIMITER ;;
-CREATE DEFINER=`root`@`localhost` PROCEDURE `sp_game_channel`()
+CREATE PROCEDURE `sp_game_channel`()
 BEGIN
 
  DECLARE v_gc_channel VARCHAR(10) default '';

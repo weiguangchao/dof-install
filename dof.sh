@@ -213,8 +213,15 @@ function save_gm_user() {
 function init_game_database() {
     log_info "初始化大区数据库..."
 
-    local gm_name=$(random_string 8)
-    local gm_password=$(random_string 12)
+    # 获取gm用户名和密码
+    local gm_name=$(get_gm_name)
+    local gm_password=$(get_gm_password)
+    if [ -z "$gm_name" ] || [ -z "$gm_password" ]; then
+        gm_name=$(random_string 8)
+        gm_password=$(random_string 12)
+        # 将gm用户密码写入文件
+        save_gm_user $gm_name $gm_password
+    fi
 
     # 设置用户权限
     mysql -uroot -p$ROOT_PASSWORD <<EOF
@@ -227,8 +234,6 @@ EOF
         exit
     fi
 
-    # 将gm用户密码写入文件
-    save_gm_user $gm_name $gm_password
     log_success "GM 用户名: $gm_name 密码: $gm_password"
 
     mysql -ugame -p$GAME_PASSWORD <<EOF

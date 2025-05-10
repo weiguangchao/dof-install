@@ -236,6 +236,7 @@ EOF
 
     log_success "GM 用户名: $gm_name 密码: $gm_password"
 
+    # 使用game用户初始化数据库
     mysql -ugame -p$GAME_PASSWORD <<EOF
 -- 初始化数据库
 source $BASE_DIR/init_sql/d_channel.sql

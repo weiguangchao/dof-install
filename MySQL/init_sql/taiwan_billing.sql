@@ -172,7 +172,7 @@ CREATE TABLE `log_transaction_history` (
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_balance`(
+CREATE PROCEDURE `usp_balance`(
 IN p_account VARCHAR(30), 
 OUT p_out_cera INTEGER,
 OUT p_out_error INTEGER
@@ -251,7 +251,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_balance_point`(
+CREATE PROCEDURE `usp_balance_point`(
 IN p_account VARCHAR(30), 
 OUT p_out_cera INTEGER,
 OUT p_out_cera_point INTEGER,
@@ -333,7 +333,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_cancel`(
+CREATE PROCEDURE `usp_cancel`(
 IN p_tran_id BIGINT UNSIGNED,
 OUT p_out_error INTEGER
 )
@@ -427,7 +427,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_cera_point`(
+CREATE PROCEDURE `usp_cera_point`(
 IN p_account VARCHAR(30),
 IN p_charac VARCHAR(30),
 IN p_command CHAR,
@@ -530,7 +530,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_confirm`(
+CREATE PROCEDURE `usp_confirm`(
     IN p_tran_id BIGINT UNSIGNED,
     OUT p_out_error INTEGER
 )
@@ -824,7 +824,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_gift`(
+CREATE PROCEDURE `usp_gift`(
 IN p_send_account VARCHAR(30),
 IN p_send_charac VARCHAR(30),
 IN p_recv_account VARCHAR(30),
@@ -949,7 +949,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_point_process`(
+CREATE PROCEDURE `usp_point_process`(
     IN p_account VARCHAR(30),
     IN p_charac VARCHAR(30),
     IN p_command CHAR,
@@ -1054,7 +1054,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_purchase`(
+CREATE PROCEDURE `usp_purchase`(
 IN p_account VARCHAR(30),
 IN p_charac VARCHAR(30),
 IN p_item_id INTEGER UNSIGNED,
@@ -1158,7 +1158,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_recharge`(
+CREATE PROCEDURE `usp_recharge`(
 IN p_account VARCHAR(30),
 IN p_charac VARCHAR(30),
 IN p_order_tran VARCHAR(35),
@@ -1257,7 +1257,7 @@ DELIMITER ;
 /*!50003 SET @saved_sql_mode       = @@sql_mode */ ;
 /*!50003 SET sql_mode              = '' */ ;
 DELIMITER ;;
-CREATE DEFINER=`game`@`%` PROCEDURE `usp_refund`(
+CREATE PROCEDURE `usp_refund`(
         IN p_account VARCHAR(30),
         IN p_order_tran VARCHAR(35),
         IN p_amount INTEGER UNSIGNED,

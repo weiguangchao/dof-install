@@ -68,11 +68,11 @@ rm -rf /home/neople/auction/log/*.*
 ./df_auction_r ./cfg/auction_siroco.cfg start ./df_auction_r &
 
 # 金币寄存
-cd /home/neople/point
-chmod 755 *
-rm -f /home/neople/point/pid/*.pid
-rm -rf /home/neople/point/log/*.*
-./df_point_r ./cfg/point_siroco.cfg start df_point_r &
+# cd /home/neople/point
+# chmod 755 *
+# rm -f /home/neople/point/pid/*.pid
+# rm -rf /home/neople/point/log/*.*
+# ./df_point_r ./cfg/point_siroco.cfg start df_point_r &
 
 cd /home/neople/dbmw_mnt
 chmod -R 755 *

@@ -132,6 +132,7 @@ rm -rf /home/neople/statics/log/*
 LD_PRELOAD=/lib/libhook.so ./df_statics_r statics start &
 echo "================================App 		Srv Start"
 
+# TP
 sleep 3
 cd /home/neople/secsvr/gunnersvr
 chmod -R 755 *

@@ -65,51 +65,51 @@ cd /home/neople/auction
 chmod 755 *
 rm -f /home/neople/auction/pid/*.pid
 rm -rf /home/neople/auction/log/*.*
-./df_auction_r ./cfg/auction_siroco.cfg start ./df_auction_r &
+./df_auction_r ./cfg/auction.cfg start ./df_auction_r &
 
 # 金币寄存
-# cd /home/neople/point
-# chmod 755 *
-# rm -f /home/neople/point/pid/*.pid
-# rm -rf /home/neople/point/log/*.*
-# ./df_point_r ./cfg/point_siroco.cfg start df_point_r &
+cd /home/neople/point
+chmod 755 *
+rm -f /home/neople/point/pid/*.pid
+rm -rf /home/neople/point/log/*.*
+./df_point_r ./cfg/point.cfg start df_point_r &
 
 cd /home/neople/dbmw_mnt
 chmod -R 755 *
 rm -f /home/neople/dbmw_mnt/pid/*.pid
 rm -rf /home/neople/dbmw_mnt/log/*
-LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_mnt_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_mnt start &
 
 cd /home/neople/dbmw_stat
 chmod -R 755 *
 rm -f /home/neople/dbmw_stat/pid/*.pid
 rm -rf /home/neople/dbmw_stat/log/*
-LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_stat_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_stat start &
 
 cd /home/neople/dbmw_guild
 chmod -R 755 *
 rm -f /home/neople/dbmw_guild/pid/*.pid
 rm -rf /home/neople/dbmw_guild/log/*
-LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_gld_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_guild start &
 
 # 公会
 cd /home/neople/guild
 chmod 755 *
 rm -f /home/neople/guild/pid/*.pid
 rm -rf /home/neople/guild/log/*.*
-LD_PRELOAD=/lib/libhook.so ./df_guild_r gld_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_guild_r guild start &
 
 cd /home/neople/monitor
 chmod -R 755 *
 rm -f /home/neople/monitor/pid/*.pid
 rm -rf /home/neople/monitor/log/*
-LD_PRELOAD=/lib/libhook.so ./df_monitor_r mnt_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_monitor_r monitor start &
 
 cd /home/neople/statics
 chmod -R 755 *
 rm -f /home/neople/statics/pid/*.pid
 rm -rf /home/neople/statics/log/*
-LD_PRELOAD=/lib/libhook.so ./df_statics_r stat_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_statics_r statics start &
 
 cd /home/neople/secsvr/gunnersvr
 chmod -R 755 *
@@ -125,7 +125,6 @@ rm -f /home/neople/secsvr/zergsvr/*.pid
 ./secagent &
 ./zergsvr -t30 -i1 &
 
-sleep 2
 cd /home/neople/game
 chmod -R 755 *
 rm -rf /home/neople/game/log/*

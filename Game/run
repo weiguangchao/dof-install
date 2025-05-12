@@ -23,94 +23,117 @@ chmod -R 755 *
 rm -f /home/neople/channel/pid/*.pid
 rm -rf /home/neople/channel/log/*
 LD_PRELOAD=/lib/libhook.so ./df_channel_r channel start &
+echo "================================Channel 	Srv Start"
 
+sleep 3
 cd /home/neople/relay
 chmod -R 755 *
 rm -f /home/neople/relay/pid/*.pid
 rm -rf /home/neople/relay/log/*
-./df_relay_r relay_200 start &
+./df_relay_r relay start &
+echo "================================Relay 	Srv Start"
 
+sleep 3
 cd /home/neople/stun
 chmod -R 755 *
 rm -f /home/neople/stun/pid/*.pid
 rm -rf /home/neople/stun/log/*
 ./df_stun_r start &
+echo "================================Stun 		Srv Start"
 
+sleep 3
 cd /home/neople/manager
 chmod -R 755 *
 rm -f /home/neople/manager/pid/*.pid
 rm -rf /home/neople/manager/log/*
 LD_PRELOAD=/lib/libhook.so ./df_manager_r manager start &
 
+sleep 2
 cd /home/neople/bridge
 chmod -R 755 *
 rm -f /home/neople/bridge/pid/*.pid
 rm -rf /home/neople/bridge/log/*
 LD_PRELOAD=/lib/libhook.so ./df_bridge_r bridge start &
 
+sleep 2
 cd /home/neople/community
 chmod -R 755 *
 rm -f /home/neople/community/pid/*.pid
 rm -rf /home/neople/community/log/*
 ./df_community_r community start &
 
+sleep 2
 cd /home/neople/coserver
 chmod -R 755 *
 rm -f /home/neople/coserver/pid/*.pid
 rm -rf /home/neople/coserver/log/*
 LD_PRELOAD=/lib/libhook.so ./df_coserver_r coserver start &
+echo "================================Common 	Srv Start"
 
 # 拍卖行
+sleep 3
 cd /home/neople/auction
 chmod 755 *
 rm -f /home/neople/auction/pid/*.pid
 rm -rf /home/neople/auction/log/*.*
-./df_auction_r ./cfg/auction_siroco.cfg start ./df_auction_r &
+./df_auction_r ./cfg/auction.cfg start ./df_auction_r &
+echo "================================Auction 	Srv Start"
 
 # 金币寄存
+sleep 3
 cd /home/neople/point
 chmod 755 *
 rm -f /home/neople/point/pid/*.pid
 rm -rf /home/neople/point/log/*.*
-./df_point_r ./cfg/point_siroco.cfg start df_point_r &
+./df_point_r ./cfg/point.cfg start df_point_r &
+echo "================================Point 	Srv Start"
 
+sleep 3
 cd /home/neople/dbmw_mnt
 chmod -R 755 *
 rm -f /home/neople/dbmw_mnt/pid/*.pid
 rm -rf /home/neople/dbmw_mnt/log/*
-LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_mnt_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_mnt start &
 
+sleep 2
 cd /home/neople/dbmw_stat
 chmod -R 755 *
 rm -f /home/neople/dbmw_stat/pid/*.pid
 rm -rf /home/neople/dbmw_stat/log/*
-LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_stat_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_stat start &
 
+sleep 2
 cd /home/neople/dbmw_guild
 chmod -R 755 *
 rm -f /home/neople/dbmw_guild/pid/*.pid
 rm -rf /home/neople/dbmw_guild/log/*
-LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_gld_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_guild start &
 
 # 公会
+sleep 2
 cd /home/neople/guild
 chmod 755 *
 rm -f /home/neople/guild/pid/*.pid
 rm -rf /home/neople/guild/log/*.*
-LD_PRELOAD=/lib/libhook.so ./df_guild_r gld_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_guild_r guild start &
 
+sleep 2
 cd /home/neople/monitor
 chmod -R 755 *
 rm -f /home/neople/monitor/pid/*.pid
 rm -rf /home/neople/monitor/log/*
-LD_PRELOAD=/lib/libhook.so ./df_monitor_r mnt_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_monitor_r monitor start &
 
+sleep 2
 cd /home/neople/statics
 chmod -R 755 *
 rm -f /home/neople/statics/pid/*.pid
 rm -rf /home/neople/statics/log/*
-LD_PRELOAD=/lib/libhook.so ./df_statics_r stat_siroco start &
+LD_PRELOAD=/lib/libhook.so ./df_statics_r statics start &
+echo "================================App 		Srv Start"
 
+# TP
+sleep 3
 cd /home/neople/secsvr/gunnersvr
 chmod -R 755 *
 rm -rf /home/neople/secsvr/gunnersvr/log/*
@@ -124,6 +147,7 @@ rm -f /home/neople/secsvr/zergsvr/*.pid
 
 ./secagent &
 ./zergsvr -t30 -i1 &
+echo "================================TP 		Srv Start"
 
 sleep 2
 cd /home/neople/game
@@ -132,3 +156,4 @@ rm -rf /home/neople/game/log/*
 rm -rf /home/neople/game/pid/*
 # LD_PRELOAD=/dp2/libdp2pre.so ./df_game_r siroco11 start &
 LD_PRELOAD=/lib/libhook.so ./df_game_r cain11 start &
+echo "================================Game 		Srv Start"

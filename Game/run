@@ -30,7 +30,7 @@ cd /home/neople/relay
 chmod -R 755 *
 rm -f /home/neople/relay/pid/*.pid
 rm -rf /home/neople/relay/log/*
-./df_relay_r relay_200 start &
+./df_relay_r relay start &
 echo "================================Relay 	Srv Start"
 
 sleep 3

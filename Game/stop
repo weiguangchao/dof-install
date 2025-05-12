@@ -73,7 +73,7 @@ chmod -R 755 *
 sleep 2
 cd /home/neople/relay
 chmod -R 755 *
-./df_relay_r relay_200 stop
+./df_relay_r relay stop
 
 sleep 2
 cd /home/neople/channel

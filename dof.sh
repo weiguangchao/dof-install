@@ -640,6 +640,7 @@ function prepare_dof() {
     set_swap
     update_yum_repo
     install_library
+    download_files
 
     touch $PREPARE_DOF_FILE
     log_error "DOF安装环境初始化成功, 按任意键重启..."
@@ -784,7 +785,6 @@ function read_menu_command() {
 
 function main() {
     prepare_dof
-    download_files
     echo_banner
     echo_menu
     read_menu_command

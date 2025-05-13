@@ -395,26 +395,6 @@ function set_swap() {
     free -h
 }
 
-function update_dns() {
-    log_info "更新DNS..."
-
-    mv /etc/resolv.conf /etc/resolv.conf.bak
-    cat >/etc/resolv.conf <<EOF
-nameserver 223.5.5.5
-nameserver 223.6.6.6
-EOF
-
-    mv /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak
-    cat >/etc/NetworkManager/NetworkManager.conf <<EOF
-[main]
-dns=none
-EOF
-
-    systemctl restart NetworkManager
-
-    log_success "DNS更新成功!!!"
-}
-
 function remove_dofserver() {
     log_info "卸载DOF Server..."
 
@@ -652,7 +632,6 @@ function prepare_dof() {
     check_root_user
     performance_optimize
     set_swap
-    update_dns
     update_yum_repo
     install_library
 

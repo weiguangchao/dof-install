@@ -168,6 +168,11 @@ function install_mysql() {
     cd $BASE_DIR
     tar -zxvf MySQL.tar.gz
 
+    # 创建MySQL用户和组
+    groupadd mysql
+    useradd -g mysql mysql
+    log_success "MySQL用户和组创建成功!!!"
+
     rpm -ivh mysql-community-common-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-libs-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-client-5.7.44-1.el7.x86_64.rpm

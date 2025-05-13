@@ -12,13 +12,13 @@ YELLOW='\033[0;33m' # YELLOW
 BLUE='\033[0;34m'   # BLUE
 NC='\033[0m'        # NC
 
-export MYSQL_DIR="/opt/mysql"
 export MYSQL_IP="127.0.0.1"
 export MYSQL_PORT="3306"
 export ROOT_PASSWORD="123456"
 export GAME_PASSWORD="uu5!^%jg"
 export DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
+MYSQL_DIR="/opt/mysql"
 SWAP_FILE="/swapfile"
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"

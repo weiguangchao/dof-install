@@ -12,7 +12,7 @@ YELLOW='\033[0;33m' # YELLOW
 BLUE='\033[0;34m'   # BLUE
 NC='\033[0m'        # NC
 
-export MYSQL_PORT="3306"
+MYSQL_PORT="3306"
 
 MYSQL_DIR="/opt/mysql"
 MYSQL_IP="127.0.0.1"
@@ -28,16 +28,16 @@ PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
 CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
 # 默认大区 卡恩
-export SERVER_GROUP=1
+SERVER_GROUP=1
 
 # 大区对应名称
 # 1 : 卡恩, 2 :狄瑞吉, 3 : 希洛克, 4 : 普雷prey, 5 : 凱西亞斯casillas, 6 : 赫爾德hilder , 99 : first server first , 98 : 開發server
-export SERVER_GROUP_NAME_1="cain"
-export SERVER_GROUP_NAME_2="diregie"
-export SERVER_GROUP_NAME_3="siroco"
-export SERVER_GROUP_NAME_4="prey"
-export SERVER_GROUP_NAME_5="casillas"
-export SERVER_GROUP_NAME_6="hilder"
+SERVER_GROUP_NAME_1="cain"
+SERVER_GROUP_NAME_2="diregie"
+SERVER_GROUP_NAME_3="siroco"
+SERVER_GROUP_NAME_4="prey"
+SERVER_GROUP_NAME_5="casillas"
+SERVER_GROUP_NAME_6="hilder"
 
 log_error() {
     echo -e "${RED}$1${NC}"
@@ -483,8 +483,8 @@ function init_server_group() {
     # 校验大区
     if [ "$SERVER_GROUP" -ge 1 ] && [ "$SERVER_GROUP" -le 6 ]; then
         local SERVER_GROUP_NAME_VAR="SERVER_GROUP_NAME_$SERVER_GROUP"
-        export SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
-        export SERVER_GROUP_DB=$SERVER_GROUP_NAME
+        SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
+        SERVER_GROUP_DB=$SERVER_GROUP_NAME
         log_success "当前大区编号: $SERVER_GROUP, 大区名称: $SERVER_GROUP_NAME"
     else
         log_error "无效的大区编号: $SERVER_GROUP"

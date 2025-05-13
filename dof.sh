@@ -678,18 +678,6 @@ function performance_optimize() {
     log_success "系统性能优化成功!!!"
 }
 
-function restart_mysql() {
-    log_info "重启MySQL..."
-
-    sleep 1
-    systemctl stop mysqld
-    sleep 1
-    systemctl start mysqld
-    sleep 1
-
-    log_success "MySQL重启成功!!!"
-}
-
 function install_all() {
     reinstall_database
     reinstall_dofserver
@@ -701,7 +689,6 @@ function reinstall_database() {
     init_database
     init_game_database
     clean_database_install_files
-    restart_mysql
 }
 
 function reinstall_dofserver() {

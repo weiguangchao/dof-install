@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# 下载地址
+GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Game.tar.gz"
+MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/MySQL.tar.gz"
+GATE_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Gate.tar.gz"
+
 # 定义颜色
 RED='\033[0;31m'    # RED
 GREEN='\033[0;32m'  # GREEN
@@ -13,10 +18,6 @@ export MYSQL_PORT="3306"
 export ROOT_PASSWORD="123456"
 export GAME_PASSWORD="uu5!^%jg"
 export DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
-
-GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Game.tar.gz"
-MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/MySQL.tar.gz"
-GATE_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Gate.tar.gz"
 
 SWAP_FILE="/swapfile"
 BASE_DIR="/root"

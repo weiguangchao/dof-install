@@ -14,7 +14,7 @@ NC='\033[0m'        # NC
 
 MYSQL_DIR="/opt/mysql"
 MYSQL_IP="127.0.0.1"
-MYSQL_PORT="3306"
+MYSQL_PORT="MYSQL_PORT"
 ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
@@ -458,8 +458,7 @@ function install_dofserver() {
     log_info "替换环境变量..."
     cd /home/neople
     sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
-
-    echo $server_ip >/root/PUBLIC_IP
+    sed -i "s/MYSQL_PORT/${MYSQL_PORT}/g" $(find . -type f -name "*.cfg")
 
     log_success "DOF Server安装成功!!!"
 

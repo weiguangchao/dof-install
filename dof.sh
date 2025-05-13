@@ -663,8 +663,8 @@ function performance_optimize() {
     fi
 
     # 如果不存在则添加
-    if ! grep -q "\$usersoft soft nofile 2048" /etc/security/limits.conf; then
-        echo "\$usersoft soft nofile 2048" >>/etc/security/limits.conf
+    if ! grep -q "\$user soft nofile 2048" /etc/security/limits.conf; then
+        echo "\$user soft nofile 2048" >>/etc/security/limits.conf
     fi
 
     # 如果不存在则添加

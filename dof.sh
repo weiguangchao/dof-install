@@ -444,15 +444,15 @@ function install_dofserver() {
     chown -R root:root ./usr/lib
     mv ./usr/lib/* /usr/lib
 
-    chmod -R 777 ./home/neople
+    chmod -R 755 ./home/neople
     chown -R root:root ./home/neople
     mv ./home/neople /home
 
-    chmod -R 777 ./run
-    chmod -R 777 ./stop
-    chmod -R 777 ./quickstop
+    chmod -R 755 ./run
     chown root:root ./run
+    chmod -R 755 ./stop
     chown root:root ./stop
+    chmod -R 755 ./quickstop
     chown root:root ./quickstop
 
     log_info "替换环境变量..."

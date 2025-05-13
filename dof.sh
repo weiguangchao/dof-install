@@ -29,6 +29,8 @@ CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
 # 默认大区 希洛克
 SERVER_GROUP=3
+# 11频道
+CHANNEL_NO=11
 
 # 大区对应名称
 # 1 : 卡恩, 2 :狄瑞吉, 3 : 希洛克, 4 : 普雷prey, 5 : 凱西亞斯casillas, 6 : 赫爾德hilder , 99 : first server first , 98 : 開發server
@@ -455,11 +457,6 @@ function install_dofserver() {
     chmod -R 755 ./quickstop
     chown root:root ./quickstop
 
-    log_info "替换环境变量..."
-    cd /home/neople
-    sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
-    sed -i "s/MYSQL_PORT/${MYSQL_PORT}/g" $(find . -type f -name "*.cfg")
-
     log_success "DOF Server安装成功!!!"
 
     remove_dofserver_install_files
@@ -489,26 +486,26 @@ function init_server_group() {
         exit
     fi
 
-    local channel_no=11
-    local process_sequence=$channel_no
-    local channel_name="${SERVER_GROUP_NAME}$channel_no"
-    log_info "初始化${SERVER_GROUP_NAME}频道 $channel_no, 进程序号 $process_sequence..."
+    local process_sequence=$CHANNEL_NO
+    local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
+    log_info "初始化${SERVER_GROUP_NAME}频道 $CHANNEL_NO, 进程序号 $process_sequence..."
 
     cd /home/neople/game
     rm -rf ./cfg/$channel_name.cfg
     cp ./cfg/server.template ./cfg/$channel_name.cfg
 
-    local PUBLIC_IP=$(cat /root/PUBLIC_IP 2>/dev/null || true)
-    if [ -z "$PUBLIC_IP" ]; then
+    local server_ip=$(cat /root/PUBLIC_IP 2>/dev/null || true)
+    if [ -z "$server_ip" ]; then
         log_error "PUBLIC_IP为空"
         exit
     fi
-    log_info "PUBLIC_IP为 $PUBLIC_IP"
 
+    cd /home/neople
+    sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
     sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" ./cfg/$channel_name.cfg
-    sed -i "s/CHANNEL_NO/$channel_no/g" ./cfg/$channel_name.cfg
+    sed -i "s/MYSQL_PORT/${MYSQL_PORT}/g" $(find . -type f -name "*.cfg")
+    sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" ./cfg/$channel_name.cfg
     sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" ./cfg/$channel_name.cfg
-    sed -i "s/PUBLIC_IP/$PUBLIC_IP/g" ./cfg/$channel_name.cfg
 
     log_success "${SERVER_GROUP_NAME}频道初始化成功!!!"
 }

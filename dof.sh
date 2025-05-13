@@ -435,6 +435,7 @@ function install_dofserver() {
     fi
 
     log_info "安装DOF Server ($server_ip)..."
+    echo $server_ip >/root/PUBLIC_IP
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz

@@ -457,7 +457,6 @@ function install_dofserver() {
     log_info "替换环境变量..."
     cd /home/neople
     sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
-    sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.tbl")
 
     echo $server_ip >/root/PUBLIC_IP
 

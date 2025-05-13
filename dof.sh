@@ -26,7 +26,7 @@ PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
 CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
 # 默认大区 卡恩
-export SERVER_GROUP=1
+export SERVER_GROUP=3
 
 # 大区对应名称
 # 1 : 卡恩, 2 :狄瑞吉, 3 : 希洛克, 4 : 普雷prey, 5 : 凱西亞斯casillas, 6 : 赫爾德hilder , 99 : first server first , 98 : 開發server

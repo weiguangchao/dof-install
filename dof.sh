@@ -313,6 +313,8 @@ function init_database() {
     chmod 755 $MYSQL_DIR
     chown -R mysql.mysql $MYSQL_DIR
 
+    # 替换my.cnf中的MYSQL_PORT
+    sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
     mv $BASE_DIR/my.cnf /etc/my.cnf
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf

@@ -66,7 +66,7 @@ community_server_port = 31100
 //nexon_billing_ip = 211.218.232.97
 //nexon_billing_port = 36500
 
-db_thread_count = 3
+db_thread_count = 1
 master_db_ip = MYSQL_IP
 master_db_port = MYSQL_PORT
 master_db_acc = game
@@ -89,7 +89,7 @@ header_sequence = 11 2
 header_load_interval = 10
 header_mangled_length = 13
 
-libserverlib_config_name = ServerLab#22001
+libserverlib_config_name = ServerLab
 
 script_dir = ./Script/
 //stand_alone = yes

@@ -473,7 +473,7 @@ function remove_dofserver_install_files() {
 }
 
 function init_server_group() {
-    log_info "初始化频道..."
+    log_info "初始化大区频道..."
 
     # 校验大区
     if [ "$SERVER_GROUP" -ge 1 ] && [ "$SERVER_GROUP" -le 6 ]; then
@@ -488,7 +488,7 @@ function init_server_group() {
 
     local process_sequence=$CHANNEL_NO
     local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
-    log_info "初始化${SERVER_GROUP_NAME}频道 $CHANNEL_NO, 进程序号 $process_sequence..."
+    log_info "大区: $SERVER_GROUP_NAME 频道: $CHANNEL_NO"
 
     cd /home/neople/game
     rm -rf ./cfg/$channel_name.cfg

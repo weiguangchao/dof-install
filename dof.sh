@@ -503,6 +503,7 @@ function init_server_group() {
     cd /home/neople
     sed -i "s/PUBLIC_IP/$server_ip/g" $(find . -type f -name "*.cfg")
     sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.cfg")
+    sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.tbl")
     sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $(find . -type f -name "*.cfg")
     sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" $(find . -type f -name "*.cfg")
     sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" $(find . -type f -name "*.cfg")

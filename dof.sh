@@ -75,11 +75,9 @@ function random_string() {
 function update_yum_repo() {
     log_info "替换yum源..."
 
-    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
-    mv /etc/yum.repos.d/CentOS-7.repo /etc/yum.repos.d/CentOS-7.repo.backup
+    # 删除/etc/yum.repos.d/下所有文件
+    rm -rf /etc/yum.repos.d/*
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-
-    mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.backup
     curl -o /etc/yum.repos.d/epel.repo https://mirrors.aliyun.com/repo/epel-7.repo
 
     yum clean all

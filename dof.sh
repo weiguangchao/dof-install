@@ -1,5 +1,10 @@
 #!/bin/bash
 
+# 下载地址 下载地址 下载地址 下载地址 下载地址
+GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Game.tar.gz"
+MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/MySQL.tar.gz"
+GATE_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Gate.tar.gz"
+
 # 定义颜色
 RED='\033[0;31m'    # RED
 GREEN='\033[0;32m'  # GREEN
@@ -7,35 +12,34 @@ YELLOW='\033[0;33m' # YELLOW
 BLUE='\033[0;34m'   # BLUE
 NC='\033[0m'        # NC
 
-export MYSQL_DIR="/opt/mysql"
-export MYSQL_IP="127.0.0.1"
-export MYSQL_PORT="3306"
-export ROOT_PASSWORD="123456"
-export GAME_PASSWORD="uu5!^%jg"
-export DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
-
-GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Game.tar.gz"
-MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/MySQL.tar.gz"
-GATE_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Gate.tar.gz"
+MYSQL_DIR="/opt/mysql"
+MYSQL_IP="127.0.0.1"
+MYSQL_PORT="3306"
+ROOT_PASSWORD="123456"
+GAME_PASSWORD="uu5!^%jg"
+DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
 SWAP_FILE="/swapfile"
+VM_SWAPPINESS=70
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
 # 随机密码随机池
 CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
-# 默认大区 卡恩
-export SERVER_GROUP=3
+# 默认大区 希洛克
+SERVER_GROUP=3
+# 11频道
+CHANNEL_NO=11
 
 # 大区对应名称
 # 1 : 卡恩, 2 :狄瑞吉, 3 : 希洛克, 4 : 普雷prey, 5 : 凱西亞斯casillas, 6 : 赫爾德hilder , 99 : first server first , 98 : 開發server
-export SERVER_GROUP_NAME_1="cain"
-export SERVER_GROUP_NAME_2="diregie"
-export SERVER_GROUP_NAME_3="siroco"
-export SERVER_GROUP_NAME_4="prey"
-export SERVER_GROUP_NAME_5="casillas"
-export SERVER_GROUP_NAME_6="hilder"
+SERVER_GROUP_NAME_1="cain"
+SERVER_GROUP_NAME_2="diregie"
+SERVER_GROUP_NAME_3="siroco"
+SERVER_GROUP_NAME_4="prey"
+SERVER_GROUP_NAME_5="casillas"
+SERVER_GROUP_NAME_6="hilder"
 
 log_error() {
     echo -e "${RED}$1${NC}"
@@ -312,6 +316,8 @@ function init_database() {
     chmod 755 $MYSQL_DIR
     chown -R mysql.mysql $MYSQL_DIR
 
+    # 替换my.cnf中的MYSQL_PORT
+    sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
     mv $BASE_DIR/my.cnf /etc/my.cnf
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf
@@ -364,55 +370,32 @@ function set_swap() {
         return
     fi
 
-    local total_mem=$(grep MemTotal /proc/meminfo | awk '{print $2}')
-    local total_mem_gb=$((total_mem / 1024 / 1024))
-
+    local max_memory=$((1024 * 8))
+    # 当前内存大小
+    local memory=$(free -m | awk '/^Mem:/{print $2}')
     # 内存 >= 8GB
-    if [ $total_mem_gb -ge 8 ]; then
+    if [ $memory -ge $max_memory ]; then
         log_warning "内存 >= 8GB, 无需设置swap分区!!!"
         return
     fi
 
-    local swap_size=$((1024 * 8))
-    local vm_swappiness=100
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${max_memory}MB..."
 
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
-
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$max_memory status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE
     echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
 
     if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness=.*/vm.swappiness=$vm_swappiness/' /etc/sysctl.conf
+        sed -i 's/^vm.swappiness.*/vm.swappiness=$VM_SWAPPINESS/' /etc/sysctl.conf
     else
-        echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
+        echo "vm.swappiness=$VM_SWAPPINESS" >>/etc/sysctl.conf
     fi
 
     sysctl -p
     log_success "swap设置成功!!! $(sysctl vm.swappiness)"
     free -h
-}
-
-function update_dns() {
-    log_info "更新DNS..."
-
-    mv /etc/resolv.conf /etc/resolv.conf.bak
-    cat >/etc/resolv.conf <<EOF
-nameserver 223.5.5.5
-nameserver 223.6.6.6
-EOF
-
-    mv /etc/NetworkManager/NetworkManager.conf /etc/NetworkManager/NetworkManager.conf.bak
-    cat >/etc/NetworkManager/NetworkManager.conf <<EOF
-[main]
-dns=none
-EOF
-
-    systemctl restart NetworkManager
-
-    log_success "DNS更新成功!!!"
 }
 
 function remove_dofserver() {
@@ -454,6 +437,7 @@ function install_dofserver() {
     fi
 
     log_info "安装DOF Server ($server_ip)..."
+    echo $server_ip >/root/PUBLIC_IP
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz
@@ -462,23 +446,16 @@ function install_dofserver() {
     chown -R root:root ./usr/lib
     mv ./usr/lib/* /usr/lib
 
-    chmod -R 777 ./home/neople
+    chmod -R 755 ./home/neople
     chown -R root:root ./home/neople
     mv ./home/neople /home
 
-    chmod -R 777 ./run
-    chmod -R 777 ./stop
-    chmod -R 777 ./quickstop
+    chmod -R 755 ./run
     chown root:root ./run
+    chmod -R 755 ./stop
     chown root:root ./stop
+    chmod -R 755 ./quickstop
     chown root:root ./quickstop
-
-    log_info "替换环境变量..."
-    cd /home/neople
-    sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.cfg")
-    sed -i "s/PUBLIC_IP/${server_ip}/g" $(find . -type f -name "*.tbl")
-
-    echo $server_ip >/root/PUBLIC_IP
 
     log_success "DOF Server安装成功!!!"
 
@@ -496,39 +473,42 @@ function remove_dofserver_install_files() {
 }
 
 function init_server_group() {
-    log_info "初始化频道..."
+    log_info "初始化大区频道..."
 
     # 校验大区
     if [ "$SERVER_GROUP" -ge 1 ] && [ "$SERVER_GROUP" -le 6 ]; then
         local SERVER_GROUP_NAME_VAR="SERVER_GROUP_NAME_$SERVER_GROUP"
-        export SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
-        export SERVER_GROUP_DB=$SERVER_GROUP_NAME
+        SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
+        SERVER_GROUP_DB=$SERVER_GROUP_NAME
         log_success "当前大区编号: $SERVER_GROUP, 大区名称: $SERVER_GROUP_NAME"
     else
         log_error "无效的大区编号: $SERVER_GROUP"
         exit
     fi
 
-    local channel_no=11
-    local process_sequence=$channel_no
-    local channel_name="${SERVER_GROUP_NAME}$channel_no"
-    log_info "初始化${SERVER_GROUP_NAME}频道 $channel_no, 进程序号 $process_sequence..."
+    local process_sequence=$CHANNEL_NO
+    local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
+    log_info "大区: $SERVER_GROUP_NAME 频道: $CHANNEL_NO"
 
     cd /home/neople/game
     rm -rf ./cfg/$channel_name.cfg
     cp ./cfg/server.template ./cfg/$channel_name.cfg
 
-    local PUBLIC_IP=$(cat /root/PUBLIC_IP 2>/dev/null || true)
-    if [ -z "$PUBLIC_IP" ]; then
+    local server_ip=$(cat /root/PUBLIC_IP 2>/dev/null || true)
+    if [ -z "$server_ip" ]; then
         log_error "PUBLIC_IP为空"
         exit
     fi
-    log_info "PUBLIC_IP为 $PUBLIC_IP"
 
-    sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" ./cfg/$channel_name.cfg
-    sed -i "s/CHANNEL_NO/$channel_no/g" ./cfg/$channel_name.cfg
-    sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" ./cfg/$channel_name.cfg
-    sed -i "s/PUBLIC_IP/$PUBLIC_IP/g" ./cfg/$channel_name.cfg
+    cd /home/neople
+    sed -i "s/PUBLIC_IP/$server_ip/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+    sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+    sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+    sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+    sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+
+    sed -i "s/MYSQL_IP/$MYSQL_IP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+    sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
 
     log_success "${SERVER_GROUP_NAME}频道初始化成功!!!"
 }
@@ -614,15 +594,15 @@ function install_gate() {
     chown -R root:root ./usr/lib64/*
     mv ./usr/lib64/* /usr/lib64
 
-    chmod 777 ./home/neople/game/publickey.pem
+    chmod 755 ./home/neople/game/publickey.pem
     chown -R root:root ./home/neople/game/publickey.pem
     mv ./home/neople/game/publickey.pem /home/neople/game/publickey.pem
 
-    chmod 777 ./DnfGateServer
+    chmod 755 ./DnfGateServer
     chown root:root ./DnfGateServer
-    chmod 777 ./GateRestart
+    chmod 755 ./GateRestart
     chown root:root ./GateRestart
-    chmod 777 ./GateStop
+    chmod 755 ./GateStop
     chown root:root ./GateStop
 
     remove_gate_install_files
@@ -652,9 +632,9 @@ function prepare_dof() {
     check_root_user
     performance_optimize
     set_swap
-    update_dns
     update_yum_repo
     install_library
+    download_files
 
     touch $PREPARE_DOF_FILE
     log_error "DOF安装环境初始化成功, 按任意键重启..."
@@ -681,13 +661,13 @@ function performance_optimize() {
     fi
 
     # 如果不存在则添加
-    if ! grep -q "\$usersoft soft nofile 2048" /etc/security/limits.conf; then
-        echo "\$usersoft soft nofile 2048" >>/etc/security/limits.conf
+    if ! grep -q "root soft nofile 2048" /etc/security/limits.conf; then
+        echo "root soft nofile 2048" >>/etc/security/limits.conf
     fi
 
     # 如果不存在则添加
-    if ! grep -q "\$user hard nofile 4096" /etc/security/limits.conf; then
-        echo "\$user hard nofile 4096" >>/etc/security/limits.conf
+    if ! grep -q "root hard nofile 4096" /etc/security/limits.conf; then
+        echo "root hard nofile 4096" >>/etc/security/limits.conf
     fi
 
     # 如果不存在则添加
@@ -701,18 +681,6 @@ function performance_optimize() {
     log_success "系统性能优化成功!!!"
 }
 
-function restart_mysql() {
-    log_info "重启MySQL..."
-
-    sleep 1
-    systemctl stop mysqld
-    sleep 1
-    systemctl start mysqld
-    sleep 1
-
-    log_success "MySQL重启成功!!!"
-}
-
 function install_all() {
     reinstall_database
     reinstall_dofserver
@@ -724,7 +692,6 @@ function reinstall_database() {
     init_database
     init_game_database
     clean_database_install_files
-    restart_mysql
 }
 
 function reinstall_dofserver() {
@@ -799,7 +766,6 @@ function read_menu_command() {
 
 function main() {
     prepare_dof
-    download_files
     echo_banner
     echo_menu
     read_menu_command

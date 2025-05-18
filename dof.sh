@@ -452,8 +452,8 @@ function install_dofserver() {
     chown root:root ./run
     chmod -R 755 ./stop
     chown root:root ./stop
-    chmod -R 755 ./quickstop
-    chown root:root ./quickstop
+    chmod -R 755 ./safestop
+    chown root:root ./safestop
 
     log_success "DOF Server安装成功!!!"
 

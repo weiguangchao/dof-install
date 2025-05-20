@@ -97,10 +97,7 @@ function install_library() {
         glibc.i686 \
         zlib.i686 \
         libstdc++.i686 \
-        net-tools \
-        htop \
         libaio \
-        screen \
         wget \
         GeoIP.i686
 

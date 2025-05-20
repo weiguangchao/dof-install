@@ -78,7 +78,6 @@ function update_yum_repo() {
     # 删除/etc/yum.repos.d/下所有文件
     rm -rf /etc/yum.repos.d/*
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-    curl -o /etc/yum.repos.d/epel.repo https://mirrors.aliyun.com/repo/epel-7.repo
 
     yum clean all
     yum makecache
@@ -90,7 +89,6 @@ function install_library() {
     log_info "安装库..."
 
     yum install -y \
-        epel-release \
         perl \
         autoconf \
         psmisc \

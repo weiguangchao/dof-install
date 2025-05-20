@@ -640,6 +640,7 @@ function prepare_dof() {
     reboot
 }
 
+# 参看官方操作手册对机器进行优化
 function performance_optimize() {
     log_info "系统性能优化..."
 

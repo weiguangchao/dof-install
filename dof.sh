@@ -503,7 +503,6 @@ function init_server_group() {
     sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
-    sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
 
     sed -i "s/MYSQL_IP/$MYSQL_IP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")

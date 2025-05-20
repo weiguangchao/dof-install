@@ -94,4 +94,4 @@ libserverlib_config_name = ServerLab
 script_dir = ./Script/
 //stand_alone = yes
 scriptpacks = yes
-process_sequence = PROCESS_SEQUENCE
+process_sequence = CHANNEL_NO

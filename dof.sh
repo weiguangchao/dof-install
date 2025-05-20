@@ -75,11 +75,9 @@ function random_string() {
 function update_yum_repo() {
     log_info "替换yum源..."
 
-    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.backup
-    mv /etc/yum.repos.d/CentOS-7.repo /etc/yum.repos.d/CentOS-7.repo.backup
+    # 删除/etc/yum.repos.d/下所有文件
+    rm -rf /etc/yum.repos.d/*
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-
-    mv /etc/yum.repos.d/epel.repo /etc/yum.repos.d/epel.repo.backup
     curl -o /etc/yum.repos.d/epel.repo https://mirrors.aliyun.com/repo/epel-7.repo
 
     yum clean all
@@ -454,8 +452,8 @@ function install_dofserver() {
     chown root:root ./run
     chmod -R 755 ./stop
     chown root:root ./stop
-    chmod -R 755 ./quickstop
-    chown root:root ./quickstop
+    chmod -R 755 ./safestop
+    chown root:root ./safestop
 
     log_success "DOF Server安装成功!!!"
 
@@ -505,7 +503,6 @@ function init_server_group() {
     sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
-    sed -i "s/PROCESS_SEQUENCE/$process_sequence/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
 
     sed -i "s/MYSQL_IP/$MYSQL_IP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
@@ -643,6 +640,7 @@ function prepare_dof() {
     reboot
 }
 
+# 参看官方操作手册对机器进行优化
 function performance_optimize() {
     log_info "系统性能优化..."
 

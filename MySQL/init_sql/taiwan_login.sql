@@ -388,7 +388,6 @@ CREATE TABLE `member_login` (
   PRIMARY KEY (`m_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
-INSERT INTO `member_login` VALUES (1,1435583760,1599146854,1599146674,0,0,0,0,0,0,0,'192.168.50.2',0,0,11692,0,0,1,'0',0,0);
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `member_mousepass` (

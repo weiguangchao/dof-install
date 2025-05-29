@@ -445,8 +445,13 @@ function install_dofserver() {
 
     chmod -R 755 ./run
     chown root:root ./run
+
+    chmod -R 755 ./run1
+    chown root:root ./run1
+
     chmod -R 755 ./stop
     chown root:root ./stop
+
     chmod -R 755 ./safestop
     chown root:root ./safestop
 

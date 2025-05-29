@@ -44,16 +44,8 @@ cd /root && ./run
 
 停止服务端
 
-这种方式比较粗暴
-
 ```bash
 cd /root && ./stop
-```
-
-官方的方式
-
-```bash
-cd /root && ./safastop
 ```
 
 需要开放的端口

@@ -578,7 +578,7 @@ function download_gate() {
 function download_files() {
     download_mysql
     download_dofserver
-    download_gate
+    # download_gate
 }
 
 function install_gate() {

@@ -70,7 +70,7 @@ rm -rf /home/neople/coserver/log/*
 LD_PRELOAD=/lib/libhook.so ./df_coserver_r coserver start &
 echo "================================Common 	Srv Start"
 
-# 拍卖行
+#拍卖行
 sleep 3
 cd /home/neople/auction
 chmod 755 *
@@ -79,7 +79,7 @@ rm -rf /home/neople/auction/log/*.*
 ./df_auction_r ./cfg/auction.cfg start ./df_auction_r &
 echo "================================Auction 	Srv Start"
 
-# 金币寄存
+#金币寄存
 sleep 3
 cd /home/neople/point
 chmod 755 *
@@ -109,7 +109,7 @@ rm -f /home/neople/dbmw_guild/pid/*.pid
 rm -rf /home/neople/dbmw_guild/log/*
 LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_guild start &
 
-# 公会
+#公会
 sleep 2
 cd /home/neople/guild
 chmod 755 *
@@ -132,7 +132,7 @@ rm -rf /home/neople/statics/log/*
 LD_PRELOAD=/lib/libhook.so ./df_statics_r statics start &
 echo "================================App 		Srv Start"
 
-# TP
+#TP
 sleep 3
 cd /home/neople/secsvr/gunnersvr
 chmod -R 755 *

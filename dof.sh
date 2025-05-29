@@ -720,7 +720,7 @@ function echo_menu() {
     log_success "1) 一键搭建(2,3)"
     log_success "2) 安装服务端"
     log_success "3) 安装数据库"
-    log_success "4) 安装统一网关(测试)"
+    # log_success "4) 安装统一网关(测试)"
     log_info "以上命令均可重复执行, 多次可重装"
     log_warning "———————————————其他———————————————"
     log_success "5) 备份数据库"
@@ -745,9 +745,9 @@ function read_menu_command() {
     3)
         reinstall_database
         ;;
-    4)
-        reinstall_gate
-        ;;
+    # 4)
+    #     reinstall_gate
+    #     ;;
     5)
         backup_database
         ;;

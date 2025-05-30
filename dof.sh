@@ -256,7 +256,7 @@ source $BASE_DIR/init_sql/taiwan_mng_manager.sql
 source $BASE_DIR/init_sql/taiwan_prod.sql
 source $BASE_DIR/init_sql/taiwan_pvp.sql
 source $BASE_DIR/init_sql/taiwan_se_event.sql
-source $BASE_DIR/init_sql/clear.sql
+source $BASE_DIR/init_sql/clean.sql
 
 -- 设置数据库连接配置
 update d_taiwan.db_connect set db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";

@@ -25,7 +25,7 @@ rm -rf /home/neople/channel/log/*
 LD_PRELOAD=/lib/libhook.so ./df_channel_r channel start &
 echo "================================Channel 	Srv Start"
 
-sleep 3
+sleep 2
 cd /home/neople/relay
 chmod -R 755 *
 rm -f /home/neople/relay/pid/*.pid
@@ -33,7 +33,7 @@ rm -rf /home/neople/relay/log/*
 ./df_relay_r relay start &
 echo "================================Relay 	Srv Start"
 
-sleep 3
+sleep 2
 cd /home/neople/stun
 chmod -R 755 *
 rm -f /home/neople/stun/pid/*.pid
@@ -41,7 +41,7 @@ rm -rf /home/neople/stun/log/*
 ./df_stun_r start &
 echo "================================Stun 		Srv Start"
 
-sleep 3
+sleep 2
 cd /home/neople/manager
 chmod -R 755 *
 rm -f /home/neople/manager/pid/*.pid
@@ -55,12 +55,13 @@ rm -f /home/neople/bridge/pid/*.pid
 rm -rf /home/neople/bridge/log/*
 LD_PRELOAD=/lib/libhook.so ./df_bridge_r bridge start &
 
-sleep 2
-cd /home/neople/community
-chmod -R 755 *
-rm -f /home/neople/community/pid/*.pid
-rm -rf /home/neople/community/log/*
-./df_community_r community start &
+# 决斗场
+# sleep 2
+# cd /home/neople/community
+# chmod -R 755 *
+# rm -f /home/neople/community/pid/*.pid
+# rm -rf /home/neople/community/log/*
+# ./df_community_r community start &
 
 sleep 2
 cd /home/neople/coserver
@@ -70,25 +71,25 @@ rm -rf /home/neople/coserver/log/*
 LD_PRELOAD=/lib/libhook.so ./df_coserver_r coserver start &
 echo "================================Common 	Srv Start"
 
-#拍卖行
-sleep 3
-cd /home/neople/auction
-chmod 755 *
-rm -f /home/neople/auction/pid/*.pid
-rm -rf /home/neople/auction/log/*.*
-./df_auction_r ./cfg/auction.cfg start ./df_auction_r &
-echo "================================Auction 	Srv Start"
+# 拍卖行
+# sleep 2
+# cd /home/neople/auction
+# chmod 755 *
+# rm -f /home/neople/auction/pid/*.pid
+# rm -rf /home/neople/auction/log/*.*
+# ./df_auction_r ./cfg/auction.cfg start ./df_auction_r &
+# echo "================================Auction 	Srv Start"
 
-#金币寄存
-sleep 3
-cd /home/neople/point
-chmod 755 *
-rm -f /home/neople/point/pid/*.pid
-rm -rf /home/neople/point/log/*.*
-./df_point_r ./cfg/point.cfg start df_point_r &
-echo "================================Point 	Srv Start"
+# 金币寄存
+# sleep 2
+# cd /home/neople/point
+# chmod 755 *
+# rm -f /home/neople/point/pid/*.pid
+# rm -rf /home/neople/point/log/*.*
+# ./df_point_r ./cfg/point.cfg start df_point_r &
+# echo "================================Point 	Srv Start"
 
-sleep 3
+sleep 2
 cd /home/neople/dbmw_mnt
 chmod -R 755 *
 rm -f /home/neople/dbmw_mnt/pid/*.pid
@@ -102,20 +103,21 @@ rm -f /home/neople/dbmw_stat/pid/*.pid
 rm -rf /home/neople/dbmw_stat/log/*
 LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_stat start &
 
-sleep 2
-cd /home/neople/dbmw_guild
-chmod -R 755 *
-rm -f /home/neople/dbmw_guild/pid/*.pid
-rm -rf /home/neople/dbmw_guild/log/*
-LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_guild start &
+# 工会
+# sleep 2
+# cd /home/neople/dbmw_guild
+# chmod -R 755 *
+# rm -f /home/neople/dbmw_guild/pid/*.pid
+# rm -rf /home/neople/dbmw_guild/log/*
+# LD_PRELOAD=/lib/libhook.so ./df_dbmw_r dbmw_guild start &
 
-#公会
-sleep 2
-cd /home/neople/guild
-chmod 755 *
-rm -f /home/neople/guild/pid/*.pid
-rm -rf /home/neople/guild/log/*.*
-LD_PRELOAD=/lib/libhook.so ./df_guild_r guild start &
+# 公会
+# sleep 2
+# cd /home/neople/guild
+# chmod 755 *
+# rm -f /home/neople/guild/pid/*.pid
+# rm -rf /home/neople/guild/log/*.*
+# LD_PRELOAD=/lib/libhook.so ./df_guild_r guild start &
 
 sleep 2
 cd /home/neople/monitor
@@ -133,7 +135,7 @@ LD_PRELOAD=/lib/libhook.so ./df_statics_r statics start &
 echo "================================App 		Srv Start"
 
 #TP
-sleep 3
+sleep 2
 cd /home/neople/secsvr/gunnersvr
 chmod -R 755 *
 rm -rf /home/neople/secsvr/gunnersvr/log/*

@@ -1,9 +1,9 @@
 #!/bin/bash
 
-# 下载地址 下载地址 下载地址 下载地址 下载地址
-GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Game.tar.gz"
-MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/MySQL.tar.gz"
-GATE_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/v0.1.1/Gate.tar.gz"
+# 下载地址
+GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/release/Game.tar.gz"
+MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/release/MySQL.tar.gz"
+GATE_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/release/Gate.tar.gz"
 
 # 定义颜色
 RED='\033[0;31m'    # RED
@@ -78,7 +78,6 @@ function update_yum_repo() {
     # 删除/etc/yum.repos.d/下所有文件
     rm -rf /etc/yum.repos.d/*
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-    curl -o /etc/yum.repos.d/epel.repo https://mirrors.aliyun.com/repo/epel-7.repo
 
     yum clean all
     yum makecache
@@ -90,17 +89,13 @@ function install_library() {
     log_info "安装库..."
 
     yum install -y \
-        epel-release \
         perl \
         autoconf \
         psmisc \
         glibc.i686 \
         zlib.i686 \
         libstdc++.i686 \
-        net-tools \
-        htop \
         libaio \
-        screen \
         wget \
         GeoIP.i686
 
@@ -261,7 +256,7 @@ source $BASE_DIR/init_sql/taiwan_mng_manager.sql
 source $BASE_DIR/init_sql/taiwan_prod.sql
 source $BASE_DIR/init_sql/taiwan_pvp.sql
 source $BASE_DIR/init_sql/taiwan_se_event.sql
-source $BASE_DIR/init_sql/clear.sql
+source $BASE_DIR/init_sql/clean.sql
 
 -- 设置数据库连接配置
 update d_taiwan.db_connect set db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
@@ -450,8 +445,13 @@ function install_dofserver() {
 
     chmod -R 755 ./run
     chown root:root ./run
+
+    chmod -R 755 ./run1
+    chown root:root ./run1
+
     chmod -R 755 ./stop
     chown root:root ./stop
+
     chmod -R 755 ./safestop
     chown root:root ./safestop
 
@@ -578,7 +578,7 @@ function download_gate() {
 function download_files() {
     download_mysql
     download_dofserver
-    download_gate
+    # download_gate
 }
 
 function install_gate() {
@@ -720,7 +720,7 @@ function echo_menu() {
     log_success "1) 一键搭建(2,3)"
     log_success "2) 安装服务端"
     log_success "3) 安装数据库"
-    log_success "4) 安装统一网关(测试)"
+    # log_success "4) 安装统一网关(测试)"
     log_info "以上命令均可重复执行, 多次可重装"
     log_warning "———————————————其他———————————————"
     log_success "5) 备份数据库"
@@ -745,9 +745,9 @@ function read_menu_command() {
     3)
         reinstall_database
         ;;
-    4)
-        reinstall_gate
-        ;;
+    # 4)
+    #     reinstall_gate
+    #     ;;
     5)
         backup_database
         ;;

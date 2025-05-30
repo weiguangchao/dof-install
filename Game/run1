@@ -1,0 +1,9 @@
+killall -9 df_channel_r
+
+
+cd /home/neople/channel
+chmod 777 *
+rm -f /home/neople/channel/pid/*.pid
+rm -rf /home/neople/channel/log/*.*
+./df_channel_r channel start &
+

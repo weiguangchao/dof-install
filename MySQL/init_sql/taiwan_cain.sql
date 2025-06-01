@@ -352,7 +352,7 @@ CREATE TABLE `charac_info` (
   `mercenary_finish_time` int(11) NOT NULL DEFAULT '0',
   `mercenary_area` tinyint(4) NOT NULL DEFAULT '-1',
   `mercenary_period` tinyint(4) NOT NULL DEFAULT '-1',
-  `VIP` varchar(255) NOT NULL DEFAULT '1',
+  `VIP` varchar(255) NOT NULL DEFAULT '0',
   PRIMARY KEY (`charac_no`),
   UNIQUE KEY `charac_name` (`charac_name`) USING BTREE,
   KEY `charac_info_idx1` (`m_id`) USING BTREE,

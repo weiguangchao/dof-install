@@ -1,0 +1,10 @@
+#!/bin/bash
+
+killall -9 df_game_r
+
+echo "Game Restart..."
+
+sleep 1
+cd /home/neople/game
+#LD_PRELOAD=/dp2/libdp2pre.so ./df_game_r siroco11 start &
+LD_PRELOAD=/lib/libhook.so ./df_game_r siroco11 start &

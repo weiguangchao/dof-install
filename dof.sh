@@ -96,6 +96,7 @@ function install_library() {
         libstdc++.i686 \
         libaio \
         wget \
+        net-tools \
         GeoIP.i686
 
     log_success "库安装成功!!!"

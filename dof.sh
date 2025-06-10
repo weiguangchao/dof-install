@@ -19,10 +19,8 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
-NEOPLE_DIR="/home/neople"
-
 SWAP_FILE="/swapfile"
-
+VM_SWAPPINESS=70
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
@@ -99,7 +97,6 @@ function install_library() {
         libstdc++.i686 \
         libaio \
         wget \
-        net-tools \
         GeoIP.i686
 
     log_success "库安装成功!!!"
@@ -123,8 +120,6 @@ function check_system() {
 function remove_mysql() {
     log_info "卸载MySQL..."
 
-    systemctl disable mysqld
-    systemctl stop mysqld
     chkconfig mysql off
     service mysql stop
 
@@ -368,35 +363,27 @@ function set_swap() {
         return
     fi
 
+    local max_memory=$((1024 * 8))
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
-
-    # 内存 >6GB
-    if [ $memory -ge 6000 ]; then
-        log_warning "内存 >= 6GB, 无需设置swap分区!!!"
+    # 内存 >= 8GB
+    if [ $memory -ge $max_memory ]; then
+        log_warning "内存 >= 8GB, 无需设置swap分区!!!"
         return
     fi
 
-    local size=6000
-    local vm_swappiness=100
-    # 内存 >4GB
-    if [ $memory -ge 4000 ]; then
-        size=4000
-        vm_swappiness=75
-    fi
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${max_memory}MB..."
 
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${size}MB..."
-
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=${size} status=progress
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$max_memory status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE
     echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
 
     if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness.*/vm.swappiness=${vm_swappiness}/' /etc/sysctl.conf
+        sed -i 's/^vm.swappiness.*/vm.swappiness=$VM_SWAPPINESS/' /etc/sysctl.conf
     else
-        echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
+        echo "vm.swappiness=$VM_SWAPPINESS" >>/etc/sysctl.conf
     fi
 
     sysctl -p
@@ -467,9 +454,6 @@ function install_dofserver() {
 
     chmod -R 755 ./safestop
     chown root:root ./safestop
-
-    chmod -R 755 ./GameRestart
-    chown root:root ./GameRestart
 
     log_success "DOF Server安装成功!!!"
 
@@ -719,25 +703,6 @@ function reinstall_gate() {
     install_gate
 }
 
-function clean_log_and_temp_files() {
-    log_info "清理日志和临时文件..."
-
-    cd $NEOPLE_DIR
-    find . -type f \( \
-        -name '*.log' \
-        -o -name '*.core' \
-        -o -name '*.error' \
-        -o -name '*.debug' \
-        -o -name '*.cri' \
-        -o -name '*.init' \
-        -o -name '*.money' \
-        -o -name '*.history' \
-        -o -name '*.snap' \
-        \) -print -exec rm -f {} \;
-
-    log_success "日志和临时文件清理成功!!!"
-}
-
 function echo_banner() {
     clear
     log_error "
@@ -755,9 +720,9 @@ function echo_menu() {
     log_success "1) 一键搭建(2,3)"
     log_success "2) 安装服务端"
     log_success "3) 安装数据库"
+    # log_success "4) 安装统一网关(测试)"
     log_info "以上命令均可重复执行, 多次可重装"
     log_warning "———————————————其他———————————————"
-    log_success "4) 日志or临时文件清理"
     log_success "5) 备份数据库"
     log_success "6) 恢复数据库"
     log_warning "——————————————————————————————————"
@@ -780,9 +745,9 @@ function read_menu_command() {
     3)
         reinstall_database
         ;;
-    4)
-        clean_log_and_temp_files
-        ;;
+    # 4)
+    #     reinstall_gate
+    #     ;;
     5)
         backup_database
         ;;

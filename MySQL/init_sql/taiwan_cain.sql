@@ -352,7 +352,7 @@ CREATE TABLE `charac_info` (
   `mercenary_finish_time` int(11) NOT NULL DEFAULT '0',
   `mercenary_area` tinyint(4) NOT NULL DEFAULT '-1',
   `mercenary_period` tinyint(4) NOT NULL DEFAULT '-1',
-  `VIP` varchar(255) NOT NULL DEFAULT '0',
+  `VIP` varchar(255) NOT NULL DEFAULT '1',
   PRIMARY KEY (`charac_no`),
   UNIQUE KEY `charac_name` (`charac_name`) USING BTREE,
   KEY `charac_info_idx1` (`m_id`) USING BTREE,
@@ -360,6 +360,7 @@ CREATE TABLE `charac_info` (
   KEY `idx_guild_id` (`guild_id`) USING BTREE
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8;
 /*!40101 SET character_set_client = @saved_cs_client */;
+INSERT INTO `charac_info` VALUES (1,1,'yyyyz',1,0,7,0,0,0,4500,2900,363,363,297,297,0x00000000C80038FF,0x00000000000000000000000000000000000000000000000000000000000000000000,498000,0,650,8500,8500,7000,6090,4300,680000,0,156,0,0,'2020-09-03 23:08:53','0000-00-00 00:00:00',0,'0000-00-00 00:00:00',0,0,0,0,1,0,-1,0,0,0,0,0,-1,-1,0,0,-1,-1,'1');
 /*!40101 SET @saved_cs_client     = @@character_set_client */;
 /*!40101 SET character_set_client = utf8 */;
 CREATE TABLE `charac_item_stat` (

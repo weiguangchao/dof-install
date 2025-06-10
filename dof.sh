@@ -19,6 +19,8 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
+NEOPLE_DIR="/home/neople"
+
 SWAP_FILE="/swapfile"
 VM_SWAPPINESS=70
 BASE_DIR="/root"
@@ -706,6 +708,25 @@ function reinstall_gate() {
     install_gate
 }
 
+function clean_log_and_temp_files() {
+    log_info "清理日志和临时文件..."
+
+    cd $NEOPLE_DIR
+    find . -type f \( \
+        -name '*.log' \
+        -o -name '*.core' \
+        -o -name '*.error' \
+        -o -name '*.debug' \
+        -o -name '*.cri' \
+        -o -name '*.init' \
+        -o -name '*.money' \
+        -o -name '*.history' \
+        -o -name '*.snap' \
+        \) -print -exec rm -f {} \;
+
+    log_success "日志和临时文件清理成功!!!"
+}
+
 function echo_banner() {
     clear
     log_error "
@@ -723,9 +744,9 @@ function echo_menu() {
     log_success "1) 一键搭建(2,3)"
     log_success "2) 安装服务端"
     log_success "3) 安装数据库"
-    # log_success "4) 安装统一网关(测试)"
     log_info "以上命令均可重复执行, 多次可重装"
     log_warning "———————————————其他———————————————"
+    log_success "4) 日志or临时文件清理"
     log_success "5) 备份数据库"
     log_success "6) 恢复数据库"
     log_warning "——————————————————————————————————"
@@ -748,9 +769,9 @@ function read_menu_command() {
     3)
         reinstall_database
         ;;
-    # 4)
-    #     reinstall_gate
-    #     ;;
+    4)
+        clean_log_and_temp_files
+        ;;
     5)
         backup_database
         ;;

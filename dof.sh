@@ -20,7 +20,6 @@ GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
 SWAP_FILE="/swapfile"
-VM_SWAPPINESS=70
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
@@ -363,27 +362,33 @@ function set_swap() {
         return
     fi
 
-    local max_memory=$((1024 * 8))
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
-    # 内存 >= 8GB
-    if [ $memory -ge $max_memory ]; then
-        log_warning "内存 >= 8GB, 无需设置swap分区!!!"
+    # 内存 > 6GB
+    if [ $memory -ge 6000 ]; then
+        log_warning "内存 > 6GB, 无需设置swap分区!!!"
         return
     fi
 
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${max_memory}MB..."
+    local memory_size=6000
+    local vm_swappiness=100
+    # 内存 > 4GB
+    if [ $memory -ge 4000 ]; then
+        memory_size=4000
+        vm_swappiness=75
+    fi
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${memory_size}MB..."
 
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$max_memory status=progress
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$memory_size status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE
     echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
 
     if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness.*/vm.swappiness=$VM_SWAPPINESS/' /etc/sysctl.conf
+        sed -i 's/^vm.swappiness.*/vm.swappiness=$vm_swappiness/' /etc/sysctl.conf
     else
-        echo "vm.swappiness=$VM_SWAPPINESS" >>/etc/sysctl.conf
+        echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
     fi
 
     sysctl -p

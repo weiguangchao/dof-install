@@ -22,7 +22,6 @@ DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 NEOPLE_DIR="/home/neople"
 
 SWAP_FILE="/swapfile"
-SWAP_SIZE=8000
 VM_SWAPPINESS=70
 
 BASE_DIR="/root"
@@ -369,15 +368,22 @@ function set_swap() {
 
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
-    # 内存 >= 8GB
-    if [ $memory -ge $SWAP_SIZE ]; then
+
+    # 内存 >8GB
+    if [ $memory -ge 8000 ]; then
         log_warning "内存 >= 8GB, 无需设置swap分区!!!"
         return
     fi
 
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${SWAP_SIZE}MB..."
+    local size=8000
+    # 内存 >4GB
+    if [ $memory -ge 4000 ]; then
+        size=4000
+    fi
 
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$SWAP_SIZE status=progress
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${size}MB..."
+
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=${size} status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE

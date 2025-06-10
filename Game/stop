@@ -17,7 +17,3 @@ killall -9 gunnersvr
 killall -9 zergsvr
 killall -9 df_game_r
 killall -9 secagent
-
-sleep 2
-
-find /home/neople \( -name "*.log" -o -name "*.pid" -o -name "core.*" \) -type f -print -exec rm -f {} \;

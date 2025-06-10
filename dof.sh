@@ -22,7 +22,9 @@ DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 NEOPLE_DIR="/home/neople"
 
 SWAP_FILE="/swapfile"
+SWAP_SIZE=8000
 VM_SWAPPINESS=70
+
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
@@ -365,18 +367,17 @@ function set_swap() {
         return
     fi
 
-    local max_memory=$((1024 * 8))
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
     # 内存 >= 8GB
-    if [ $memory -ge $max_memory ]; then
+    if [ $memory -ge $SWAP_SIZE ]; then
         log_warning "内存 >= 8GB, 无需设置swap分区!!!"
         return
     fi
 
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${max_memory}MB..."
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${SWAP_SIZE}MB..."
 
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$max_memory status=progress
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$SWAP_SIZE status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE

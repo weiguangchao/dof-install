@@ -123,6 +123,8 @@ function check_system() {
 function remove_mysql() {
     log_info "卸载MySQL..."
 
+    systemctl disable mysqld
+    systemctl stop mysqld
     chkconfig mysql off
     service mysql stop
 
@@ -369,13 +371,13 @@ function set_swap() {
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
 
-    # 内存 >8GB
-    if [ $memory -ge 8000 ]; then
-        log_warning "内存 >= 8GB, 无需设置swap分区!!!"
+    # 内存 >6GB
+    if [ $memory -ge 6000 ]; then
+        log_warning "内存 >= 6GB, 无需设置swap分区!!!"
         return
     fi
 
-    local size=8000
+    local size=6000
     local vm_swappiness=100
     # 内存 >4GB
     if [ $memory -ge 4000 ]; then

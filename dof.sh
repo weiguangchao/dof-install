@@ -22,7 +22,6 @@ DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 NEOPLE_DIR="/home/neople"
 
 SWAP_FILE="/swapfile"
-VM_SWAPPINESS=70
 
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
@@ -377,9 +376,11 @@ function set_swap() {
     fi
 
     local size=8000
+    local vm_swappiness=100
     # 内存 >4GB
     if [ $memory -ge 4000 ]; then
         size=4000
+        vm_swappiness=75
     fi
 
     log_info "创建swap文件 $SWAP_FILE, 大小 ${size}MB..."
@@ -391,9 +392,9 @@ function set_swap() {
     echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
 
     if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness.*/vm.swappiness=$VM_SWAPPINESS/' /etc/sysctl.conf
+        sed -i 's/^vm.swappiness.*/vm.swappiness=${vm_swappiness}/' /etc/sysctl.conf
     else
-        echo "vm.swappiness=$VM_SWAPPINESS" >>/etc/sysctl.conf
+        echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
     fi
 
     sysctl -p

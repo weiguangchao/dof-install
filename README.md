@@ -20,7 +20,7 @@
 
 ## 食用指南
 
-### 方案一
+### 方案一(联网安装)
 
 直接执行下面这段命令
 
@@ -28,9 +28,9 @@
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
-### 方案二
+### 方案二(本地安装)
 
-从网页下载 dof.sh, 从 Release 中下载 Game.tar.gz, MySQL.tar.gz 一并上传到/root 目录下, 执行下面这段命令
+从 Release 中下载 dof.sh, Game.tar.gz, MySQL.tar.gz 一并上传到/root 目录下, 执行下面这段命令
 
 ```bash
 chmod +x ./dof.sh && ./dof.sh

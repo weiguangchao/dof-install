@@ -400,7 +400,7 @@ function set_swap() {
 function remove_dofserver() {
     log_info "卸载DOF Server..."
 
-    rm -rf /home/neople
+    rm -rf $NEOPLE_DIR
     rm -rf $BASE_DIR/PUBLIC_IP
     rm -rf $BASE_DIR/run
     rm -rf $BASE_DIR/stop
@@ -494,7 +494,7 @@ function init_server_group() {
     local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
     log_info "大区: $SERVER_GROUP_NAME 频道: $CHANNEL_NO"
 
-    cd /home/neople/game
+    cd $NEOPLE_DIR/game
     rm -rf ./cfg/$channel_name.cfg
     cp ./cfg/server.template ./cfg/$channel_name.cfg
 
@@ -504,7 +504,7 @@ function init_server_group() {
         exit
     fi
 
-    cd /home/neople
+    cd $NEOPLE_DIR
     sed -i "s/PUBLIC_IP/$server_ip/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")

@@ -1,0 +1,5 @@
+#-------|-------------|-------|---------------|------------------|
+#Type   | Server Group| Index |  Server IP    | Server UDP Port  |
+#-------|-------------|-------|---------------|------------------|
+1               SERVER_GROUP         11       127.0.0.1         SERVER_GROUP10CHANNEL_NO
+2               SERVER_GROUP         200      127.0.0.1         20303

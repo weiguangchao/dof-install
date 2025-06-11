@@ -24,8 +24,6 @@ SWAP_FILE="/swapfile"
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
-# 随机密码随机池
-CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
 # 默认大区 希洛克
 SERVER_GROUP=3
@@ -40,6 +38,9 @@ SERVER_GROUP_NAME_3="siroco"
 SERVER_GROUP_NAME_4="prey"
 SERVER_GROUP_NAME_5="casillas"
 SERVER_GROUP_NAME_6="hilder"
+
+# 随机密码随机池
+CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
 log_error() {
     echo -e "${RED}$1${NC}"

@@ -463,6 +463,9 @@ function install_dofserver() {
     chmod -R 755 ./safestop
     chown root:root ./safestop
 
+    chmod -R 755 ./GameRestart
+    chown root:root ./GameRestart
+
     log_success "DOF Server安装成功!!!"
 
     remove_dofserver_install_files

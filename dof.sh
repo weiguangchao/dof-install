@@ -95,7 +95,7 @@ function install_yum_dependency() {
         libaio \
         wget \
         net-tools \
-        ntp \
+        chrony \
         GeoIP.i686
 
     log_success "yum依赖安装成功!!!"
@@ -613,12 +613,10 @@ function performance_optimize() {
         echo 'ulimit -n 65535' >>/etc/profile
     fi
 
-    # 使用ntp同步时间
-    systemctl enable ntpd
-    systemctl start ntpd
-    # 设置时区
+    # 同步时间
     timedatectl set-timezone Asia/Shanghai
-    ntpdate -u ntp.aliyun.com
+    systemctl enable chronyd
+    systemctl start chronyd
 
     log_success "系统性能优化成功!!!"
 }

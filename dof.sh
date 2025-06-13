@@ -1,8 +1,8 @@
 #!/bin/bash
 
-VERSION="1.0"
-GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$VERSION/Game.tar.gz"
-MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$VERSION/MySQL.tar.gz"
+PACKAGE_VERSION="1.0"
+GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
+MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/MySQL.tar.gz"
 
 # 定义颜色
 RED='\033[0;31m'    # RED
@@ -24,8 +24,6 @@ SWAP_FILE="/swapfile"
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
-# 随机密码随机池
-CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
 # 默认大区 希洛克
 SERVER_GROUP=3
@@ -40,6 +38,9 @@ SERVER_GROUP_NAME_3="siroco"
 SERVER_GROUP_NAME_4="prey"
 SERVER_GROUP_NAME_5="casillas"
 SERVER_GROUP_NAME_6="hilder"
+
+# 随机密码随机池
+CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
 log_error() {
     echo -e "${RED}$1${NC}"
@@ -94,6 +95,7 @@ function install_yum_dependency() {
         libaio \
         wget \
         net-tools \
+        chrony \
         GeoIP.i686
 
     log_success "yum依赖安装成功!!!"
@@ -400,7 +402,7 @@ function set_swap() {
 function remove_dofserver() {
     log_info "卸载DOF Server..."
 
-    rm -rf /home/neople
+    rm -rf $NEOPLE_DIR
     rm -rf $BASE_DIR/PUBLIC_IP
     rm -rf $BASE_DIR/run
     rm -rf $BASE_DIR/stop
@@ -461,6 +463,9 @@ function install_dofserver() {
     chmod -R 755 ./safestop
     chown root:root ./safestop
 
+    chmod -R 755 ./GameRestart
+    chown root:root ./GameRestart
+
     log_success "DOF Server安装成功!!!"
 
     remove_dofserver_install_files
@@ -494,7 +499,7 @@ function init_server_group() {
     local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
     log_info "大区: $SERVER_GROUP_NAME 频道: $CHANNEL_NO"
 
-    cd /home/neople/game
+    cd $NEOPLE_DIR/game
     rm -rf ./cfg/$channel_name.cfg
     cp ./cfg/server.template ./cfg/$channel_name.cfg
 
@@ -504,7 +509,7 @@ function init_server_group() {
         exit
     fi
 
-    cd /home/neople
+    cd $NEOPLE_DIR
     sed -i "s/PUBLIC_IP/$server_ip/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
@@ -611,8 +616,10 @@ function performance_optimize() {
         echo 'ulimit -n 65535' >>/etc/profile
     fi
 
-    # 设置时区
+    # 同步时间
     timedatectl set-timezone Asia/Shanghai
+    systemctl enable chronyd
+    systemctl start chronyd
 
     log_success "系统性能优化成功!!!"
 }

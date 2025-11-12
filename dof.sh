@@ -263,8 +263,7 @@ source $BASE_DIR/init_sql/clean.sql
 update d_taiwan.db_connect set db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
 
 -- 自动尊10
-alter table taiwan_cain.pvp_result 
-modify column pvp_grade int(11) not null default 29;
+-- alter table taiwan_cain.pvp_result modify column pvp_grade int(11) not null default 29;
 
 -- 解除创建角色数量限制
 use d_taiwan;

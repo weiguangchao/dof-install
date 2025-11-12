@@ -168,10 +168,13 @@ function install_mysql() {
     rpm -ivh mysql-community-client-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-server-5.7.44-1.el7.x86_64.rpm
 
+    chown -R root:root /root
+
     if [ $? -ne 0 ]; then
         log_error "MySQL 安装失败, 请检查安装日志!!!"
         exit
     fi
+
 
     log_success "MySQL 安装成功!!!"
 }

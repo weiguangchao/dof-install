@@ -67,7 +67,6 @@ cd /root && ./stop
 | 2311 | UDP | df_stun_r
 | 2312 | UDP | df_stun_r
 | 2313 | UDP | df_stun_r
-| 881 | TCP | 统一网关
 
 ## 免责声明
 

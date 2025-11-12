@@ -76,9 +76,7 @@ function random_string() {
 function install_yum_dependency() {
     log_info "安装yum依赖..."
 
-    # 删除/etc/yum.repos.d/下所有文件
-    # 替换阿里镜像源
-    rm -rf /etc/yum.repos.d/*
+    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
 
     yum clean all

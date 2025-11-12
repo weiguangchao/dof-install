@@ -173,9 +173,6 @@ function install_mysql() {
         exit
     fi
 
-    systemctl enable mysqld
-    systemctl status mysqld
-
     log_success "MySQL 安装成功!!!"
 }
 

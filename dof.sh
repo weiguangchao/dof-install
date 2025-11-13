@@ -301,6 +301,7 @@ function init_database() {
     log_info "初始化本地数据库..."
 
     systemctl stop mysqld
+    systemctl enable mysqld
 
     mkdir -p $MYSQL_DIR/data
     mkdir -p $MYSQL_DIR/base

@@ -403,6 +403,7 @@ function remove_dofserver() {
     rm -rf $BASE_DIR/PUBLIC_IP
     rm -rf $BASE_DIR/run
     rm -rf $BASE_DIR/stop
+    rm -rf $BASE_DIR/GameRestart
 
     log_success "DOF Server卸载成功!!!"
 }
@@ -451,14 +452,8 @@ function install_dofserver() {
     chmod -R 755 ./run
     chown root:root ./run
 
-    chmod -R 755 ./run1
-    chown root:root ./run1
-
     chmod -R 755 ./stop
     chown root:root ./stop
-
-    chmod -R 755 ./safestop
-    chown root:root ./safestop
 
     chmod -R 755 ./GameRestart
     chown root:root ./GameRestart

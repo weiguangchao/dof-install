@@ -163,12 +163,13 @@ function install_mysql() {
     cd $BASE_DIR
     tar -zxvf MySQL.tar.gz
 
+    chown -R root:root /root
+    chmod -R 755 /root
+
     rpm -ivh mysql-community-common-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-libs-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-client-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-server-5.7.44-1.el7.x86_64.rpm
-
-    chown -R root:root /root
 
     if [ $? -ne 0 ]; then
         log_error "MySQL 安装失败, 请检查安装日志!!!"
@@ -441,6 +442,9 @@ function install_dofserver() {
     cd $BASE_DIR
     tar -zxvf Game.tar.gz
 
+    chown -R root:root /root
+    chmod -R 755 /root
+
     chmod -R 755 ./usr/lib
     chown -R root:root ./usr/lib
     mv ./usr/lib/* /usr/lib
@@ -457,8 +461,6 @@ function install_dofserver() {
 
     chmod -R 755 ./GameRestart
     chown root:root ./GameRestart
-
-    chown -R root:root /root
 
     log_success "DOF Server安装成功!!!"
 

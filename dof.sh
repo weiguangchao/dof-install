@@ -458,6 +458,8 @@ function install_dofserver() {
     chmod -R 755 ./GameRestart
     chown root:root ./GameRestart
 
+    chown -R root:root /root
+
     log_success "DOF Server安装成功!!!"
 
     remove_dofserver_install_files

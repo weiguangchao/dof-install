@@ -1,8 +1,9 @@
 #!/bin/bash
 
 PACKAGE_VERSION="1.0"
-GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
-MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/MySQL.tar.gz"
+GITHUB_PROXY="https://ghfast.top/"
+GAME_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
+MYSQL_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/MySQL.tar.gz"
 
 # 定义颜色
 RED='\033[0;31m'    # RED

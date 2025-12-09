@@ -1,8 +1,9 @@
 #!/bin/bash
 
 PACKAGE_VERSION="1.0"
-GAME_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
-MYSQL_DOWNLOAD_URL="https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/MySQL.tar.gz"
+GITHUB_PROXY="https://ghfast.top/"
+GAME_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
+MYSQL_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/MySQL.tar.gz"
 
 # 定义颜色
 RED='\033[0;31m'    # RED
@@ -76,9 +77,7 @@ function random_string() {
 function install_yum_dependency() {
     log_info "安装yum依赖..."
 
-    # 删除/etc/yum.repos.d/下所有文件
-    # 替换阿里镜像源
-    rm -rf /etc/yum.repos.d/*
+    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
 
     yum clean all
@@ -165,6 +164,9 @@ function install_mysql() {
     cd $BASE_DIR
     tar -zxvf MySQL.tar.gz
 
+    chown -R root:root /root
+    chmod -R 755 /root
+
     rpm -ivh mysql-community-common-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-libs-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-client-5.7.44-1.el7.x86_64.rpm
@@ -174,9 +176,6 @@ function install_mysql() {
         log_error "MySQL 安装失败, 请检查安装日志!!!"
         exit
     fi
-
-    systemctl enable mysqld
-    systemctl status mysqld
 
     log_success "MySQL 安装成功!!!"
 }
@@ -263,8 +262,7 @@ source $BASE_DIR/init_sql/clean.sql
 update d_taiwan.db_connect set db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
 
 -- 自动尊10
-alter table taiwan_cain.pvp_result 
-modify column pvp_grade int(11) not null default 29;
+-- alter table taiwan_cain.pvp_result modify column pvp_grade int(11) not null default 29;
 
 -- 解除创建角色数量限制
 use d_taiwan;
@@ -304,6 +302,7 @@ function init_database() {
     log_info "初始化本地数据库..."
 
     systemctl stop mysqld
+    systemctl enable mysqld
 
     mkdir -p $MYSQL_DIR/data
     mkdir -p $MYSQL_DIR/base
@@ -312,7 +311,7 @@ function init_database() {
 
     # 替换my.cnf中的MYSQL_PORT
     sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
-    mv $BASE_DIR/my.cnf /etc/my.cnf
+    mv -f $BASE_DIR/my.cnf /etc/my.cnf
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf
 
@@ -405,6 +404,7 @@ function remove_dofserver() {
     rm -rf $BASE_DIR/PUBLIC_IP
     rm -rf $BASE_DIR/run
     rm -rf $BASE_DIR/stop
+    rm -rf $BASE_DIR/GameRestart
 
     log_success "DOF Server卸载成功!!!"
 }
@@ -442,6 +442,9 @@ function install_dofserver() {
     cd $BASE_DIR
     tar -zxvf Game.tar.gz
 
+    chown -R root:root /root
+    chmod -R 755 /root
+
     chmod -R 755 ./usr/lib
     chown -R root:root ./usr/lib
     mv ./usr/lib/* /usr/lib
@@ -453,14 +456,8 @@ function install_dofserver() {
     chmod -R 755 ./run
     chown root:root ./run
 
-    chmod -R 755 ./run1
-    chown root:root ./run1
-
     chmod -R 755 ./stop
     chown root:root ./stop
-
-    chmod -R 755 ./safestop
-    chown root:root ./safestop
 
     chmod -R 755 ./GameRestart
     chown root:root ./GameRestart

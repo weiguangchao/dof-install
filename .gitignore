@@ -1,6 +1,7 @@
 .DS_Store
 
-build.sh
+Game.tar.gz
+MySQL.tar.gz
 
 mysql-community-client-5.7.44-1.el7.x86_64.rpm
 mysql-community-server-5.7.44-1.el7.x86_64.rpm

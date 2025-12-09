@@ -8,9 +8,8 @@
 
 ## 系统适配
 
-- CentOS 7.9 虚拟机 ✅
-- CentOS 7.6 虚拟机 ✅
-- 京东云 CentOS 7.9 轻量应用服务器 ✅
+- CentOS 7.6 ✅
+- CentOS 7.9 ✅
 
 ## 功能特性
 
@@ -21,7 +20,32 @@
 
 ## 食用指南
 
-### 方案一(本地安装)
+### 准备工作
+
+#### 禁用防火墙
+
+简单粗暴，如果有需求可以根据下方列表自行开放端口
+
+```
+sudo systemctl stop firewalld
+sudo systemctl disable firewalld
+```
+
+#### 查看 gm 用户名、密码
+
+安装完成之后，默认会禁用 `game` 用户以 `uu5!^%jg` 默认密码登录数据库，如果有 gm 需求，可以手动查看随机生成的 gm 用户名、密码
+
+```
+cd /root && ./dof.sh
+
+```
+
+输出：
+![](./image/Snipaste_2025-12-06_12-34-57.png)
+
+### 安装服务端
+
+#### 方案一(本地安装)
 
 从 Release 中下载 dof.sh, Game.tar.gz, MySQL.tar.gz 一并上传到/root 目录下, 执行下面这段命令
 
@@ -29,23 +53,25 @@
 chmod +x ./dof.sh && ./dof.sh
 ```
 
-### 方案二(联网安装)
+#### 方案二(联网安装)
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
-启动服务端
+### 启动服务端
 
 ```bash
 cd /root && ./run
 ```
 
-停止服务端
+### 停止服务端
 
 ```bash
 cd /root && ./stop
 ```
+
+### 端口汇总
 
 实测需要开放的端口
 | 端口 | 类型 | 描述 |
@@ -54,20 +80,18 @@ cd /root && ./stop
 | 30011 | TCP | df_game_r[ch.11] 频道端口
 | 2311 | UDP | df_stun_r 组队端口
 
-端口汇总
-| 端口 | 类型 | 描述 |
-| ----------- | ----------- |----------- |
-| 3306 | TCP | MySQL
-| 7001 | TCP | df_channel_r
-| 7001 | UDP | df_channel_r
-| 7200 | TCP | df_relay_r
-| 7200 | UDP | df_relay_r
-| 30011 | TCP | df_game_r[ch.11]
-| 31011 | UDP | df_game_r[ch.11]
-| 2311 | UDP | df_stun_r
-| 2312 | UDP | df_stun_r
-| 2313 | UDP | df_stun_r
-| 881 | TCP | 统一网关
+| 端口  | 类型 | 描述             |
+| ----- | ---- | ---------------- |
+| 3306  | TCP  | MySQL            |
+| 7001  | TCP  | df_channel_r     |
+| 7001  | UDP  | df_channel_r     |
+| 7200  | TCP  | df_relay_r       |
+| 7200  | UDP  | df_relay_r       |
+| 30011 | TCP  | df_game_r[ch.11] |
+| 31011 | UDP  | df_game_r[ch.11] |
+| 2311  | UDP  | df_stun_r        |
+| 2312  | UDP  | df_stun_r        |
+| 2313  | UDP  | df_stun_r        |
 
 ## 免责声明
 

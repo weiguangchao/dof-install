@@ -1,5 +1,8 @@
 #!/bin/bash
 
+##########################################################################################
+# 常量
+##########################################################################################
 PACKAGE_VERSION="1.0"
 GITHUB_PROXY="https://ghfast.top/"
 GAME_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
@@ -43,19 +46,22 @@ SERVER_GROUP_NAME_6="hilder"
 # 随机密码随机池
 CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
 
-log_error() {
+##########################################################################################
+# 工具
+##########################################################################################
+function log_error() {
     echo -e "${RED}$1${NC}"
 }
 
-log_success() {
+function log_success() {
     echo -e "${GREEN}$1${NC}"
 }
 
-log_warning() {
+function log_warning() {
     echo -e "${YELLOW}$1${NC}"
 }
 
-log_info() {
+function log_info() {
     echo -e "${BLUE}$1${NC}"
 }
 
@@ -74,6 +80,36 @@ function random_string() {
     echo "$CHARS" | fold -w1 | shuf | tr -d '\n' | head -c"$length"
 }
 
+function get_gm_name() {
+    # 读取gm_user.txt文件
+    local gm_user=$(cat $GM_USER_FILE)
+    # 通过:分割
+    local gm_name=$(echo $gm_user | cut -d ':' -f 1)
+    echo $gm_name
+}
+
+function get_gm_password() {
+    # 读取gm_user.txt文件
+    local gm_user=$(cat $GM_USER_FILE)
+    # 通过:分割
+    local gm_password=$(echo $gm_user | cut -d ':' -f 2)
+    echo $gm_password
+}
+
+function save_gm_user() {
+    local gm_name=$1
+    local gm_password=$2
+
+    # 如果文件存在, 则删除
+    if [ -f $GM_USER_FILE ]; then
+        rm -f $GM_USER_FILE
+    fi
+    echo "$gm_name:$gm_password" >$GM_USER_FILE
+}
+
+##########################################################################################
+# 安装
+##########################################################################################
 function install_yum_dependency() {
     log_info "安装yum依赖..."
 
@@ -179,33 +215,6 @@ function install_mysql() {
     fi
 
     log_success "MySQL 安装成功!!!"
-}
-
-function get_gm_name() {
-    # 读取gm_user.txt文件
-    local gm_user=$(cat $GM_USER_FILE)
-    # 通过:分割
-    local gm_name=$(echo $gm_user | cut -d ':' -f 1)
-    echo $gm_name
-}
-
-function get_gm_password() {
-    # 读取gm_user.txt文件
-    local gm_user=$(cat $GM_USER_FILE)
-    # 通过:分割
-    local gm_password=$(echo $gm_user | cut -d ':' -f 2)
-    echo $gm_password
-}
-
-function save_gm_user() {
-    local gm_name=$1
-    local gm_password=$2
-
-    # 如果文件存在, 则删除
-    if [ -f $GM_USER_FILE ]; then
-        rm -f $GM_USER_FILE
-    fi
-    echo "$gm_name:$gm_password" >$GM_USER_FILE
 }
 
 function init_game_database() {
@@ -518,40 +527,6 @@ function init_server_group() {
     log_success "${SERVER_GROUP_NAME}频道初始化成功!!!"
 }
 
-function backup_database() {
-    log_info "备份数据库..."
-    # 跳过系统数据库
-    local databases=$(mysql -u root -p$ROOT_PASSWORD -N -e "
-        select group_concat(schema_name separator ' ')
-        FROM information_schema.schemata
-        WHERE schema_name NOT IN (
-            'information_schema',
-            'mysql',
-            'performance_schema',
-            'sys',
-            'test'
-        );
-    ")
-
-    log_warning "需要备份的数据库: $databases"
-
-    mysqldump -uroot -p$ROOT_PASSWORD \
-        --databases $databases \
-        >/root/dof_bakup.sql
-    log_success "数据库备份成功!!!"
-}
-
-function restore_database() {
-    if [ ! -f /root/dof_bakup.sql ]; then
-        log_error "dof_bakup.sql未找到在/root目录下"
-        exit
-    fi
-
-    log_info "恢复数据库..."
-    mysql -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
-    log_success "数据库恢复成功!!!"
-}
-
 function download_files() {
     download_mysql
     download_dofserver
@@ -619,9 +594,18 @@ function performance_optimize() {
     log_success "系统性能优化成功!!!"
 }
 
+##########################################################################################
+# 功能菜单
+##########################################################################################
 function install_all() {
     reinstall_database
     reinstall_dofserver
+}
+
+function reinstall_dofserver() {
+    remove_dofserver
+    install_dofserver
+    init_server_group
 }
 
 function reinstall_database() {
@@ -630,12 +614,6 @@ function reinstall_database() {
     init_database
     init_game_database
     clean_database_install_files
-}
-
-function reinstall_dofserver() {
-    remove_dofserver
-    install_dofserver
-    init_server_group
 }
 
 function clean_log_files() {
@@ -657,6 +635,43 @@ function clean_log_files() {
     log_success "日志文件清理成功!!!"
 }
 
+function backup_database() {
+    log_info "备份数据库..."
+    # 跳过系统数据库
+    local databases=$(mysql -u root -p$ROOT_PASSWORD -N -e "
+        select group_concat(schema_name separator ' ')
+        FROM information_schema.schemata
+        WHERE schema_name NOT IN (
+            'information_schema',
+            'mysql',
+            'performance_schema',
+            'sys',
+            'test'
+        );
+    ")
+
+    log_warning "需要备份的数据库: $databases"
+
+    mysqldump -uroot -p$ROOT_PASSWORD \
+        --databases $databases \
+        >/root/dof_bakup.sql
+    log_success "数据库备份成功!!!"
+}
+
+function restore_database() {
+    if [ ! -f /root/dof_bakup.sql ]; then
+        log_error "dof_bakup.sql未找到在/root目录下"
+        exit
+    fi
+
+    log_info "恢复数据库..."
+    mysql -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
+    log_success "数据库恢复成功!!!"
+}
+
+##########################################################################################
+# 入口
+##########################################################################################
 function echo_banner() {
     clear
     log_error "

@@ -77,7 +77,8 @@ function random_string() {
 function install_yum_dependency() {
     log_info "安装yum依赖..."
 
-    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+    mv /etc/yum.repos.d /etc/yum.repos.d.bak
+    mkdir /etc/yum.repos.d
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
 
     yum clean all

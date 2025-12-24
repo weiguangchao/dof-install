@@ -177,24 +177,6 @@ function remove_mysql() {
     log_success "MySQL卸载成功!!!"
 }
 
-function download_mysql() {
-    if [ -f MySQL.tar.gz ]; then
-        log_warning "MySQL.tar.gz 已存在!!!"
-        return
-    fi
-
-    log_info "下载MySQL..."
-    cd $BASE_DIR
-    wget "$MYSQL_DOWNLOAD_URL"
-
-    if [ ! -f MySQL.tar.gz ]; then
-        log_error "MySQL.tar.gz 下载失败!!!"
-        exit
-    fi
-
-    log_success "MySQL.tar.gz 下载成功!!!"
-}
-
 function install_mysql() {
     log_info "安装MySQL..."
 
@@ -419,25 +401,6 @@ function remove_dofserver() {
     log_success "DOF Server卸载成功!!!"
 }
 
-function download_dofserver() {
-    if [ -f Game.tar.gz ]; then
-        log_warning "Game.tar.gz 已存在!!!"
-        return
-    fi
-
-    log_info "下载DOF Server..."
-
-    cd $BASE_DIR
-    wget "$GAME_DOWNLOAD_URL"
-
-    if [ ! -f Game.tar.gz ]; then
-        log_error "Game.tar.gz 下载失败!!!"
-        exit
-    fi
-
-    log_success "Game.tar.gz 下载成功!!!"
-}
-
 function install_dofserver() {
     local server_ip=""
     read -p "输入服务器 IP: " server_ip
@@ -527,11 +490,6 @@ function init_server_group() {
     log_success "${SERVER_GROUP_NAME}频道初始化成功!!!"
 }
 
-function download_files() {
-    download_mysql
-    download_dofserver
-}
-
 function prepare_dof() {
     if [ -f $PREPARE_DOF_FILE ]; then
         return
@@ -592,6 +550,48 @@ function performance_optimize() {
     timedatectl set-timezone Asia/Shanghai
 
     log_success "系统性能优化成功!!!"
+}
+
+function download_files() {
+    download_mysql
+    download_dofserver
+}
+
+function download_mysql() {
+    if [ -f MySQL.tar.gz ]; then
+        log_warning "MySQL.tar.gz 已存在!!!"
+        return
+    fi
+
+    log_info "下载MySQL..."
+    cd $BASE_DIR
+    wget "$MYSQL_DOWNLOAD_URL"
+
+    if [ ! -f MySQL.tar.gz ]; then
+        log_error "MySQL.tar.gz 下载失败!!!"
+        exit
+    fi
+
+    log_success "MySQL.tar.gz 下载成功!!!"
+}
+
+function download_dofserver() {
+    if [ -f Game.tar.gz ]; then
+        log_warning "Game.tar.gz 已存在!!!"
+        return
+    fi
+
+    log_info "下载DOF Server..."
+
+    cd $BASE_DIR
+    wget "$GAME_DOWNLOAD_URL"
+
+    if [ ! -f Game.tar.gz ]; then
+        log_error "Game.tar.gz 下载失败!!!"
+        exit
+    fi
+
+    log_success "Game.tar.gz 下载成功!!!"
 }
 
 ##########################################################################################

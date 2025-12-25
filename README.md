@@ -76,19 +76,17 @@ cd /root && ./stop
 实测需要开放的端口：
 | 端口 | 类型 | 描述 |
 | ----------- | ----------- |----------- |
-| 7001 | TCP | df_channel_r 登录端口
-| 30011 | TCP | df_game_r[ch.11] 频道端口
+| 7001 | TCP | df_channel_r 服务器选择端口 |
+| 30011 | TCP | df_game_r[ch.11] 频道端口 |
+
 如果需要组队的话，df_stun_r 相关端口只需要放开一个就行。比如说 2311 端口
 
 所有端口汇总：
 | 端口 | 类型 | 描述 |
 | ----- | ---- | ---------------- |
 | 3306 | TCP | MySQL |
-| 7001 | TCP | df_channel_r |
-| 7200 | TCP | df_relay_r |
-| 7200 | UDP | df_relay_r |
-| 30011 | TCP | df_game_r[ch.11] |
-| 31011 | UDP | df_game_r[ch.11] |
+| 7001 | TCP | df_channel_r 服务器选择端口 |
+| 30011 | TCP | df_game_r[ch.11] 频道端口 |
 | 2311 | UDP | df_stun_r 组队端口 |
 | 2312 | UDP | df_stun_r 组队端口 |
 | 2313 | UDP | df_stun_r 组队端口 |

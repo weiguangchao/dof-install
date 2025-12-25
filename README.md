@@ -2,7 +2,7 @@
 
 ## 概述
 
-基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化(手动[狗头])
+基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化
 
 默认开启希洛克大区，此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行处理
 

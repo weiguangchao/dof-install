@@ -349,8 +349,7 @@ function check_root_user() {
 function set_swap() {
     log_info "设置swap..."
 
-    local swap_exists=$(swapon --show)
-    if [ ! -z "$swap_exists" ]; then
+    if [ ! -z "$(swapon --show)" ]; then
         log_warning "swap分区已存在, 无需进行设置!!!"
         return
     fi
@@ -376,13 +375,9 @@ function set_swap() {
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE
-    echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
 
-    if grep -q "^vm.swappiness" /etc/sysctl.conf; then
-        sed -i 's/^vm.swappiness.*/vm.swappiness=$vm_swappiness/' /etc/sysctl.conf
-    else
-        echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
-    fi
+    echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
+    echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
 
     sysctl -p
     log_success "swap设置成功!!! $(sysctl vm.swappiness)"

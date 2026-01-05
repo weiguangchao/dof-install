@@ -2,7 +2,7 @@
 
 ## 概述
 
-基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化(手动[狗头])
+基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化
 
 默认开启希洛克大区，此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行处理
 
@@ -79,7 +79,7 @@ cd /root && ./stop
 | 7001 | TCP | df_channel_r 服务器选择端口 |
 | 30011 | TCP | df_game_r[ch.11] 频道端口 |
 
-如果需要组队的话，df_stun_r 相关端口只需要放开一个就行。比如说 2311 端口
+如果需要组队的话，df_stun_r 端口只需要放开一个就行。比如说 2311 端口
 
 所有端口汇总：
 | 端口 | 类型 | 描述 |

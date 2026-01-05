@@ -113,9 +113,8 @@ function save_gm_user() {
 function install_yum_dependency() {
     log_info "安装yum依赖..."
 
-    mv /etc/yum.repos.d /etc/yum.repos.d.bak
-    mkdir /etc/yum.repos.d
-    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.cloud.tencent.com/repo/centos7_base.repo
 
     yum clean all
     yum makecache
@@ -508,7 +507,6 @@ function prepare_dof() {
     reboot
 }
 
-# 参看官方操作手册对机器进行优化
 function performance_optimize() {
     log_info "系统性能优化..."
 
@@ -520,29 +518,6 @@ function performance_optimize() {
     else
         echo "SELINUX=disabled" >>/etc/selinux/config
     fi
-
-    # 如果不存在则添加
-    if ! grep -q "net.ipv4.tcp_syncookies" /etc/sysctl.conf; then
-        echo "net.ipv4.tcp_syncookies = 1" >>/etc/sysctl.conf
-    fi
-
-    # 如果不存在则添加
-    if ! grep -q "root soft nofile 2048" /etc/security/limits.conf; then
-        echo "root soft nofile 2048" >>/etc/security/limits.conf
-    fi
-
-    # 如果不存在则添加
-    if ! grep -q "root hard nofile 4096" /etc/security/limits.conf; then
-        echo "root hard nofile 4096" >>/etc/security/limits.conf
-    fi
-
-    # 如果不存在则添加
-    if ! grep -q "ulimit -n 65535" /etc/profile; then
-        echo 'ulimit -n 65535' >>/etc/profile
-    fi
-
-    # 设置时区
-    timedatectl set-timezone Asia/Shanghai
 
     log_success "系统性能优化成功!!!"
 }

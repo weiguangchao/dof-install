@@ -113,13 +113,11 @@ function save_gm_user() {
 function install_yum_dependency() {
     log_info "安装yum依赖..."
 
-    # TODO 暂时不换源
-    # mv /etc/yum.repos.d /etc/yum.repos.d.bak
-    # mkdir /etc/yum.repos.d
-    # curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.cloud.tencent.com/repo/centos7_base.repo
+    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.cloud.tencent.com/repo/centos7_base.repo
 
-    # yum clean all
-    # yum makecache
+    yum clean all
+    yum makecache
     yum update -y
 
     yum install -y \

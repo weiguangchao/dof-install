@@ -262,8 +262,8 @@ drop trigger if exists update_limit_create_character;
 
 delimiter $
 
-create trigger update_limit_create_character 
-before update on limit_create_character 
+create trigger update_limit_create_character
+before update on limit_create_character
 for each row
 begin
     if new.count = 2 then

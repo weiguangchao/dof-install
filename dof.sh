@@ -512,7 +512,6 @@ function performance_optimize() {
 
     # 禁用SELinux
     setenforce 0
-    # 如果存在则修改
     if grep -q "^SELINUX=" /etc/selinux/config; then
         sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
     else

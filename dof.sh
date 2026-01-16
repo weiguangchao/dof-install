@@ -1,4 +1,5 @@
 #!/bin/bash
+set -euo pipefail # 添加在脚本开头
 
 ##########################################################################################
 # 常量
@@ -348,7 +349,7 @@ function check_root_user() {
 function set_swap() {
     log_info "设置swap..."
 
-    if [ ! -z "$(swapon --show)" ]; then
+    if [ -n "$(swapon --show)" ]; then
         log_warning "swap分区已存在, 无需进行设置!!!"
         return
     fi

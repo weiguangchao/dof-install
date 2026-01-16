@@ -346,6 +346,15 @@ function check_root_user() {
     log_success "当前用户: root"
 }
 
+function check_disk_space() {
+    local required_space=9000000
+    local available=$(df / | tail -1 | awk '{print $4}')
+    if [ "$available" -lt "$required_space" ]; then
+        log_error "磁盘空间不足"
+        exit 1
+    fi
+}
+
 function set_swap() {
     log_info "设置swap..."
 
@@ -493,6 +502,8 @@ function prepare_dof() {
     log_info "初始化DOF安装环境..."
     check_system
     check_root_user
+    check_disk_space
+
     performance_optimize
     set_swap
     install_yum_dependency
@@ -500,7 +511,6 @@ function prepare_dof() {
 
     touch $PREPARE_DOF_FILE
     log_error "DOF安装环境初始化成功, 按任意键重启..."
-    # 按任意键重启
     read -n 1 -s -r
     reboot
 }

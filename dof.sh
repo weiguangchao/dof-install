@@ -459,8 +459,6 @@ function init_server_group() {
 
     # channel_name=大区+频道
     local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
-    log_info "大区: $SERVER_GROUP_NAME 频道: $CHANNEL_NO"
-
     cd $NEOPLE_DIR/game
     rm -rf ./cfg/$channel_name.cfg
     cp ./cfg/server.template ./cfg/$channel_name.cfg

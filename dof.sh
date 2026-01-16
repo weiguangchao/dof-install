@@ -180,7 +180,7 @@ function install_mysql() {
     log_info "安装MySQL..."
 
     cd $BASE_DIR
-    tar -zxvf MySQL.tar.gz
+    tar -zxvf MySQL.tar.gz --no-overwrite-dir
 
     chown -R root:root /root
     chmod -R 755 /root
@@ -407,7 +407,7 @@ function install_dofserver() {
     echo $server_ip >/root/PUBLIC_IP
 
     cd $BASE_DIR
-    tar -zxvf Game.tar.gz
+    tar -zxvf Game.tar.gz --no-overwrite-dir
 
     chown -R root:root /root
     chmod -R 755 /root

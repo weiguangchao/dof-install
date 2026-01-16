@@ -300,19 +300,19 @@ function init_database() {
     chmod 755 $MYSQL_DIR
     chown -R mysql.mysql $MYSQL_DIR
 
-    # 替换my.cnf中的MYSQL_PORT
     sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
     mv -f $BASE_DIR/my.cnf /etc/my.cnf
+
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf
 
+    # 初始化MySQL数据库
     mysqld --defaults-file=/etc/my.cnf \
         --initialize-insecure \
         --user=mysql \
         --explicit_defaults_for_timestamp
 
     systemctl start mysqld
-    # 检查本地数据库是否初始化成功
     mysql -uroot --skip-password <<EOF
 alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
 flush privileges;

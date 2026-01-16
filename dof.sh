@@ -447,7 +447,6 @@ function remove_dofserver_install_files() {
 function init_server_group() {
     log_info "初始化大区频道..."
 
-    # 校验大区
     if [ "$SERVER_GROUP" -ge 1 ] && [ "$SERVER_GROUP" -le 6 ]; then
         local SERVER_GROUP_NAME_VAR="SERVER_GROUP_NAME_$SERVER_GROUP"
         SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
@@ -458,7 +457,7 @@ function init_server_group() {
         exit
     fi
 
-    local process_sequence=$CHANNEL_NO
+    # channel_name=大区+频道
     local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
     log_info "大区: $SERVER_GROUP_NAME 频道: $CHANNEL_NO"
 

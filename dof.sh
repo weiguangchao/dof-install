@@ -536,11 +536,16 @@ function performance_optimize() {
     log_info "系统性能优化..."
 
     # 禁用SELinux
-    setenforce 0
-    if grep -q "^SELINUX=" /etc/selinux/config; then
-        sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+    if command -v setenforce &>/dev/null && [ -f /etc/selinux/config ]; then
+        setenforce 0 2>/dev/null || true
+        if grep -q "^SELINUX=" /etc/selinux/config; then
+            sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+        else
+            echo "SELINUX=disabled" >>/etc/selinux/config
+        fi
+        log_info "SELinux 已禁用"
     else
-        echo "SELINUX=disabled" >>/etc/selinux/config
+        log_info "SELinux 未安装或已禁用，跳过"
     fi
 
     log_success "系统性能优化成功!!!"

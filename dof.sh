@@ -387,6 +387,12 @@ function set_swap() {
         exit 1
     fi
 
+    # 如果swap文件已存在，先删除
+    if [ -f "$SWAP_FILE" ]; then
+        log_warning "检测到已存在的swap文件，正在删除..."
+        rm -f "$SWAP_FILE"
+    fi
+
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE

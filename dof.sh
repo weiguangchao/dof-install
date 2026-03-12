@@ -380,6 +380,13 @@ function set_swap() {
     fi
     log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
 
+    # 检查磁盘剩余空间
+    local available_space=$(df -m / | awk 'NR==2 {print $4}')
+    if [ "$available_space" -lt "$swap_size" ]; then
+        log_error "磁盘剩余空间不足!!! 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
+        exit 1
+    fi
+
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE

@@ -1,8 +1,5 @@
 #!/bin/bash
 
-##########################################################################################
-# 常量
-##########################################################################################
 PACKAGE_VERSION="1.0"
 GITHUB_PROXY="https://ghfast.top/"
 GAME_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
@@ -15,8 +12,6 @@ YELLOW='\033[0;33m' # YELLOW
 BLUE='\033[0;34m'   # BLUE
 NC='\033[0m'        # NC
 
-NEOPLE_DIR="/home/neople"
-
 MYSQL_DIR="/opt/mysql"
 MYSQL_IP="127.0.0.1"
 MYSQL_PORT="3306"
@@ -24,11 +19,13 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
+REQUIRED_DISK_SPACE_GB=10
 SWAP_FILE="/swapfile"
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
 
+NEOPLE_DIR="/home/neople"
 # 默认大区 希洛克
 SERVER_GROUP=3
 # 11频道
@@ -43,12 +40,6 @@ SERVER_GROUP_NAME_4="prey"
 SERVER_GROUP_NAME_5="casillas"
 SERVER_GROUP_NAME_6="hilder"
 
-# 随机密码随机池
-CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
-
-##########################################################################################
-# 工具
-##########################################################################################
 function log_error() {
     echo -e "${RED}$1${NC}"
 }
@@ -66,21 +57,25 @@ function log_info() {
 }
 
 function random_string() {
-    local length=$1
-    # 默认长度为8
-    if [ -z "$length" ]; then
-        length=8
+    local length="${1:-8}"
+
+    # 验证：必须是正整数
+    if ! [[ "$length" =~ ^[1-9][0-9]*$ ]]; then
+        log_error "错误：长度必须是正整数"
+        return 1
     fi
-    # 检查参数是否为数字
-    if ! [[ "$length" =~ ^[0-9]+$ ]]; then
-        log_error "错误：长度必须是数字"
-        exit
-    fi
-    # 生成随机字符串
-    echo "$CHARS" | fold -w1 | shuf | tr -d '\n' | head -c"$length"
+
+    # 使用 /dev/urandom 生成加密安全的随机字符串
+    tr -dc 'a-zA-Z0-9' </dev/urandom | head -c "$length"
+    echo
 }
 
 function get_gm_name() {
+    if [ ! -f "$GM_USER_FILE" ]; then
+        log_error "GM用户文件不存在: $GM_USER_FILE"
+        exit
+    fi
+
     # 读取gm_user.txt文件
     local gm_user=$(cat $GM_USER_FILE)
     # 通过:分割
@@ -89,6 +84,11 @@ function get_gm_name() {
 }
 
 function get_gm_password() {
+    if [ ! -f "$GM_USER_FILE" ]; then
+        log_error "GM用户文件不存在: $GM_USER_FILE"
+        exit
+    fi
+
     # 读取gm_user.txt文件
     local gm_user=$(cat $GM_USER_FILE)
     # 通过:分割
@@ -107,14 +107,46 @@ function save_gm_user() {
     echo "$gm_name:$gm_password" >$GM_USER_FILE
 }
 
-##########################################################################################
-# 安装
-##########################################################################################
+function check_system() {
+    if [ ! -f /etc/redhat-release ]; then
+        log_error "请使用CentOS系统!!!"
+        exit
+    fi
+
+    if grep -q "CentOS Linux release 7" /etc/redhat-release; then
+        local system_version=$(cat /etc/redhat-release)
+        log_success "系统版本: $system_version"
+    else
+        log_error "请使用CentOS7系统, 当前系统版本: $(cat /etc/redhat-release)"
+        exit
+    fi
+}
+
+function check_root_user() {
+    if [ "$EUID" -ne 0 ]; then
+        log_error "请使用root用户执行此脚本"
+        exit
+    fi
+    log_success "当前用户: root"
+}
+
+function check_disk_space() {
+    local required_mb=$((REQUIRED_DISK_SPACE_GB * 1024))
+    local available_mb=$(df -m / | awk 'NR==2 {print $4}')
+
+    if [ "$available_mb" -lt "$required_mb" ]; then
+        log_error "磁盘空间不足!!! 需要至少 ${REQUIRED_DISK_SPACE_GB}GB, 实际可用 ${available_mb}MB"
+        exit 1
+    fi
+
+    log_success "磁盘空间检查通过: ${available_mb}MB 可用"
+}
+
 function install_yum_dependency() {
     log_info "安装yum依赖..."
 
     mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
-    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.cloud.tencent.com/repo/centos7_base.repo
+    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
 
     yum clean all
     yum makecache
@@ -133,21 +165,6 @@ function install_yum_dependency() {
         GeoIP.i686
 
     log_success "yum依赖安装成功!!!"
-}
-
-function check_system() {
-    if [ ! -f /etc/redhat-release ]; then
-        log_error "请使用CentOS系统!!!"
-        exit
-    fi
-
-    if grep -q "CentOS Linux release 7" /etc/redhat-release; then
-        local system_version=$(cat /etc/redhat-release)
-        log_success "系统版本: $system_version"
-    else
-        log_error "请使用CentOS7系统, 当前系统版本: $(cat /etc/redhat-release)"
-        exit
-    fi
 }
 
 function remove_mysql() {
@@ -180,7 +197,7 @@ function install_mysql() {
     log_info "安装MySQL..."
 
     cd $BASE_DIR
-    tar -zxvf MySQL.tar.gz
+    tar -zxvf MySQL.tar.gz --no-overwrite-dir
 
     chown -R root:root /root
     chmod -R 755 /root
@@ -261,8 +278,8 @@ drop trigger if exists update_limit_create_character;
 
 delimiter $
 
-create trigger update_limit_create_character 
-before update on limit_create_character 
+create trigger update_limit_create_character
+before update on limit_create_character
 for each row
 begin
     if new.count = 2 then
@@ -300,19 +317,19 @@ function init_database() {
     chmod 755 $MYSQL_DIR
     chown -R mysql.mysql $MYSQL_DIR
 
-    # 替换my.cnf中的MYSQL_PORT
     sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
     mv -f $BASE_DIR/my.cnf /etc/my.cnf
+
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf
 
+    # 初始化MySQL数据库
     mysqld --defaults-file=/etc/my.cnf \
         --initialize-insecure \
         --user=mysql \
         --explicit_defaults_for_timestamp
 
     systemctl start mysqld
-    # 检查本地数据库是否初始化成功
     mysql -uroot --skip-password <<EOF
 alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
 flush privileges;
@@ -337,21 +354,8 @@ function clean_database_install_files() {
     log_success "本地数据库安装文件清理成功!!!"
 }
 
-function check_root_user() {
-    if [ "$EUID" -ne 0 ]; then
-        log_error "请使用root用户执行此脚本"
-        exit
-    fi
-    log_success "当前用户: root"
-}
-
-function set_swap() {
-    log_info "设置swap..."
-
-    if [ ! -z "$(swapon --show)" ]; then
-        log_warning "swap分区已存在, 无需进行设置!!!"
-        return
-    fi
+function create_swap() {
+    log_info "创建swap分区..."
 
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
@@ -361,19 +365,44 @@ function set_swap() {
         return
     fi
 
+    if [ -n "$(swapon --show)" ]; then
+        log_warning "swap分区已存在, 无需进行设置!!!"
+        return
+    fi
+
+    # 内存 < 2GB
     local swap_size=6000
     local vm_swappiness=100
+
     # 内存 > 4GB
     if [ $memory -ge 4000 ]; then
         swap_size=4000
         vm_swappiness=75
     fi
+
+    # 检查磁盘剩余空间
+    local available_space=$(df -m / | awk 'NR==2 {print $4}')
+    if [ "$available_space" -lt "$swap_size" ]; then
+        log_error "磁盘剩余空间不足!!! 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
+        exit 1
+    fi
+
+    # 如果swap文件已存在，先删除
+    if [ -f "$SWAP_FILE" ]; then
+        log_warning "检测到已存在的swap文件，正在删除..."
+        rm -f "$SWAP_FILE"
+    fi
+
     log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE
+
+    # 删除旧的swap配置（如果存在）
+    sed -i "$SWAP_FILE swap swap/d" /etc/fstab
+    sed -i '/vm.swappiness/d' /etc/sysctl.conf
 
     echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
     echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
@@ -407,7 +436,7 @@ function install_dofserver() {
     echo $server_ip >/root/PUBLIC_IP
 
     cd $BASE_DIR
-    tar -zxvf Game.tar.gz
+    tar -zxvf Game.tar.gz --no-overwrite-dir
 
     chown -R root:root /root
     chmod -R 755 /root
@@ -447,7 +476,6 @@ function remove_dofserver_install_files() {
 function init_server_group() {
     log_info "初始化大区频道..."
 
-    # 校验大区
     if [ "$SERVER_GROUP" -ge 1 ] && [ "$SERVER_GROUP" -le 6 ]; then
         local SERVER_GROUP_NAME_VAR="SERVER_GROUP_NAME_$SERVER_GROUP"
         SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
@@ -458,10 +486,8 @@ function init_server_group() {
         exit
     fi
 
-    local process_sequence=$CHANNEL_NO
+    # channel_name=大区+频道
     local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
-    log_info "大区: $SERVER_GROUP_NAME 频道: $CHANNEL_NO"
-
     cd $NEOPLE_DIR/game
     rm -rf ./cfg/$channel_name.cfg
     cp ./cfg/server.template ./cfg/$channel_name.cfg
@@ -495,14 +521,15 @@ function prepare_dof() {
     log_info "初始化DOF安装环境..."
     check_system
     check_root_user
+    check_disk_space
+
     performance_optimize
-    set_swap
+    create_swap
     install_yum_dependency
     download_files
 
     touch $PREPARE_DOF_FILE
     log_error "DOF安装环境初始化成功, 按任意键重启..."
-    # 按任意键重启
     read -n 1 -s -r
     reboot
 }
@@ -511,12 +538,16 @@ function performance_optimize() {
     log_info "系统性能优化..."
 
     # 禁用SELinux
-    setenforce 0
-    # 如果存在则修改
-    if grep -q "^SELINUX=" /etc/selinux/config; then
-        sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+    if command -v setenforce &>/dev/null && [ -f /etc/selinux/config ]; then
+        setenforce 0 2>/dev/null || true
+        if grep -q "^SELINUX=" /etc/selinux/config; then
+            sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+        else
+            echo "SELINUX=disabled" >>/etc/selinux/config
+        fi
+        log_info "SELinux 已禁用"
     else
-        echo "SELINUX=disabled" >>/etc/selinux/config
+        log_info "SELinux 未安装或已禁用，跳过"
     fi
 
     log_success "系统性能优化成功!!!"
@@ -564,9 +595,6 @@ function download_dofserver() {
     log_success "Game.tar.gz 下载成功!!!"
 }
 
-##########################################################################################
-# 功能菜单
-##########################################################################################
 function install_all() {
     reinstall_database
     reinstall_dofserver
@@ -639,9 +667,6 @@ function restore_database() {
     log_success "数据库恢复成功!!!"
 }
 
-##########################################################################################
-# 入口
-##########################################################################################
 function echo_banner() {
     clear
     log_error "

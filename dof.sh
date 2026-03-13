@@ -387,7 +387,7 @@ function create_swap() {
     swapon $SWAP_FILE
 
     # 删除旧的swap配置（如果存在）
-    sed -i "/$SWAP_FILE swap swap/d" /etc/fstab
+    sed -i "$SWAP_FILE swap swap/d" /etc/fstab
     sed -i '/vm.swappiness/d' /etc/sysctl.conf
 
     echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab

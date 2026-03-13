@@ -345,16 +345,16 @@ function check_disk_space() {
 function create_swap() {
     log_info "创建swap分区..."
 
-    if [ -n "$(swapon --show)" ]; then
-        log_warning "swap分区已存在, 无需进行设置!!!"
-        return
-    fi
-
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
     # 内存 > 6GB
     if [ $memory -ge 6000 ]; then
         log_warning "内存 > 6GB, 无需设置swap分区!!!"
+        return
+    fi
+
+    if [ -n "$(swapon --show)" ]; then
+        log_warning "swap分区已存在, 无需进行设置!!!"
         return
     fi
 

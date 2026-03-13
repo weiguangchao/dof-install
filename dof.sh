@@ -342,8 +342,8 @@ function check_disk_space() {
     fi
 }
 
-function set_swap() {
-    log_info "设置swap..."
+function create_swap() {
+    log_info "创建swap分区..."
 
     if [ -n "$(swapon --show)" ]; then
         log_warning "swap分区已存在, 无需进行设置!!!"
@@ -510,7 +510,7 @@ function prepare_dof() {
     check_disk_space
 
     performance_optimize
-    set_swap
+    create_swap
     install_yum_dependency
     download_files
 

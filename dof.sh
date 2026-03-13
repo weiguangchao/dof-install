@@ -378,7 +378,6 @@ function set_swap() {
         swap_size=4000
         vm_swappiness=75
     fi
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
 
     # 检查磁盘剩余空间
     local available_space=$(df -m / | awk 'NR==2 {print $4}')
@@ -392,6 +391,8 @@ function set_swap() {
         log_warning "检测到已存在的swap文件，正在删除..."
         rm -f "$SWAP_FILE"
     fi
+
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE

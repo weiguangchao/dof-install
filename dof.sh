@@ -358,8 +358,10 @@ function create_swap() {
         return
     fi
 
+    # 内存 < 2GB
     local swap_size=6000
     local vm_swappiness=100
+
     # 内存 > 4GB
     if [ $memory -ge 4000 ]; then
         swap_size=4000

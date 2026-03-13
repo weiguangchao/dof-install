@@ -167,6 +167,83 @@ function install_yum_dependency() {
     log_success "yum依赖安装成功!!!"
 }
 
+function performance_optimize() {
+    log_info "系统性能优化..."
+
+    # 禁用SELinux
+    if command -v setenforce &>/dev/null && [ -f /etc/selinux/config ]; then
+        setenforce 0 2>/dev/null || true
+        if grep -q "^SELINUX=" /etc/selinux/config; then
+            sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
+        else
+            echo "SELINUX=disabled" >>/etc/selinux/config
+        fi
+        log_info "SELinux 已禁用"
+    else
+        log_info "SELinux 未安装或已禁用，跳过"
+    fi
+
+    log_success "系统性能优化成功!!!"
+}
+
+function create_swap() {
+    log_info "创建swap分区..."
+
+    # 当前内存大小
+    local memory=$(free -m | awk '/^Mem:/{print $2}')
+    # 内存 > 6GB
+    if [ $memory -ge 6000 ]; then
+        log_warning "内存 > 6GB, 无需设置swap分区!!!"
+        return
+    fi
+
+    if [ -n "$(swapon --show)" ]; then
+        log_warning "swap分区已存在, 无需进行设置!!!"
+        return
+    fi
+
+    # 内存 < 2GB
+    local swap_size=6000
+    local vm_swappiness=100
+
+    # 内存 > 4GB
+    if [ $memory -ge 4000 ]; then
+        swap_size=4000
+        vm_swappiness=75
+    fi
+
+    # 检查磁盘剩余空间
+    local available_space=$(df -m / | awk 'NR==2 {print $4}')
+    if [ "$available_space" -lt "$swap_size" ]; then
+        log_error "磁盘剩余空间不足!!! 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
+        exit 1
+    fi
+
+    # 如果swap文件已存在，先删除
+    if [ -f "$SWAP_FILE" ]; then
+        log_warning "检测到已存在的swap文件，正在删除..."
+        rm -f "$SWAP_FILE"
+    fi
+
+    log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
+
+    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
+    chmod 600 $SWAP_FILE
+    mkswap $SWAP_FILE
+    swapon $SWAP_FILE
+
+    # 删除旧的swap配置（如果存在）
+    sed -i "$SWAP_FILE swap swap/d" /etc/fstab
+    sed -i '/vm.swappiness/d' /etc/sysctl.conf
+
+    echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
+    echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
+
+    sysctl -p
+    log_success "swap设置成功!!! $(sysctl vm.swappiness)"
+    free -h
+}
+
 function remove_mysql() {
     log_info "卸载MySQL..."
 
@@ -213,6 +290,54 @@ function install_mysql() {
     fi
 
     log_success "MySQL 安装成功!!!"
+}
+
+function clean_database_install_files() {
+    log_info "清理数据库安装文件..."
+
+    rm -rf $BASE_DIR/init_sql
+    rm -rf $BASE_DIR/mysql-community-common-5.7.44-1.el7.x86_64.rpm
+    rm -rf $BASE_DIR/mysql-community-libs-5.7.44-1.el7.x86_64.rpm
+    rm -rf $BASE_DIR/mysql-community-client-5.7.44-1.el7.x86_64.rpm
+    rm -rf $BASE_DIR/mysql-community-server-5.7.44-1.el7.x86_64.rpm
+
+    log_success "本地数据库安装文件清理成功!!!"
+}
+
+function init_database() {
+    log_info "初始化本地数据库..."
+
+    systemctl stop mysqld
+    systemctl enable mysqld
+
+    mkdir -p $MYSQL_DIR/data
+    mkdir -p $MYSQL_DIR/base
+    chmod 755 $MYSQL_DIR
+    chown -R mysql.mysql $MYSQL_DIR
+
+    sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
+    mv -f $BASE_DIR/my.cnf /etc/my.cnf
+
+    chmod 644 /etc/my.cnf
+    chown mysql.mysql /etc/my.cnf
+
+    # 初始化MySQL数据库
+    mysqld --defaults-file=/etc/my.cnf \
+        --initialize-insecure \
+        --user=mysql \
+        --explicit_defaults_for_timestamp
+
+    systemctl start mysqld
+    mysql -uroot --skip-password <<EOF
+alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
+flush privileges;
+EOF
+    if [ $? -ne 0 ]; then
+        log_error "本地数据库初始化失败!!!"
+        exit
+    fi
+
+    log_success "本地数据库初始化成功!!! root密码: $ROOT_PASSWORD"
 }
 
 function init_game_database() {
@@ -304,112 +429,6 @@ EOF
     fi
 
     log_success "大区数据库初始化成功!!!"
-}
-
-function init_database() {
-    log_info "初始化本地数据库..."
-
-    systemctl stop mysqld
-    systemctl enable mysqld
-
-    mkdir -p $MYSQL_DIR/data
-    mkdir -p $MYSQL_DIR/base
-    chmod 755 $MYSQL_DIR
-    chown -R mysql.mysql $MYSQL_DIR
-
-    sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
-    mv -f $BASE_DIR/my.cnf /etc/my.cnf
-
-    chmod 644 /etc/my.cnf
-    chown mysql.mysql /etc/my.cnf
-
-    # 初始化MySQL数据库
-    mysqld --defaults-file=/etc/my.cnf \
-        --initialize-insecure \
-        --user=mysql \
-        --explicit_defaults_for_timestamp
-
-    systemctl start mysqld
-    mysql -uroot --skip-password <<EOF
-alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
-flush privileges;
-EOF
-    if [ $? -ne 0 ]; then
-        log_error "本地数据库初始化失败!!!"
-        exit
-    fi
-
-    log_success "本地数据库初始化成功!!! root密码: $ROOT_PASSWORD"
-}
-
-function clean_database_install_files() {
-    log_info "清理数据库安装文件..."
-
-    rm -rf $BASE_DIR/init_sql
-    rm -rf $BASE_DIR/mysql-community-common-5.7.44-1.el7.x86_64.rpm
-    rm -rf $BASE_DIR/mysql-community-libs-5.7.44-1.el7.x86_64.rpm
-    rm -rf $BASE_DIR/mysql-community-client-5.7.44-1.el7.x86_64.rpm
-    rm -rf $BASE_DIR/mysql-community-server-5.7.44-1.el7.x86_64.rpm
-
-    log_success "本地数据库安装文件清理成功!!!"
-}
-
-function create_swap() {
-    log_info "创建swap分区..."
-
-    # 当前内存大小
-    local memory=$(free -m | awk '/^Mem:/{print $2}')
-    # 内存 > 6GB
-    if [ $memory -ge 6000 ]; then
-        log_warning "内存 > 6GB, 无需设置swap分区!!!"
-        return
-    fi
-
-    if [ -n "$(swapon --show)" ]; then
-        log_warning "swap分区已存在, 无需进行设置!!!"
-        return
-    fi
-
-    # 内存 < 2GB
-    local swap_size=6000
-    local vm_swappiness=100
-
-    # 内存 > 4GB
-    if [ $memory -ge 4000 ]; then
-        swap_size=4000
-        vm_swappiness=75
-    fi
-
-    # 检查磁盘剩余空间
-    local available_space=$(df -m / | awk 'NR==2 {print $4}')
-    if [ "$available_space" -lt "$swap_size" ]; then
-        log_error "磁盘剩余空间不足!!! 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
-        exit 1
-    fi
-
-    # 如果swap文件已存在，先删除
-    if [ -f "$SWAP_FILE" ]; then
-        log_warning "检测到已存在的swap文件，正在删除..."
-        rm -f "$SWAP_FILE"
-    fi
-
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
-
-    dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
-    chmod 600 $SWAP_FILE
-    mkswap $SWAP_FILE
-    swapon $SWAP_FILE
-
-    # 删除旧的swap配置（如果存在）
-    sed -i "$SWAP_FILE swap swap/d" /etc/fstab
-    sed -i '/vm.swappiness/d' /etc/sysctl.conf
-
-    echo "$SWAP_FILE swap swap defaults 0 0" >>/etc/fstab
-    echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
-
-    sysctl -p
-    log_success "swap设置成功!!! $(sysctl vm.swappiness)"
-    free -h
 }
 
 function remove_dofserver() {
@@ -510,110 +529,6 @@ function init_server_group() {
     log_success "${SERVER_GROUP_NAME}频道初始化成功!!!"
 }
 
-function prepare_dof() {
-    if [ -f $PREPARE_DOF_FILE ]; then
-        return
-    fi
-
-    log_error "准备安装环境, 按任意键继续..."
-    read -n 1 -s -r
-
-    log_info "初始化DOF安装环境..."
-    check_system
-    check_root_user
-    check_disk_space
-
-    performance_optimize
-    create_swap
-    install_yum_dependency
-    download_files
-
-    touch $PREPARE_DOF_FILE
-    log_error "DOF安装环境初始化成功, 按任意键重启..."
-    read -n 1 -s -r
-    reboot
-}
-
-function performance_optimize() {
-    log_info "系统性能优化..."
-
-    # 禁用SELinux
-    if command -v setenforce &>/dev/null && [ -f /etc/selinux/config ]; then
-        setenforce 0 2>/dev/null || true
-        if grep -q "^SELINUX=" /etc/selinux/config; then
-            sed -i 's/^SELINUX=.*/SELINUX=disabled/' /etc/selinux/config
-        else
-            echo "SELINUX=disabled" >>/etc/selinux/config
-        fi
-        log_info "SELinux 已禁用"
-    else
-        log_info "SELinux 未安装或已禁用，跳过"
-    fi
-
-    log_success "系统性能优化成功!!!"
-}
-
-function download_files() {
-    download_mysql
-    download_dofserver
-}
-
-function download_mysql() {
-    if [ -f MySQL.tar.gz ]; then
-        log_warning "MySQL.tar.gz 已存在!!!"
-        return
-    fi
-
-    log_info "下载MySQL..."
-    cd $BASE_DIR
-    wget "$MYSQL_DOWNLOAD_URL"
-
-    if [ ! -f MySQL.tar.gz ]; then
-        log_error "MySQL.tar.gz 下载失败!!!"
-        exit
-    fi
-
-    log_success "MySQL.tar.gz 下载成功!!!"
-}
-
-function download_dofserver() {
-    if [ -f Game.tar.gz ]; then
-        log_warning "Game.tar.gz 已存在!!!"
-        return
-    fi
-
-    log_info "下载DOF Server..."
-
-    cd $BASE_DIR
-    wget "$GAME_DOWNLOAD_URL"
-
-    if [ ! -f Game.tar.gz ]; then
-        log_error "Game.tar.gz 下载失败!!!"
-        exit
-    fi
-
-    log_success "Game.tar.gz 下载成功!!!"
-}
-
-function install_all() {
-    reinstall_database
-    reinstall_dofserver
-}
-
-function reinstall_dofserver() {
-    remove_dofserver
-    install_dofserver
-    init_server_group
-}
-
-function reinstall_database() {
-    remove_mysql
-    install_mysql
-    init_database
-    init_game_database
-    clean_database_install_files
-}
-
 function clean_log_files() {
     log_info "清理日志文件..."
 
@@ -665,6 +580,91 @@ function restore_database() {
     log_info "恢复数据库..."
     mysql -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
     log_success "数据库恢复成功!!!"
+}
+
+function download_files() {
+    download_mysql
+    download_dofserver
+}
+
+function download_mysql() {
+    if [ -f MySQL.tar.gz ]; then
+        log_warning "MySQL.tar.gz 已存在!!!"
+        return
+    fi
+
+    log_info "下载MySQL..."
+    cd $BASE_DIR
+    wget "$MYSQL_DOWNLOAD_URL"
+
+    if [ ! -f MySQL.tar.gz ]; then
+        log_error "MySQL.tar.gz 下载失败!!!"
+        exit
+    fi
+
+    log_success "MySQL.tar.gz 下载成功!!!"
+}
+
+function download_dofserver() {
+    if [ -f Game.tar.gz ]; then
+        log_warning "Game.tar.gz 已存在!!!"
+        return
+    fi
+
+    log_info "下载DOF Server..."
+
+    cd $BASE_DIR
+    wget "$GAME_DOWNLOAD_URL"
+
+    if [ ! -f Game.tar.gz ]; then
+        log_error "Game.tar.gz 下载失败!!!"
+        exit
+    fi
+
+    log_success "Game.tar.gz 下载成功!!!"
+}
+
+function prepare_dof() {
+    if [ -f $PREPARE_DOF_FILE ]; then
+        return
+    fi
+
+    log_error "准备安装环境, 按任意键继续..."
+    read -n 1 -s -r
+
+    log_info "初始化DOF安装环境..."
+    check_system
+    check_root_user
+    check_disk_space
+
+    performance_optimize
+    create_swap
+    install_yum_dependency
+    download_files
+
+    touch $PREPARE_DOF_FILE
+    log_error "DOF安装环境初始化成功, 按任意键重启..."
+    read -n 1 -s -r
+    reboot
+}
+
+function install_all() {
+    reinstall_database
+    reinstall_dofserver
+}
+
+function reinstall_dofserver() {
+    remove_dofserver
+    install_dofserver
+    init_server_group
+}
+
+function reinstall_database() {
+    remove_mysql
+    install_mysql
+    init_database
+    init_game_database
+    clean_database_install_files
 }
 
 function echo_banner() {

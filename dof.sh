@@ -98,31 +98,6 @@ function save_gm_user() {
     echo "$gm_name:$gm_password" >$GM_USER_FILE
 }
 
-function install_yum_dependency() {
-    log_info "安装yum依赖..."
-
-    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
-    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-
-    yum clean all
-    yum makecache
-    yum update -y
-
-    yum install -y \
-        perl \
-        autoconf \
-        psmisc \
-        glibc.i686 \
-        zlib.i686 \
-        libstdc++.i686 \
-        libaio \
-        wget \
-        net-tools \
-        GeoIP.i686
-
-    log_success "yum依赖安装成功!!!"
-}
-
 function check_system() {
     if [ ! -f /etc/redhat-release ]; then
         log_error "请使用CentOS系统!!!"
@@ -156,6 +131,31 @@ function check_disk_space() {
     fi
 
     log_success "磁盘空间检查通过: ${available_mb}MB 可用"
+}
+
+function install_yum_dependency() {
+    log_info "安装yum依赖..."
+
+    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
+
+    yum clean all
+    yum makecache
+    yum update -y
+
+    yum install -y \
+        perl \
+        autoconf \
+        psmisc \
+        glibc.i686 \
+        zlib.i686 \
+        libstdc++.i686 \
+        libaio \
+        wget \
+        net-tools \
+        GeoIP.i686
+
+    log_success "yum依赖安装成功!!!"
 }
 
 function remove_mysql() {

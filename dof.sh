@@ -67,18 +67,17 @@ function log_info() {
 }
 
 function random_string() {
-    local length=$1
-    # 默认长度为8
-    if [ -z "$length" ]; then
-        length=8
+    local length="${1:-8}"
+
+    # 验证：必须是正整数
+    if ! [[ "$length" =~ ^[1-9][0-9]*$ ]]; then
+        log_error "错误：长度必须是正整数"
+        return 1
     fi
-    # 检查参数是否为数字
-    if ! [[ "$length" =~ ^[0-9]+$ ]]; then
-        log_error "错误：长度必须是数字"
-        exit
-    fi
-    # 生成随机字符串
-    echo "$CHARS" | fold -w1 | shuf | tr -d '\n' | head -c"$length"
+
+    # 使用 /dev/urandom 生成加密安全的随机字符串
+    tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c "$length"
+    echo
 }
 
 function get_gm_name() {

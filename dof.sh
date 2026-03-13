@@ -1,5 +1,4 @@
 #!/bin/bash
-set -euo pipefail # 添加在脚本开头
 
 PACKAGE_VERSION="1.0"
 GITHUB_PROXY="https://ghfast.top/"

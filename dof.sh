@@ -71,6 +71,11 @@ function random_string() {
 }
 
 function get_gm_name() {
+    if [ ! -f "$GM_USER_FILE" ]; then
+        log_error "GM用户文件不存在: $GM_USER_FILE"
+        exit
+    fi
+
     # 读取gm_user.txt文件
     local gm_user=$(cat $GM_USER_FILE)
     # 通过:分割
@@ -79,6 +84,11 @@ function get_gm_name() {
 }
 
 function get_gm_password() {
+    if [ ! -f "$GM_USER_FILE" ]; then
+        log_error "GM用户文件不存在: $GM_USER_FILE"
+        exit
+    fi
+
     # 读取gm_user.txt文件
     local gm_user=$(cat $GM_USER_FILE)
     # 通过:分割

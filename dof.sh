@@ -13,8 +13,6 @@ YELLOW='\033[0;33m' # YELLOW
 BLUE='\033[0;34m'   # BLUE
 NC='\033[0m'        # NC
 
-NEOPLE_DIR="/home/neople"
-
 MYSQL_DIR="/opt/mysql"
 MYSQL_IP="127.0.0.1"
 MYSQL_PORT="3306"
@@ -22,11 +20,13 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
+REQUIRED_DISK_SPACE_GB=10
 SWAP_FILE="/swapfile"
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
 PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
 
+NEOPLE_DIR="/home/neople"
 # 默认大区 希洛克
 SERVER_GROUP=3
 # 11频道
@@ -136,6 +136,26 @@ function check_system() {
         log_error "请使用CentOS7系统, 当前系统版本: $(cat /etc/redhat-release)"
         exit
     fi
+}
+
+function check_root_user() {
+    if [ "$EUID" -ne 0 ]; then
+        log_error "请使用root用户执行此脚本"
+        exit
+    fi
+    log_success "当前用户: root"
+}
+
+function check_disk_space() {
+    local required_mb=$((REQUIRED_DISK_SPACE_GB * 1024))
+    local available_mb=$(df -m / | awk 'NR==2 {print $4}')
+
+    if [ "$available_mb" -lt "$required_mb" ]; then
+        log_error "磁盘空间不足!!! 需要至少 ${REQUIRED_DISK_SPACE_GB}GB, 实际可用 ${available_mb}MB"
+        exit 1
+    fi
+
+    log_success "磁盘空间检查通过: ${available_mb}MB 可用"
 }
 
 function remove_mysql() {
@@ -325,14 +345,6 @@ function clean_database_install_files() {
     log_success "本地数据库安装文件清理成功!!!"
 }
 
-function check_root_user() {
-    if [ "$EUID" -ne 0 ]; then
-        log_error "请使用root用户执行此脚本"
-        exit
-    fi
-    log_success "当前用户: root"
-}
-
 function create_swap() {
     log_info "创建swap分区..."
 
@@ -500,6 +512,7 @@ function prepare_dof() {
     log_info "初始化DOF安装环境..."
     check_system
     check_root_user
+    check_disk_space
 
     performance_optimize
     create_swap

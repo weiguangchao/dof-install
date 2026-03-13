@@ -44,9 +44,6 @@ SERVER_GROUP_NAME_4="prey"
 SERVER_GROUP_NAME_5="casillas"
 SERVER_GROUP_NAME_6="hilder"
 
-# 随机密码随机池
-CHARS="abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ01234567890123456789"
-
 ##########################################################################################
 # 工具
 ##########################################################################################
@@ -76,7 +73,7 @@ function random_string() {
     fi
 
     # 使用 /dev/urandom 生成加密安全的随机字符串
-    tr -dc 'a-zA-Z0-9' < /dev/urandom | head -c "$length"
+    tr -dc 'a-zA-Z0-9' </dev/urandom | head -c "$length"
     echo
 }
 

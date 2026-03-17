@@ -113,11 +113,12 @@ function check_system() {
         exit
     fi
 
-    if grep -q "CentOS Linux release 7" /etc/redhat-release; then
-        local system_version=$(cat /etc/redhat-release)
+    local system_version=$(cat /etc/redhat-release)
+
+    if grep -q "CentOS Linux release 7" <<< "$system_version"; then
         log_success "系统版本: $system_version"
     else
-        log_error "请使用CentOS7系统, 当前系统版本: $(cat /etc/redhat-release)"
+        log_error "请使用CentOS7系统, 当前系统版本: $system_version"
         exit
     fi
 }

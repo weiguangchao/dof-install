@@ -345,7 +345,6 @@ EOF
         save_gm_user $gm_name $gm_password
     fi
 
-    # 设置用户权限
     mysql -uroot -p$ROOT_PASSWORD <<EOF
 grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD";
 grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
@@ -358,8 +357,7 @@ EOF
 function init_game_database() {
     log_info "初始化大区数据库..."
 
-    # 使用game用户初始化数据库
-    mysql -ugame -p$GAME_PASSWORD <<EOF
+    mysql -uroot -p$ROOT_PASSWORD <<EOF
 -- 初始化数据库
 source $BASE_DIR/init_sql/d_channel.sql
 source $BASE_DIR/init_sql/d_guild.sql

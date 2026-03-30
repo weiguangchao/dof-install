@@ -355,6 +355,11 @@ EOF
 }
 
 function init_game_database() {
+    local mysql_host=$1
+    local mysql_port=$2
+    local mysql_user=$3
+    local mysql_password=$4
+
     log_info "初始化大区数据库..."
 
     mysql -uroot -p$ROOT_PASSWORD <<EOF

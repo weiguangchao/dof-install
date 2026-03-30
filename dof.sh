@@ -387,7 +387,7 @@ source $BASE_DIR/init_sql/taiwan_se_event.sql
 source $BASE_DIR/init_sql/clean.sql
 
 -- 设置数据库连接配置
-update d_taiwan.db_connect set db_ip="$MYSQL_IP", db_port="$MYSQL_PORT", db_passwd="$DEC_GAME_PASSWORD";
+update d_taiwan.db_connect set db_ip="$mysql_ip", db_port="$mysql_port", db_passwd="$DEC_GAME_PASSWORD";
 
 -- 自动尊10
 -- alter table taiwan_cain.pvp_result modify column pvp_grade int(11) not null default 29;

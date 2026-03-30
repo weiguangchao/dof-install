@@ -355,14 +355,14 @@ EOF
 }
 
 function init_game_database() {
-    local mysql_host=$1
+    local mysql_ip=$1
     local mysql_port=$2
     local mysql_user=$3
     local mysql_password=$4
 
     log_info "初始化大区数据库..."
 
-    mysql -uroot -p$ROOT_PASSWORD <<EOF
+    mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
 -- 初始化数据库
 source $BASE_DIR/init_sql/d_channel.sql
 source $BASE_DIR/init_sql/d_guild.sql
@@ -658,7 +658,7 @@ function reinstall_database() {
     remove_mysql
     install_mysql
     init_database
-    init_game_database
+    init_game_database "$MYSQL_IP" "$MYSQL_PORT" "root" "$ROOT_PASSWORD"
     clean_database_install_files
 }
 

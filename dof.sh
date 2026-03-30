@@ -115,7 +115,7 @@ function check_system() {
 
     local system_version=$(cat /etc/redhat-release)
 
-    if grep -q "CentOS Linux release 7" <<< "$system_version"; then
+    if grep -q "CentOS Linux release 7" <<<"$system_version"; then
         log_success "系统版本: $system_version"
     else
         log_error "请使用CentOS7系统, 当前系统版本: $system_version"
@@ -333,16 +333,8 @@ function init_database() {
 alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
 flush privileges;
 EOF
-    if [ $? -ne 0 ]; then
-        log_error "本地数据库初始化失败!!!"
-        exit
-    fi
 
-    log_success "本地数据库初始化成功!!! root密码: $ROOT_PASSWORD"
-}
-
-function init_game_database() {
-    log_info "初始化大区数据库..."
+    log_success "MySQL root密码: $ROOT_PASSWORD"
 
     # 获取gm用户名和密码
     local gm_name=$(get_gm_name)
@@ -350,7 +342,6 @@ function init_game_database() {
     if [ -z "$gm_name" ] || [ -z "$gm_password" ]; then
         gm_name=$(random_string 8)
         gm_password=$(random_string 12)
-        # 将gm用户密码写入文件
         save_gm_user $gm_name $gm_password
     fi
 
@@ -360,12 +351,12 @@ grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD"
 grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
 flush privileges;
 EOF
-    if [ $? -ne 0 ]; then
-        log_error "初始化game用户失败!!!"
-        exit
-    fi
 
-    log_success "GM 用户名: $gm_name 密码: $gm_password"
+    log_success "MySQL GM 用户名: $gm_name 密码: $gm_password"
+}
+
+function init_game_database() {
+    log_info "初始化大区数据库..."
 
     # 使用game用户初始化数据库
     mysql -ugame -p$GAME_PASSWORD <<EOF

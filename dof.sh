@@ -316,7 +316,6 @@ function init_database() {
 
     systemctl daemon-reload
     systemctl stop mysqld
-    systemctl enable mysqld
 
     mkdir -p $MYSQL_DIR/data
     mkdir -p $MYSQL_DIR/base
@@ -334,6 +333,7 @@ function init_database() {
         --user=mysql \
         --explicit_defaults_for_timestamp
 
+    systemctl enable mysqld
     systemctl start mysqld
     mysql -uroot --skip-password <<EOF
 alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';

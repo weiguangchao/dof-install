@@ -349,7 +349,6 @@ flush privileges;
 EOF
 
     log_warning "MySQL 初始化完成 - 用户名: root, 密码: $ROOT_PASSWORD"
-
 }
 
 function remove_game_server() {

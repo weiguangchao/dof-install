@@ -275,18 +275,18 @@ function create_swap() {
 }
 
 function remove_mysql() {
-    systemctl disable mysqld
-    systemctl stop mysqld
+    systemctl disable mysqld 2>/dev/null || true
+    systemctl stop mysqld 2>/dev/null || true
 
-    chkconfig mysql off
-    service mysql stop
+    chkconfig mysql off 2>/dev/null || true
+    service mysql stop 2>/dev/null || true
 
     log_success "MySQL服务已停止"
 
-    rpm -qa | grep mariadb | xargs rpm -e --nodeps
-    rpm -qa | grep MariaDB | xargs rpm -e --nodeps
-    rpm -qa | grep mysql | xargs rpm -e --nodeps
-    rpm -qa | grep MySQL | xargs rpm -e --nodeps
+    rpm -qa | grep mariadb | xargs -r rpm -e --nodeps 2>/dev/null || true
+    rpm -qa | grep MariaDB | xargs -r rpm -e --nodeps 2>/dev/null || true
+    rpm -qa | grep mysql | xargs -r rpm -e --nodeps 2>/dev/null || true
+    rpm -qa | grep MySQL | xargs -r rpm -e --nodeps 2>/dev/null || true
 
     log_success "MySQL安装包卸载完成"
 
@@ -296,8 +296,8 @@ function remove_mysql() {
 
     log_success "MySQL数据文件删除完成"
 
-    userdel -f mysql
-    groupdel -f mysql
+    userdel -f mysql 2>/dev/null || true
+    groupdel -f mysql 2>/dev/null || true
 
     log_success "MySQL用户和组删除完成"
 
@@ -330,7 +330,8 @@ function clean_database_install_files() {
 }
 
 function init_database() {
-    systemctl stop mysqld
+    systemctl daemon-reload
+    systemctl stop mysqld 2>/dev/null || true
     systemctl enable mysqld
 
     log_success "MySQL服务设置完成"

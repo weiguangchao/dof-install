@@ -245,7 +245,7 @@ function create_swap() {
     # 如果swap文件已存在，先删除
     if [ -f "$SWAP_FILE" ]; then
         log_warning "检测到已存在的swap文件, 正在删除..."
-        rm -f "$SWAP_FILE"
+        rm -rf "$SWAP_FILE"
     fi
 
     log_info "创建swap文件$SWAP_FILE, 大小${swap_size_formatted}..."

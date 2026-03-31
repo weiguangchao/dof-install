@@ -171,8 +171,6 @@ function install_yum_dependency() {
 }
 
 function performance_optimize() {
-    log_info "系统性能优化..."
-
     # 禁用SELinux
     if command -v setenforce &>/dev/null && [ -f /etc/selinux/config ]; then
         setenforce 0 2>/dev/null || true
@@ -181,27 +179,25 @@ function performance_optimize() {
         else
             echo "SELINUX=disabled" >>/etc/selinux/config
         fi
-        log_info "SELinux 已禁用"
+        log_success "SELinux 已禁用"
     else
-        log_info "SELinux 未安装或已禁用，跳过"
+        log_warning "SELinux 未安装或已禁用，跳过"
     fi
 
-    log_success "系统性能优化成功!!!"
+    log_success "系统性能优化完成"
 }
 
 function create_swap() {
-    log_info "创建swap分区..."
-
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
     # 内存 > 6GB
     if [ $memory -ge 6000 ]; then
-        log_warning "内存 > 6GB, 无需设置swap分区!!!"
+        log_warning "内存 > 6GB, 无需设置swap分区"
         return
     fi
 
     if [ -n "$(swapon --show)" ]; then
-        log_warning "swap分区已存在, 无需进行设置!!!"
+        log_warning "swap分区已存在, 无需进行设置"
         return
     fi
 
@@ -218,17 +214,17 @@ function create_swap() {
     # 检查磁盘剩余空间
     local available_space=$(df -m / | awk 'NR==2 {print $4}')
     if [ "$available_space" -lt "$swap_size" ]; then
-        log_error "磁盘剩余空间不足!!! 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
+        log_error "磁盘剩余空间不足, 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
         exit 1 1
     fi
 
     # 如果swap文件已存在，先删除
     if [ -f "$SWAP_FILE" ]; then
-        log_warning "检测到已存在的swap文件，正在删除..."
+        log_warning "检测到已存在的 swap 文件, 正在删除..."
         rm -f "$SWAP_FILE"
     fi
 
-    log_info "创建swap文件 $SWAP_FILE, 大小 ${swap_size}MB..."
+    log_info "创建 swap 文件 $SWAP_FILE, 大小 ${swap_size}MB..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
@@ -243,7 +239,7 @@ function create_swap() {
     echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
 
     sysctl -p
-    log_success "swap设置成功!!! $(sysctl vm.swappiness)"
+    log_success "swap 设置完成, 当前 swappiness: $(sysctl vm.swappiness)"
     free -h
 }
 

@@ -21,7 +21,7 @@ ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
 
-REQUIRED_DISK_SPACE_GB=10
+REQUIRED_DISK_SPACE_GB=12
 SWAP_FILE="/swapfile"
 BASE_DIR="/root"
 GM_USER_FILE="$BASE_DIR/gm_user"
@@ -240,15 +240,6 @@ function create_swap() {
     if [ $memory -ge $((4 * 1024)) ]; then
         swap_size=$((4 * 1024))
         vm_swappiness=75
-    fi
-
-    # 检查磁盘剩余空间
-    local available_space=$(df -m / | awk 'NR==2 {print $4}')
-    local available_formatted=$(format_size "$available_space")
-    local swap_size_formatted=$(format_size "$swap_size")
-    if [ "$available_space" -lt "$swap_size" ]; then
-        log_error "磁盘剩余空间不足, 需要${swap_size_formatted}, 实际可用${available_formatted}"
-        exit 1
     fi
 
     # 如果swap文件已存在，先删除

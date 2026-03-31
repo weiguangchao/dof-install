@@ -64,7 +64,7 @@ function random_string() {
     # 验证：必须是正整数
     if ! [[ "$length" =~ ^[1-9][0-9]*$ ]]; then
         log_error "错误：长度必须是正整数"
-        return 1
+        exit 1
     fi
 
     # 使用 /dev/urandom 生成加密安全的随机字符串
@@ -138,15 +138,15 @@ function check_disk_space() {
     local available_mb=$(df -m / | awk 'NR==2 {print $4}')
 
     if [ "$available_mb" -lt "$required_mb" ]; then
-        log_error "磁盘空间不足!!! 需要至少 ${REQUIRED_DISK_SPACE_GB}GB, 实际可用 ${available_mb}MB"
-        exit 1 1
+        log_error "磁盘空间不足, 需要至少 ${REQUIRED_DISK_SPACE_GB}GB, 实际可用 ${available_mb}MB"
+        exit 1
     fi
 
-    log_success "磁盘空间检查通过: ${available_mb}MB 可用"
+    log_success "磁盘空间检查通过: ${available_mb}MB可用"
 }
 
 function install_yum_dependency() {
-    log_info "安装yum依赖..."
+    log_info "开始安装yum依赖..."
 
     mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
     curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
@@ -167,7 +167,7 @@ function install_yum_dependency() {
         net-tools \
         GeoIP.i686
 
-    log_success "yum依赖安装成功!!!"
+    log_success "yum依赖安装完成"
 }
 
 function performance_optimize() {
@@ -179,9 +179,9 @@ function performance_optimize() {
         else
             echo "SELINUX=disabled" >>/etc/selinux/config
         fi
-        log_success "SELinux 已禁用"
+        log_info "SELinux已禁用"
     else
-        log_warning "SELinux 未安装或已禁用，跳过"
+        log_warning "SELinux未安装或已禁用, 跳过"
     fi
 
     log_success "系统性能优化完成"
@@ -214,24 +214,23 @@ function create_swap() {
     # 检查磁盘剩余空间
     local available_space=$(df -m / | awk 'NR==2 {print $4}')
     if [ "$available_space" -lt "$swap_size" ]; then
-        log_error "磁盘剩余空间不足, 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
-        exit 1 1
+        log_error "磁盘剩余空间不足, 需要${swap_size}MB, 实际可用${available_space}MB"
+        exit 1
     fi
 
     # 如果swap文件已存在，先删除
     if [ -f "$SWAP_FILE" ]; then
-        log_warning "检测到已存在的 swap 文件, 正在删除..."
+        log_warning "检测到已存在的swap文件, 正在删除..."
         rm -f "$SWAP_FILE"
     fi
 
-    log_info "创建 swap 文件 $SWAP_FILE, 大小 ${swap_size}MB..."
+    log_info "创建swap文件$SWAP_FILE, 大小${swap_size}MB..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE
     mkswap $SWAP_FILE
     swapon $SWAP_FILE
 
-    # 删除旧的swap配置（如果存在）
     sed -i "$SWAP_FILE swap swap/d" /etc/fstab
     sed -i '/vm.swappiness/d' /etc/sysctl.conf
 
@@ -239,8 +238,7 @@ function create_swap() {
     echo "vm.swappiness=$vm_swappiness" >>/etc/sysctl.conf
 
     sysctl -p
-    log_success "swap 设置完成, 当前 swappiness: $(sysctl vm.swappiness)"
-    free -h
+    log_success "swap设置完成, 当前$(sysctl vm.swappiness), swap容量: $(free -h | awk '/^Swap:/{print $2}')"
 }
 
 function remove_mysql() {
@@ -250,27 +248,27 @@ function remove_mysql() {
     chkconfig mysql off
     service mysql stop
 
-    log_success "MySQL 服务已停止"
+    log_success "MySQL服务已停止"
 
     rpm -qa | grep mariadb | xargs rpm -e --nodeps
     rpm -qa | grep MariaDB | xargs rpm -e --nodeps
     rpm -qa | grep mysql | xargs rpm -e --nodeps
     rpm -qa | grep MySQL | xargs rpm -e --nodeps
 
-    log_success "MySQL 安装包卸载完成"
+    log_success "MySQL安装包卸载完成"
 
     rm -rf /etc/my.cnf
     rm -rf /var/lib/mysql
     rm -rf $MYSQL_DIR
 
-    log_success "MySQL 数据文件删除完成"
+    log_success "MySQL数据文件删除完成"
 
     userdel -f mysql
     groupdel -f mysql
 
-    log_success "MySQL 用户和组删除完成"
+    log_success "MySQL用户和组删除完成"
 
-    log_success "MySQL 卸载完成"
+    log_success "MySQL卸载完成"
 }
 
 function install_mysql() {
@@ -285,7 +283,7 @@ function install_mysql() {
     rpm -ivh mysql-community-client-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-server-5.7.44-1.el7.x86_64.rpm
 
-    log_success "MySQL 安装成功"
+    log_success "MySQL安装完成"
 }
 
 function clean_database_install_files() {
@@ -302,7 +300,7 @@ function init_database() {
     systemctl stop mysqld
     systemctl enable mysqld
 
-    log_success "MySQL 服务设置成功"
+    log_success "MySQL服务设置完成"
 
     mkdir -p $MYSQL_DIR/data
     mkdir -p $MYSQL_DIR/base
@@ -326,7 +324,7 @@ alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
 flush privileges;
 EOF
 
-    log_warning "MySQL 初始化完成, root密码: $ROOT_PASSWORD"
+    log_warning "MySQL初始化完成, root用户密码: $ROOT_PASSWORD"
 
 }
 
@@ -351,7 +349,7 @@ grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
 flush privileges;
 EOF
 
-    log_warning "MySQL GM 用户创建成功, 用户名: $gm_name 密码: $gm_password"
+    log_warning "MySQL GM用户创建完成, 用户名: $gm_name 密码: $gm_password"
 
     mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
 source $BASE_DIR/init_sql/d_channel.sql
@@ -424,9 +422,9 @@ function remove_dofserver() {
 
 function install_dofserver() {
     local server_ip=""
-    read -p "输入服务器 IP: " server_ip
+    read -p "输入服务器IP: " server_ip
     if [ -z "$server_ip" ]; then
-        log_error "服务器 IP 不能为空"
+        log_error "服务器IP不能为空"
         exit 1
     fi
 
@@ -455,7 +453,7 @@ function install_dofserver() {
     chmod -R 755 ./GameRestart
     chown root:root ./GameRestart
 
-    log_success "DOF Server安装完成 ($server_ip)"
+    log_success "DOF Server安装完成, 服务器IP: $server_ip"
 
     remove_dofserver_install_files
 }
@@ -487,7 +485,7 @@ function init_server_group() {
 
     local server_ip=$(cat /root/PUBLIC_IP 2>/dev/null || true)
     if [ -z "$server_ip" ]; then
-        log_error "PUBLIC_IP 为空"
+        log_error "PUBLIC_IP为空"
         exit 1
     fi
 
@@ -559,7 +557,7 @@ function download_files() {
 
 function download_mysql() {
     if [ -f MySQL.tar.gz ]; then
-        log_warning "MySQL.tar.gz 已存在"
+        log_warning "MySQL.tar.gz已存在"
         return
     fi
 
@@ -567,16 +565,16 @@ function download_mysql() {
     wget "$MYSQL_DOWNLOAD_URL"
 
     if [ ! -f MySQL.tar.gz ]; then
-        log_error "MySQL.tar.gz 下载失败"
+        log_error "MySQL.tar.gz下载失败"
         exit 1
     fi
 
-    log_success "MySQL.tar.gz 下载完成"
+    log_success "MySQL.tar.gz下载完成"
 }
 
 function download_dofserver() {
     if [ -f Game.tar.gz ]; then
-        log_warning "Game.tar.gz 已存在"
+        log_warning "Game.tar.gz已存在"
         return
     fi
 
@@ -584,11 +582,11 @@ function download_dofserver() {
     wget "$GAME_DOWNLOAD_URL"
 
     if [ ! -f Game.tar.gz ]; then
-        log_error "Game.tar.gz 下载失败"
+        log_error "Game.tar.gz下载失败"
         exit 1
     fi
 
-    log_success "Game.tar.gz 下载完成"
+    log_success "Game.tar.gz下载完成"
 }
 
 function prepare_dof() {
@@ -596,7 +594,9 @@ function prepare_dof() {
         return
     fi
 
-    log_error "准备安装环境, 按任意键继续..."
+    log_error "===================================================="
+    log_error "=============准备安装环境,按任意键继续=============="
+    log_error "===================================================="
     read -n 1 -s -r
 
     check_system
@@ -609,7 +609,9 @@ function prepare_dof() {
     download_files
 
     touch $PREPARE_DOF_FILE
-    log_error "DOF安装环境初始化成功, 按任意键重启..."
+    log_error "===================================================="
+    log_error "===========DOF安装环境初始化成功,按任意键重启==========="
+    log_error "===================================================="
     read -n 1 -s -r
     reboot
 }

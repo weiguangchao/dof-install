@@ -288,28 +288,20 @@ function remove_mysql() {
     rpm -qa | grep mysql | xargs -r rpm -e --nodeps 2>/dev/null || true
     rpm -qa | grep MySQL | xargs -r rpm -e --nodeps 2>/dev/null || true
 
-    log_success "MySQL安装包卸载完成"
-
     rm -rf /etc/my.cnf
     rm -rf /var/lib/mysql
     rm -rf $MYSQL_DIR
 
-    log_success "MySQL数据文件删除完成"
-
     userdel -f mysql 2>/dev/null || true
     groupdel -f mysql 2>/dev/null || true
-
-    log_success "MySQL用户和组删除完成"
 
     log_success "MySQL卸载完成"
 }
 
 function install_mysql() {
+    log_info "开始安装MySQL..."
     cd $BASE_DIR
-    tar -zxvf MySQL.tar.gz --no-overwrite-dir
-
-    chown -R root:root /root
-    chmod -R 755 /root
+    tar -zxvf MySQL.tar.gz --no-overwrite-dir --no-same-owner
 
     rpm -ivh mysql-community-common-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-libs-5.7.44-1.el7.x86_64.rpm
@@ -325,21 +317,21 @@ function remove_database_install_files() {
     rm -rf $BASE_DIR/mysql-community-client-5.7.44-1.el7.x86_64.rpm
     rm -rf $BASE_DIR/mysql-community-server-5.7.44-1.el7.x86_64.rpm
 
-    log_success "数据库安装文件清理完成"
+    log_info "数据库安装文件清理完成"
 }
 
 function remove_database_init_files() {
     rm -rf $BASE_DIR/init_sql
 
-    log_success "数据库初始化文件清理完成"
+    log_info "数据库初始化文件清理完成"
 }
 
 function init_database() {
+    log_info "开始初始化MySQL..."
+
     systemctl daemon-reload
     systemctl stop mysqld 2>/dev/null || true
     systemctl enable mysqld
-
-    log_success "MySQL服务设置完成"
 
     mkdir -p $MYSQL_DIR/data
     mkdir -p $MYSQL_DIR/base
@@ -368,6 +360,8 @@ EOF
 }
 
 function init_game_database() {
+    log_info "开始初始化游戏数据库..."
+
     local mysql_ip=$1
     local mysql_port=$2
     local mysql_user=$3
@@ -456,10 +450,12 @@ function remove_dofserver() {
     rm -rf $BASE_DIR/stop
     rm -rf $BASE_DIR/GameRestart
 
-    log_success "DOF Server卸载完成"
+    log_info "DOF Server卸载完成"
 }
 
 function install_dofserver() {
+    log_info "开始安装DOF Server..."
+
     local server_ip="$1"
     if [ -z "$server_ip" ]; then
         log_error "服务器IP不能为空"
@@ -469,27 +465,10 @@ function install_dofserver() {
     echo $server_ip >/root/SERVER_IP
 
     cd $BASE_DIR
-    tar -zxvf Game.tar.gz --no-overwrite-dir
+    tar -zxvf Game.tar.gz --no-overwrite-dir --no-same-owner
 
-    chown -R root:root /root
-    chmod -R 755 /root
-
-    chmod -R 755 ./usr/lib
-    chown -R root:root ./usr/lib
     mv ./usr/lib/* /usr/lib
-
-    chmod -R 755 ./home/neople
-    chown -R root:root ./home/neople
     mv ./home/neople /home
-
-    chmod -R 755 ./run
-    chown root:root ./run
-
-    chmod -R 755 ./stop
-    chown root:root ./stop
-
-    chmod -R 755 ./GameRestart
-    chown root:root ./GameRestart
 
     log_success "DOF Server安装完成, 服务器IP: $server_ip"
 }
@@ -499,7 +478,7 @@ function remove_dofserver_install_files() {
     rm -rf ./home
     rm -rf ./usr
 
-    log_success "DOF Server安装文件删除完成"
+    log_info "DOF Server安装文件删除完成"
 }
 
 function init_server_group() {
@@ -507,6 +486,8 @@ function init_server_group() {
     local server_group=$2
     local mysql_ip=$3
     local mysql_port=$4
+
+    log_info "开始初始化大区频道..."
 
     if [ -z "$server_ip" ]; then
         log_error "服务器IP不能为空"
@@ -592,6 +573,7 @@ function backup_database() {
     mysqldump -uroot -p$ROOT_PASSWORD \
         --databases $databases \
         >/root/dof_bakup.sql
+
     log_success "数据库备份完成"
 }
 
@@ -624,7 +606,7 @@ function download_mysql() {
         exit 1
     fi
 
-    log_success "MySQL.tar.gz下载完成"
+    log_info "MySQL.tar.gz下载完成"
 }
 
 function download_dofserver() {
@@ -641,7 +623,7 @@ function download_dofserver() {
         exit 1
     fi
 
-    log_success "Game.tar.gz下载完成"
+    log_info "Game.tar.gz下载完成"
 }
 
 function prepare_dof() {

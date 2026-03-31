@@ -72,6 +72,36 @@ function random_string() {
     echo
 }
 
+# 格式化存储单位（MB -> GB/TB 等）
+function format_size() {
+    local size_mb="$1"
+    local units=("MB" "GB" "TB" "PB")
+    local index=0
+    local size="$size_mb"
+
+    while (($(echo "$size >= 1024" | bc -l 2>/dev/null || echo "0"))) && [ $index -lt 3 ]; do
+        size=$(echo "scale=2; $size / 1024" | bc)
+        ((index++))
+    done
+
+    # 如果bc不可用，使用简单计算
+    if [ -z "$size" ] || [ "$size" = "0" ]; then
+        size="$size_mb"
+        index=0
+        while [ "${size%.*}" -ge 1024 ] 2>/dev/null && [ $index -lt 3 ]; do
+            size=$((size / 1024))
+            ((index++))
+        done
+    fi
+
+    # 去除末尾的.00
+    if [[ "$size" =~ \.00$ ]]; then
+        size="${size%.00}"
+    fi
+
+    echo "${size}${units[$index]}"
+}
+
 function get_gm_name() {
     if [ ! -f "$GM_USER_FILE" ]; then
         echo ""
@@ -136,13 +166,14 @@ function check_root_user() {
 function check_disk_space() {
     local required_mb=$((REQUIRED_DISK_SPACE_GB * 1024))
     local available_mb=$(df -m / | awk 'NR==2 {print $4}')
+    local available_formatted=$(format_size "$available_mb")
 
     if [ "$available_mb" -lt "$required_mb" ]; then
-        log_error "磁盘空间不足, 需要至少 ${REQUIRED_DISK_SPACE_GB}GB, 实际可用 ${available_mb}MB"
+        log_error "磁盘空间不足, 需要至少 ${REQUIRED_DISK_SPACE_GB}GB, 实际可用 ${available_formatted}"
         exit 1
     fi
 
-    log_success "磁盘空间检查通过: ${available_mb}MB可用"
+    log_success "磁盘空间检查通过: ${available_formatted}可用"
 }
 
 function install_yum_dependency() {
@@ -213,8 +244,10 @@ function create_swap() {
 
     # 检查磁盘剩余空间
     local available_space=$(df -m / | awk 'NR==2 {print $4}')
+    local available_formatted=$(format_size "$available_space")
+    local swap_size_formatted=$(format_size "$swap_size")
     if [ "$available_space" -lt "$swap_size" ]; then
-        log_error "磁盘剩余空间不足, 需要${swap_size}MB, 实际可用${available_space}MB"
+        log_error "磁盘剩余空间不足, 需要${swap_size_formatted}, 实际可用${available_formatted}"
         exit 1
     fi
 
@@ -224,7 +257,7 @@ function create_swap() {
         rm -f "$SWAP_FILE"
     fi
 
-    log_info "创建swap文件$SWAP_FILE, 大小${swap_size}MB..."
+    log_info "创建swap文件$SWAP_FILE, 大小${swap_size_formatted}..."
 
     dd if=/dev/zero of=$SWAP_FILE bs=1M count=$swap_size status=progress
     chmod 600 $SWAP_FILE

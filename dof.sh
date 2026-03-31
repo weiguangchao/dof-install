@@ -344,90 +344,6 @@ EOF
 
 }
 
-function init_game_database() {
-    log_info "开始初始化游戏数据库..."
-
-    local mysql_ip=$1
-    local mysql_port=$2
-    local mysql_user=$3
-    local mysql_password=$4
-
-    # 创建 GM 用户
-    local gm_name=$(get_gm_name)
-    local gm_password=$(get_gm_password)
-    if [ -z "$gm_name" ] || [ -z "$gm_password" ]; then
-        gm_name=$(random_string 8)
-        gm_password=$(random_string 12)
-        save_gm_user $gm_name $gm_password
-    fi
-
-    mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
-grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD";
-grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
-flush privileges;
-EOF
-
-    log_warning "MySQL GM 用户创建完成 - 用户名: $gm_name, 密码: $gm_password"
-
-    mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
-source $BASE_DIR/init_sql/d_channel.sql
-source $BASE_DIR/init_sql/d_guild.sql
-source $BASE_DIR/init_sql/d_taiwan.sql
-source $BASE_DIR/init_sql/d_taiwan_secu.sql
-source $BASE_DIR/init_sql/d_technical_report.sql
-source $BASE_DIR/init_sql/taiwan_billing.sql
-source $BASE_DIR/init_sql/taiwan_cain.sql
-source $BASE_DIR/init_sql/taiwan_cain_2nd.sql
-source $BASE_DIR/init_sql/taiwan_cain_auction_cera.sql
-source $BASE_DIR/init_sql/taiwan_cain_auction_gold.sql
-source $BASE_DIR/init_sql/taiwan_cain_log.sql
-source $BASE_DIR/init_sql/taiwan_cain_web.sql
-source $BASE_DIR/init_sql/taiwan_game_event.sql
-source $BASE_DIR/init_sql/taiwan_login.sql
-source $BASE_DIR/init_sql/taiwan_login_play.sql
-source $BASE_DIR/init_sql/taiwan_main_web.sql
-source $BASE_DIR/init_sql/taiwan_mng_manager.sql
-source $BASE_DIR/init_sql/taiwan_prod.sql
-source $BASE_DIR/init_sql/taiwan_pvp.sql
-source $BASE_DIR/init_sql/taiwan_se_event.sql
-source $BASE_DIR/init_sql/clean.sql
-
--- 设置数据库连接配置
-update d_taiwan.db_connect set db_ip="$mysql_ip", db_port="$mysql_port", db_passwd="$DEC_GAME_PASSWORD";
-
--- 自动尊10
--- alter table taiwan_cain.pvp_result modify column pvp_grade int(11) not null default 29;
-
--- 解除创建角色数量限制
-use d_taiwan;
-drop trigger if exists update_limit_create_character;
-
-delimiter $
-
-create trigger update_limit_create_character
-before update on limit_create_character
-for each row
-begin
-    if new.count = 2 then
-        set new.count = 0;
-    end if;
-end
-$
-
-delimiter ;
-
--- 修复晶体契约重新登陆后消失
-use taiwan_cain;
-create table cube_premium (
-    charac_no int,
-    selected int,
-    cube_type int
-);
-EOF
-
-    log_success "大区数据库初始化完成"
-}
-
 function remove_game_server() {
     rm -rf $NEOPLE_DIR
     rm -rf $BASE_DIR/run
@@ -517,6 +433,90 @@ function init_server_group() {
     find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_PORT/$mysql_port/g" {} +
 
     log_success "${SERVER_GROUP_NAME}频道初始化完成"
+}
+
+function init_game_database() {
+    log_info "开始初始化游戏数据库..."
+
+    local mysql_ip=$1
+    local mysql_port=$2
+    local mysql_user=$3
+    local mysql_password=$4
+
+    # 创建 GM 用户
+    local gm_name=$(get_gm_name)
+    local gm_password=$(get_gm_password)
+    if [ -z "$gm_name" ] || [ -z "$gm_password" ]; then
+        gm_name=$(random_string 8)
+        gm_password=$(random_string 12)
+        save_gm_user $gm_name $gm_password
+    fi
+
+    mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
+grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD";
+grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
+flush privileges;
+EOF
+
+    log_warning "MySQL GM 用户创建完成 - 用户名: $gm_name, 密码: $gm_password"
+
+    mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
+source $BASE_DIR/init_sql/d_channel.sql
+source $BASE_DIR/init_sql/d_guild.sql
+source $BASE_DIR/init_sql/d_taiwan.sql
+source $BASE_DIR/init_sql/d_taiwan_secu.sql
+source $BASE_DIR/init_sql/d_technical_report.sql
+source $BASE_DIR/init_sql/taiwan_billing.sql
+source $BASE_DIR/init_sql/taiwan_cain.sql
+source $BASE_DIR/init_sql/taiwan_cain_2nd.sql
+source $BASE_DIR/init_sql/taiwan_cain_auction_cera.sql
+source $BASE_DIR/init_sql/taiwan_cain_auction_gold.sql
+source $BASE_DIR/init_sql/taiwan_cain_log.sql
+source $BASE_DIR/init_sql/taiwan_cain_web.sql
+source $BASE_DIR/init_sql/taiwan_game_event.sql
+source $BASE_DIR/init_sql/taiwan_login.sql
+source $BASE_DIR/init_sql/taiwan_login_play.sql
+source $BASE_DIR/init_sql/taiwan_main_web.sql
+source $BASE_DIR/init_sql/taiwan_mng_manager.sql
+source $BASE_DIR/init_sql/taiwan_prod.sql
+source $BASE_DIR/init_sql/taiwan_pvp.sql
+source $BASE_DIR/init_sql/taiwan_se_event.sql
+source $BASE_DIR/init_sql/clean.sql
+
+-- 设置数据库连接配置
+update d_taiwan.db_connect set db_ip="$mysql_ip", db_port="$mysql_port", db_passwd="$DEC_GAME_PASSWORD";
+
+-- 自动尊10
+-- alter table taiwan_cain.pvp_result modify column pvp_grade int(11) not null default 29;
+
+-- 解除创建角色数量限制
+use d_taiwan;
+drop trigger if exists update_limit_create_character;
+
+delimiter $
+
+create trigger update_limit_create_character
+before update on limit_create_character
+for each row
+begin
+    if new.count = 2 then
+        set new.count = 0;
+    end if;
+end
+$
+
+delimiter ;
+
+-- 修复晶体契约重新登陆后消失
+use taiwan_cain;
+create table cube_premium (
+    charac_no int,
+    selected int,
+    cube_type int
+);
+EOF
+
+    log_success "大区数据库初始化完成"
 }
 
 function clean_log_files() {

@@ -524,13 +524,13 @@ function init_server_group() {
     fi
 
     cd $NEOPLE_DIR
-    sed -i "s/PUBLIC_IP/$server_ip/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
-    sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
-    sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
-    sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/PUBLIC_IP/$server_ip/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" {} +
 
-    sed -i "s/MYSQL_IP/$MYSQL_IP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
-    sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_IP/$MYSQL_IP/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" {} +
 
     log_success "${SERVER_GROUP_NAME}频道初始化完成"
 }

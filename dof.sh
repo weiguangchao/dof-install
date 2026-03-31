@@ -319,7 +319,7 @@ function install_mysql() {
     log_success "MySQL安装完成"
 }
 
-function clean_database_install_files() {
+function remove_database_install_files() {
     rm -rf $BASE_DIR/init_sql
     rm -rf $BASE_DIR/mysql-community-common-5.7.44-1.el7.x86_64.rpm
     rm -rf $BASE_DIR/mysql-community-libs-5.7.44-1.el7.x86_64.rpm
@@ -329,7 +329,7 @@ function clean_database_install_files() {
     log_success "数据库安装文件清理完成"
 }
 
-function clean_database_init_files() {
+function remove_database_init_files() {
     rm -rf $BASE_DIR/init_sql
 
     log_success "数据库初始化文件清理完成"
@@ -466,8 +466,6 @@ create table cube_premium (
 EOF
 
     log_success "大区数据库初始化完成"
-
-    clean_database_init_files
 }
 
 function remove_dofserver() {
@@ -513,8 +511,6 @@ function install_dofserver() {
     chown root:root ./GameRestart
 
     log_success "DOF Server安装完成, 服务器IP: $server_ip"
-
-    remove_dofserver_install_files
 }
 
 function remove_dofserver_install_files() {
@@ -711,13 +707,17 @@ function reinstall_dofserver() {
     install_dofserver "$server_ip"
     init_server_group "$server_ip" "$DEFAULT_SERVER_GROUP" "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT"
     init_game_database "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT" "root" "$ROOT_PASSWORD"
+
+    remove_dofserver_install_files
+    remove_database_init_files
 }
 
 function reinstall_database() {
     remove_mysql
     install_mysql
     init_database
-    clean_database_install_files
+
+    remove_database_install_files
 }
 
 function echo_banner() {

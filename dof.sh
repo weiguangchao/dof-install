@@ -315,7 +315,7 @@ function init_database() {
     log_info "开始初始化MySQL..."
 
     systemctl daemon-reload
-    systemctl stop mysqld 2>/dev/null || true
+    systemctl stop mysqld
     systemctl enable mysqld
 
     mkdir -p $MYSQL_DIR/data

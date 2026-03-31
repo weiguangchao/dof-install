@@ -320,7 +320,6 @@ function install_mysql() {
 }
 
 function remove_database_install_files() {
-    rm -rf $BASE_DIR/init_sql
     rm -rf $BASE_DIR/mysql-community-common-5.7.44-1.el7.x86_64.rpm
     rm -rf $BASE_DIR/mysql-community-libs-5.7.44-1.el7.x86_64.rpm
     rm -rf $BASE_DIR/mysql-community-client-5.7.44-1.el7.x86_64.rpm

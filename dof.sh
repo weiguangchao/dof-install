@@ -592,7 +592,6 @@ function download_files() {
 
 function download_mysql() {
     if [ -f MySQL.tar.gz ]; then
-        log_warning "MySQL.tar.gz已存在"
         return
     fi
 
@@ -609,7 +608,6 @@ function download_mysql() {
 
 function download_dofserver() {
     if [ -f Game.tar.gz ]; then
-        log_warning "Game.tar.gz已存在"
         return
     fi
 

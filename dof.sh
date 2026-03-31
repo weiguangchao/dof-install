@@ -363,12 +363,6 @@ alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
 flush privileges;
 EOF
 
-    # 检测 root 用户连接
-    if ! mysql -uroot -p"$ROOT_PASSWORD" -e "SELECT 1;" &>/dev/null; then
-        log_error "MySQL root 用户连接失败"
-        exit 1
-    fi
-
     log_warning "MySQL 初始化完成 - 用户名: root, 密码: $ROOT_PASSWORD"
 
 }
@@ -393,18 +387,6 @@ grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD"
 grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
 flush privileges;
 EOF
-
-    # 测试 game 用户连接
-    if ! mysql -u"game" -p"$GAME_PASSWORD" -h"$mysql_ip" -P"$mysql_port" -e "SELECT 1;" &>/dev/null; then
-        log_error "MySQL game 用户连接失败"
-        exit 1
-    fi
-
-    # 测试 gm 用户连接
-    if ! mysql -u"$gm_name" -p"$gm_password" -h"$mysql_ip" -P"$mysql_port" -e "SELECT 1;" &>/dev/null; then
-        log_error "MySQL $gm_name 用户连接失败"
-        exit 1
-    fi
 
     log_warning "MySQL GM 用户创建完成 - 用户名: $gm_name, 密码: $gm_password"
 

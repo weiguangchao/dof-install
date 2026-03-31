@@ -163,6 +163,14 @@ function check_root_user() {
     log_success "当前用户: root"
 }
 
+function check_current_dir() {
+    if [ "$(pwd)" != "$BASE_DIR" ]; then
+        log_error "请在$BASE_DIR目录下执行此脚本, 当前目录: $(pwd)"
+        exit 1
+    fi
+    log_success "当前目录: $(pwd)"
+}
+
 function check_disk_space() {
     local required_mb=$((REQUIRED_DISK_SPACE_GB * 1024))
     local available_mb=$(df -m / | awk 'NR==2 {print $4}')
@@ -616,8 +624,9 @@ function prepare_dof() {
     read -n 1 -s -r
 
     check_system
-    check_root_user
     check_disk_space
+    check_root_user
+    check_current_dir
 
     performance_optimize
     create_swap

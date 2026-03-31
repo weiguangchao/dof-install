@@ -567,12 +567,12 @@ function backup_database() {
 }
 
 function restore_database() {
-    if [ ! -f /root/dof_bakup.sql ]; then
-        log_error "dof_bakup.sql未找到在/root目录下"
+    if [ ! -f "${BASE_DIR}/dof_bakup.sql" ]; then
+        log_error "dof_bakup.sql未找到在 ${BASE_DIR} 目录下"
         exit 1
     fi
 
-    mysql -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
+    mysql -uroot -p$ROOT_PASSWORD <"${BASE_DIR}/dof_bakup.sql"
     log_success "数据库恢复完成"
 }
 

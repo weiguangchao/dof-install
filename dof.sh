@@ -462,8 +462,6 @@ function install_dofserver() {
         exit 1
     fi
 
-    echo $server_ip >/root/SERVER_IP
-
     cd $BASE_DIR
     tar -zxvf Game.tar.gz --no-overwrite-dir --no-same-owner
 

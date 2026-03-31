@@ -320,12 +320,6 @@ function remove_database_install_files() {
     log_info "数据库安装文件清理完成"
 }
 
-function remove_database_init_files() {
-    rm -rf $BASE_DIR/init_sql
-
-    log_info "数据库初始化文件清理完成"
-}
-
 function init_database() {
     log_info "开始初始化MySQL..."
 
@@ -443,18 +437,17 @@ EOF
     log_success "大区数据库初始化完成"
 }
 
-function remove_dofserver() {
+function remove_game_server() {
     rm -rf $NEOPLE_DIR
-    rm -rf $BASE_DIR/PUBLIC_IP
     rm -rf $BASE_DIR/run
     rm -rf $BASE_DIR/stop
     rm -rf $BASE_DIR/GameRestart
 
-    log_info "DOF Server卸载完成"
+    log_info "Game Server卸载完成"
 }
 
-function install_dofserver() {
-    log_info "开始安装DOF Server..."
+function install_game_server() {
+    log_info "开始安装Game Server..."
 
     local server_ip="$1"
     if [ -z "$server_ip" ]; then
@@ -466,17 +459,17 @@ function install_dofserver() {
     tar -zxvf Game.tar.gz --no-overwrite-dir --no-same-owner
 
     mv ./usr/lib/* /usr/lib
-    mv ./home/neople /home
+    mv ./home/* /home
 
-    log_success "DOF Server安装完成, 服务器IP: $server_ip"
+    log_success "Game Server安装完成, 服务器IP: $server_ip"
 }
 
-function remove_dofserver_install_files() {
-    cd $BASE_DIR
-    rm -rf ./home
-    rm -rf ./usr
+function remove_game_server_install_files() {
+    rm -rf $BASE_DIR/home
+    rm -rf $BASE_DIR/usr
+    rm -rf $BASE_DIR/init_sql
 
-    log_info "DOF Server安装文件删除完成"
+    log_info "Game Server安装文件删除完成"
 }
 
 function init_server_group() {
@@ -659,13 +652,12 @@ function reinstall_dofserver() {
         exit 1
     fi
 
-    remove_dofserver
-    install_dofserver "$server_ip"
+    remove_game_server
+    install_game_server "$server_ip"
     init_server_group "$server_ip" "$DEFAULT_SERVER_GROUP" "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT"
     init_game_database "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT" "root" "$ROOT_PASSWORD"
 
-    remove_dofserver_install_files
-    remove_database_init_files
+    remove_game_server_install_files
 }
 
 function reinstall_database() {

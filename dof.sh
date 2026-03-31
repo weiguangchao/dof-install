@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -e
+
 PACKAGE_VERSION="1.0"
 GITHUB_PROXY="https://ghfast.top/"
 GAME_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
@@ -246,34 +248,36 @@ function create_swap() {
 }
 
 function remove_mysql() {
-    log_info "卸载MySQL..."
-
     systemctl disable mysqld
     systemctl stop mysqld
 
     chkconfig mysql off
     service mysql stop
 
+    log_success "MySQL 服务已停止"
+
     rpm -qa | grep mariadb | xargs rpm -e --nodeps
     rpm -qa | grep MariaDB | xargs rpm -e --nodeps
     rpm -qa | grep mysql | xargs rpm -e --nodeps
     rpm -qa | grep MySQL | xargs rpm -e --nodeps
 
-    log_info "删除MySQL数据文件..."
+    log_success "MySQL 安装包卸载完成"
+
     rm -rf /etc/my.cnf
     rm -rf /var/lib/mysql
     rm -rf $MYSQL_DIR
 
-    log_info "删除MySQL用户和组..."
+    log_success "MySQL 数据文件删除完成"
+
     userdel -f mysql
     groupdel -f mysql
 
-    log_success "MySQL卸载成功!!!"
+    log_success "MySQL 用户和组删除完成"
+
+    log_success "MySQL 卸载完成"
 }
 
 function install_mysql() {
-    log_info "安装MySQL..."
-
     cd $BASE_DIR
     tar -zxvf MySQL.tar.gz --no-overwrite-dir
 
@@ -285,31 +289,24 @@ function install_mysql() {
     rpm -ivh mysql-community-client-5.7.44-1.el7.x86_64.rpm
     rpm -ivh mysql-community-server-5.7.44-1.el7.x86_64.rpm
 
-    if [ $? -ne 0 ]; then
-        log_error "MySQL 安装失败, 请检查安装日志!!!"
-        exit
-    fi
-
-    log_success "MySQL 安装成功!!!"
+    log_success "MySQL 安装成功"
 }
 
 function clean_database_install_files() {
-    log_info "清理数据库安装文件..."
-
     rm -rf $BASE_DIR/init_sql
     rm -rf $BASE_DIR/mysql-community-common-5.7.44-1.el7.x86_64.rpm
     rm -rf $BASE_DIR/mysql-community-libs-5.7.44-1.el7.x86_64.rpm
     rm -rf $BASE_DIR/mysql-community-client-5.7.44-1.el7.x86_64.rpm
     rm -rf $BASE_DIR/mysql-community-server-5.7.44-1.el7.x86_64.rpm
 
-    log_success "本地数据库安装文件清理成功!!!"
+    log_success "数据库安装文件清理完成"
 }
 
 function init_database() {
-    log_info "初始化本地数据库..."
-
     systemctl stop mysqld
     systemctl enable mysqld
+
+    log_success "MySQL 服务设置成功"
 
     mkdir -p $MYSQL_DIR/data
     mkdir -p $MYSQL_DIR/base
@@ -322,7 +319,6 @@ function init_database() {
     chmod 644 /etc/my.cnf
     chown mysql.mysql /etc/my.cnf
 
-    # 初始化MySQL数据库
     mysqld --defaults-file=/etc/my.cnf \
         --initialize-insecure \
         --user=mysql \
@@ -334,24 +330,8 @@ alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
 flush privileges;
 EOF
 
-    log_success "MySQL root密码: $ROOT_PASSWORD"
+    log_warning "MySQL 初始化完成, root密码: $ROOT_PASSWORD"
 
-    # 获取gm用户名和密码
-    local gm_name=$(get_gm_name)
-    local gm_password=$(get_gm_password)
-    if [ -z "$gm_name" ] || [ -z "$gm_password" ]; then
-        gm_name=$(random_string 8)
-        gm_password=$(random_string 12)
-        save_gm_user $gm_name $gm_password
-    fi
-
-    mysql -uroot -p$ROOT_PASSWORD <<EOF
-grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD";
-grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
-flush privileges;
-EOF
-
-    log_success "MySQL GM 用户名: $gm_name 密码: $gm_password"
 }
 
 function init_game_database() {
@@ -360,10 +340,24 @@ function init_game_database() {
     local mysql_user=$3
     local mysql_password=$4
 
-    log_info "初始化大区数据库..."
+    # 创建 GM 用户
+    local gm_name=$(get_gm_name)
+    local gm_password=$(get_gm_password)
+    if [ -z "$gm_name" ] || [ -z "$gm_password" ]; then
+        gm_name=$(random_string 8)
+        gm_password=$(random_string 12)
+        save_gm_user $gm_name $gm_password
+    fi
 
     mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
--- 初始化数据库
+grant all privileges on *.* to 'game'@'localhost' identified by "$GAME_PASSWORD";
+grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
+flush privileges;
+EOF
+
+    log_warning "MySQL GM 用户创建成功, 用户名: $gm_name 密码: $gm_password"
+
+    mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
 source $BASE_DIR/init_sql/d_channel.sql
 source $BASE_DIR/init_sql/d_guild.sql
 source $BASE_DIR/init_sql/d_taiwan.sql
@@ -418,35 +412,28 @@ create table cube_premium (
     cube_type int
 );
 EOF
-    if [ $? -ne 0 ]; then
-        log_error "大区数据库初始化失败!!!"
-        exit
-    fi
 
-    log_success "大区数据库初始化成功!!!"
+    log_success "大区数据库初始化完成"
 }
 
 function remove_dofserver() {
-    log_info "卸载DOF Server..."
-
     rm -rf $NEOPLE_DIR
     rm -rf $BASE_DIR/PUBLIC_IP
     rm -rf $BASE_DIR/run
     rm -rf $BASE_DIR/stop
     rm -rf $BASE_DIR/GameRestart
 
-    log_success "DOF Server卸载成功!!!"
+    log_success "DOF Server卸载完成"
 }
 
 function install_dofserver() {
     local server_ip=""
     read -p "输入服务器 IP: " server_ip
     if [ -z "$server_ip" ]; then
-        log_error "服务器 IP不能为空!!!"
+        log_error "服务器 IP 不能为空"
         exit
     fi
 
-    log_info "安装DOF Server ($server_ip)..."
     echo $server_ip >/root/PUBLIC_IP
 
     cd $BASE_DIR
@@ -472,24 +459,20 @@ function install_dofserver() {
     chmod -R 755 ./GameRestart
     chown root:root ./GameRestart
 
-    log_success "DOF Server安装成功!!!"
+    log_success "DOF Server安装完成 ($server_ip)"
 
     remove_dofserver_install_files
 }
 
 function remove_dofserver_install_files() {
-    log_info "删除DOF Server安装文件..."
-
     cd $BASE_DIR
     rm -rf ./home
     rm -rf ./usr
 
-    log_success "DOF Server安装文件删除成功!!!"
+    log_success "DOF Server安装文件删除完成"
 }
 
 function init_server_group() {
-    log_info "初始化大区频道..."
-
     if [ "$SERVER_GROUP" -ge 1 ] && [ "$SERVER_GROUP" -le 6 ]; then
         local SERVER_GROUP_NAME_VAR="SERVER_GROUP_NAME_$SERVER_GROUP"
         SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
@@ -508,7 +491,7 @@ function init_server_group() {
 
     local server_ip=$(cat /root/PUBLIC_IP 2>/dev/null || true)
     if [ -z "$server_ip" ]; then
-        log_error "PUBLIC_IP为空"
+        log_error "PUBLIC_IP 为空"
         exit
     fi
 
@@ -521,12 +504,10 @@ function init_server_group() {
     sed -i "s/MYSQL_IP/$MYSQL_IP/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
     sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $(find . -type f -name "*.cfg" -o -name "*.tbl")
 
-    log_success "${SERVER_GROUP_NAME}频道初始化成功!!!"
+    log_success "${SERVER_GROUP_NAME}频道初始化完成"
 }
 
 function clean_log_files() {
-    log_info "清理日志文件..."
-
     cd $NEOPLE_DIR
     find . -type f \( \
         -name '*.log' \
@@ -540,11 +521,10 @@ function clean_log_files() {
         -o -name '*.snap' \
         \) -print -exec rm -f {} \;
 
-    log_success "日志文件清理成功!!!"
+    log_success "日志文件清理完成"
 }
 
 function backup_database() {
-    log_info "备份数据库..."
     # 跳过系统数据库
     local databases=$(mysql -u root -p$ROOT_PASSWORD -N -e "
         select group_concat(schema_name separator ' ')
@@ -563,7 +543,7 @@ function backup_database() {
     mysqldump -uroot -p$ROOT_PASSWORD \
         --databases $databases \
         >/root/dof_bakup.sql
-    log_success "数据库备份成功!!!"
+    log_success "数据库备份完成"
 }
 
 function restore_database() {
@@ -572,9 +552,8 @@ function restore_database() {
         exit
     fi
 
-    log_info "恢复数据库..."
     mysql -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
-    log_success "数据库恢复成功!!!"
+    log_success "数据库恢复完成"
 }
 
 function download_files() {
@@ -584,39 +563,36 @@ function download_files() {
 
 function download_mysql() {
     if [ -f MySQL.tar.gz ]; then
-        log_warning "MySQL.tar.gz 已存在!!!"
+        log_warning "MySQL.tar.gz 已存在"
         return
     fi
 
-    log_info "下载MySQL..."
     cd $BASE_DIR
     wget "$MYSQL_DOWNLOAD_URL"
 
     if [ ! -f MySQL.tar.gz ]; then
-        log_error "MySQL.tar.gz 下载失败!!!"
+        log_error "MySQL.tar.gz 下载失败"
         exit
     fi
 
-    log_success "MySQL.tar.gz 下载成功!!!"
+    log_success "MySQL.tar.gz 下载完成"
 }
 
 function download_dofserver() {
     if [ -f Game.tar.gz ]; then
-        log_warning "Game.tar.gz 已存在!!!"
+        log_warning "Game.tar.gz 已存在"
         return
     fi
-
-    log_info "下载DOF Server..."
 
     cd $BASE_DIR
     wget "$GAME_DOWNLOAD_URL"
 
     if [ ! -f Game.tar.gz ]; then
-        log_error "Game.tar.gz 下载失败!!!"
+        log_error "Game.tar.gz 下载失败"
         exit
     fi
 
-    log_success "Game.tar.gz 下载成功!!!"
+    log_success "Game.tar.gz 下载完成"
 }
 
 function prepare_dof() {
@@ -627,7 +603,6 @@ function prepare_dof() {
     log_error "准备安装环境, 按任意键继续..."
     read -n 1 -s -r
 
-    log_info "初始化DOF安装环境..."
     check_system
     check_root_user
     check_disk_space

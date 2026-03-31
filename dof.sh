@@ -15,8 +15,8 @@ BLUE='\033[0;34m'   # BLUE
 NC='\033[0m'        # NC
 
 MYSQL_DIR="/opt/mysql"
-MYSQL_IP="127.0.0.1"
-MYSQL_PORT="3306"
+DEFAULT_MYSQL_IP="127.0.0.1"
+DEFAULT_MYSQL_PORT="3306"
 ROOT_PASSWORD="123456"
 GAME_PASSWORD="uu5!^%jg"
 DEC_GAME_PASSWORD="20e35501e56fcedbe8b10c1f8bc3595be8b10c1f8bc3595b"
@@ -29,9 +29,9 @@ PREPARE_DOF_FILE="$BASE_DIR/prepare_dof"
 
 NEOPLE_DIR="/home/neople"
 # 默认大区 希洛克
-SERVER_GROUP=3
+DEFAULT_SERVER_GROUP=3
 # 11频道
-CHANNEL_NO=11
+DEFAULT_CHANNEL_NO=11
 
 # 大区对应名称
 # 1 : 卡恩, 2 :狄瑞吉, 3 : 希洛克, 4 : 普雷prey, 5 : 凱西亞斯casillas, 6 : 赫爾德hilder , 99 : first server first , 98 : 開發server
@@ -341,7 +341,7 @@ function init_database() {
     chmod 755 $MYSQL_DIR
     chown -R mysql.mysql $MYSQL_DIR
 
-    sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" $BASE_DIR/my.cnf
+    sed -i "s/MYSQL_PORT/$DEFAULT_MYSQL_PORT/g" $BASE_DIR/my.cnf
     mv -f $BASE_DIR/my.cnf /etc/my.cnf
 
     chmod 644 /etc/my.cnf
@@ -455,14 +455,13 @@ function remove_dofserver() {
 }
 
 function install_dofserver() {
-    local server_ip=""
-    read -p "输入服务器IP: " server_ip
+    local server_ip="$1"
     if [ -z "$server_ip" ]; then
         log_error "服务器IP不能为空"
         exit 1
     fi
 
-    echo $server_ip >/root/PUBLIC_IP
+    echo $server_ip >/root/SERVER_IP
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz --no-overwrite-dir
@@ -501,36 +500,55 @@ function remove_dofserver_install_files() {
 }
 
 function init_server_group() {
-    if [ "$SERVER_GROUP" -ge 1 ] && [ "$SERVER_GROUP" -le 6 ]; then
-        local SERVER_GROUP_NAME_VAR="SERVER_GROUP_NAME_$SERVER_GROUP"
+    local server_ip=$1
+    local server_group=$2
+    local mysql_ip=$3
+    local mysql_port=$4
+
+    if [ -z "$server_ip" ]; then
+        log_error "服务器IP不能为空"
+        exit 1
+    fi
+
+    if [ -z "$server_group" ]; then
+        log_error "大区编号不能为空"
+        exit 1
+    fi
+
+    if [ -z "$mysql_ip" ]; then
+        log_error "MySQL IP不能为空"
+        exit 1
+    fi
+
+    if [ -z "$mysql_port" ]; then
+        log_error "MySQL端口不能为空"
+        exit 1
+    fi
+
+    if [ "$server_group" -ge 1 ] && [ "$server_group" -le 6 ]; then
+        local SERVER_GROUP_NAME_VAR="SERVER_GROUP_NAME_$server_group"
         SERVER_GROUP_NAME=${!SERVER_GROUP_NAME_VAR}
         SERVER_GROUP_DB=$SERVER_GROUP_NAME
-        log_success "当前大区编号: $SERVER_GROUP, 大区名称: $SERVER_GROUP_NAME"
+        log_success "当前大区编号: $server_group, 大区名称: $SERVER_GROUP_NAME"
     else
-        log_error "无效的大区编号: $SERVER_GROUP"
+        log_error "无效的大区编号: $server_group"
         exit 1
     fi
 
     # channel_name=大区+频道
-    local channel_name="${SERVER_GROUP_NAME}$CHANNEL_NO"
+    local channel_name="${SERVER_GROUP_NAME}$DEFAULT_CHANNEL_NO"
     cd $NEOPLE_DIR/game
     rm -rf ./cfg/$channel_name.cfg
     cp ./cfg/server.template ./cfg/$channel_name.cfg
 
-    local server_ip=$(cat /root/PUBLIC_IP 2>/dev/null || true)
-    if [ -z "$server_ip" ]; then
-        log_error "PUBLIC_IP为空"
-        exit 1
-    fi
-
     cd $NEOPLE_DIR
     find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/PUBLIC_IP/$server_ip/g" {} +
     find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/SERVER_GROUP_NAME/$SERVER_GROUP_NAME/g" {} +
-    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/SERVER_GROUP/$SERVER_GROUP/g" {} +
-    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/CHANNEL_NO/$CHANNEL_NO/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/SERVER_GROUP/$server_group/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/CHANNEL_NO/$DEFAULT_CHANNEL_NO/g" {} +
 
-    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_IP/$MYSQL_IP/g" {} +
-    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_PORT/$MYSQL_PORT/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_IP/$mysql_ip/g" {} +
+    find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_PORT/$mysql_port/g" {} +
 
     log_success "${SERVER_GROUP_NAME}频道初始化完成"
 }
@@ -656,16 +674,23 @@ function install_all() {
 }
 
 function reinstall_dofserver() {
+    local server_ip=""
+    read -p "输入服务器IP: " server_ip
+    if [ -z "$server_ip" ]; then
+        log_error "服务器IP不能为空"
+        exit 1
+    fi
+
     remove_dofserver
-    install_dofserver
-    init_server_group
+    install_dofserver "$server_ip"
+    init_server_group "$server_ip" "$DEFAULT_SERVER_GROUP" "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT"
+    init_game_database "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT" "root" "$ROOT_PASSWORD"
 }
 
 function reinstall_database() {
     remove_mysql
     install_mysql
     init_database
-    init_game_database "$MYSQL_IP" "$MYSQL_PORT" "root" "$ROOT_PASSWORD"
     clean_database_install_files
 }
 

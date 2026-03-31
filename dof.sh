@@ -357,7 +357,12 @@ alter user 'root'@'localhost' identified by '$ROOT_PASSWORD';
 flush privileges;
 EOF
 
-    log_warning "MySQL初始化完成, root用户密码: $ROOT_PASSWORD"
+    log_warning "========================================"
+    log_warning "        MySQL 初始化完成"
+    log_warning "========================================"
+    log_warning "  用户名: root"
+    log_warning "  密码:   $ROOT_PASSWORD"
+    log_warning "========================================"
 
 }
 
@@ -382,7 +387,12 @@ grant all privileges on *.* to '$gm_name'@'%' identified by "$gm_password";
 flush privileges;
 EOF
 
-    log_warning "MySQL GM用户创建完成, 用户名: $gm_name 密码: $gm_password"
+    log_warning "========================================"
+    log_warning "        MySQL GM 用户创建完成"
+    log_warning "========================================"
+    log_warning "  用户名: $gm_name"
+    log_warning "  密码:   $gm_password"
+    log_warning "========================================"
 
     mysql -u"$mysql_user" -p"$mysql_password" -h"$mysql_ip" -P"$mysql_port" <<EOF
 source $BASE_DIR/init_sql/d_channel.sql

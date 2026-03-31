@@ -164,8 +164,8 @@ function check_root_user() {
 }
 
 function check_current_dir() {
-    if [ "$(pwd)" != "$BASE_DIR" ]; then
-        log_error "请在$BASE_DIR目录下执行此脚本, 当前目录: $(pwd)"
+    if [ "$(pwd)" != "${BASE_DIR}" ]; then
+        log_error "请在 ${BASE_DIR} 目录下执行此脚本, 当前目录: $(pwd)"
         exit 1
     fi
     log_success "当前目录: $(pwd)"

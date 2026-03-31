@@ -112,7 +112,7 @@ function save_gm_user() {
 function check_system() {
     if [ ! -f /etc/redhat-release ]; then
         log_error "请使用CentOS系统!!!"
-        exit
+        exit 1
     fi
 
     local system_version=$(cat /etc/redhat-release)
@@ -121,14 +121,14 @@ function check_system() {
         log_success "系统版本: $system_version"
     else
         log_error "请使用CentOS7系统, 当前系统版本: $system_version"
-        exit
+        exit 1
     fi
 }
 
 function check_root_user() {
     if [ "$EUID" -ne 0 ]; then
         log_error "请使用root用户执行此脚本"
-        exit
+        exit 1
     fi
     log_success "当前用户: root"
 }
@@ -139,7 +139,7 @@ function check_disk_space() {
 
     if [ "$available_mb" -lt "$required_mb" ]; then
         log_error "磁盘空间不足!!! 需要至少 ${REQUIRED_DISK_SPACE_GB}GB, 实际可用 ${available_mb}MB"
-        exit 1
+        exit 1 1
     fi
 
     log_success "磁盘空间检查通过: ${available_mb}MB 可用"
@@ -219,7 +219,7 @@ function create_swap() {
     local available_space=$(df -m / | awk 'NR==2 {print $4}')
     if [ "$available_space" -lt "$swap_size" ]; then
         log_error "磁盘剩余空间不足!!! 需要 ${swap_size}MB, 实际可用 ${available_space}MB"
-        exit 1
+        exit 1 1
     fi
 
     # 如果swap文件已存在，先删除
@@ -431,7 +431,7 @@ function install_dofserver() {
     read -p "输入服务器 IP: " server_ip
     if [ -z "$server_ip" ]; then
         log_error "服务器 IP 不能为空"
-        exit
+        exit 1
     fi
 
     echo $server_ip >/root/PUBLIC_IP
@@ -480,7 +480,7 @@ function init_server_group() {
         log_success "当前大区编号: $SERVER_GROUP, 大区名称: $SERVER_GROUP_NAME"
     else
         log_error "无效的大区编号: $SERVER_GROUP"
-        exit
+        exit 1
     fi
 
     # channel_name=大区+频道
@@ -492,7 +492,7 @@ function init_server_group() {
     local server_ip=$(cat /root/PUBLIC_IP 2>/dev/null || true)
     if [ -z "$server_ip" ]; then
         log_error "PUBLIC_IP 为空"
-        exit
+        exit 1
     fi
 
     cd $NEOPLE_DIR
@@ -549,7 +549,7 @@ function backup_database() {
 function restore_database() {
     if [ ! -f /root/dof_bakup.sql ]; then
         log_error "dof_bakup.sql未找到在/root目录下"
-        exit
+        exit 1
     fi
 
     mysql -uroot -p$ROOT_PASSWORD </root/dof_bakup.sql
@@ -572,7 +572,7 @@ function download_mysql() {
 
     if [ ! -f MySQL.tar.gz ]; then
         log_error "MySQL.tar.gz 下载失败"
-        exit
+        exit 1
     fi
 
     log_success "MySQL.tar.gz 下载完成"
@@ -589,7 +589,7 @@ function download_dofserver() {
 
     if [ ! -f Game.tar.gz ]; then
         log_error "Game.tar.gz 下载失败"
-        exit
+        exit 1
     fi
 
     log_success "Game.tar.gz 下载完成"
@@ -691,7 +691,7 @@ function read_menu_command() {
         restore_database
         ;;
     *)
-        exit
+        exit 1
         ;;
     esac
 }

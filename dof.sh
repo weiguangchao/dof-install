@@ -215,7 +215,6 @@ function performance_optimize() {
         log_warning "SELinux未安装或已禁用, 跳过"
     fi
 
-    log_success "系统性能优化完成"
 }
 
 function create_swap() {

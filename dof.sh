@@ -215,13 +215,14 @@ function performance_optimize() {
         log_warning "SELinux未安装或已禁用, 跳过"
     fi
 
+    log_info "系统性能优化完成"
 }
 
 function create_swap() {
     # 当前内存大小
     local memory=$(free -m | awk '/^Mem:/{print $2}')
     # 内存 > 6GB
-    if [ $memory -ge 6000 ]; then
+    if [ $memory -ge $((6 * 1024)) ]; then
         log_warning "内存 > 6GB, 无需设置swap分区"
         return
     fi
@@ -232,12 +233,12 @@ function create_swap() {
     fi
 
     # 内存 < 2GB
-    local swap_size=6000
+    local swap_size=$((6 * 1024))
     local vm_swappiness=100
 
     # 内存 > 4GB
-    if [ $memory -ge 4000 ]; then
-        swap_size=4000
+    if [ $memory -ge $((4 * 1024)) ]; then
+        swap_size=$((4 * 1024))
         vm_swappiness=75
     fi
 
@@ -274,25 +275,25 @@ function create_swap() {
 }
 
 function remove_mysql() {
-    systemctl disable mysqld 2>/dev/null || true
-    systemctl stop mysqld 2>/dev/null || true
+    systemctl disable mysqld || true
+    systemctl stop mysqld || true
 
-    chkconfig mysql off 2>/dev/null || true
-    service mysql stop 2>/dev/null || true
+    chkconfig mysql off || true
+    service mysql stop || true
 
-    log_success "MySQL服务已停止"
+    log_info "MySQL服务已停止"
 
-    rpm -qa | grep mariadb | xargs -r rpm -e --nodeps 2>/dev/null || true
-    rpm -qa | grep MariaDB | xargs -r rpm -e --nodeps 2>/dev/null || true
-    rpm -qa | grep mysql | xargs -r rpm -e --nodeps 2>/dev/null || true
-    rpm -qa | grep MySQL | xargs -r rpm -e --nodeps 2>/dev/null || true
+    rpm -qa | grep mariadb | xargs -r rpm -e --nodeps || true
+    rpm -qa | grep MariaDB | xargs -r rpm -e --nodeps || true
+    rpm -qa | grep mysql | xargs -r rpm -e --nodeps || true
+    rpm -qa | grep MySQL | xargs -r rpm -e --nodeps || true
 
     rm -rf /etc/my.cnf
     rm -rf /var/lib/mysql
     rm -rf $MYSQL_DIR
 
-    userdel -f mysql 2>/dev/null || true
-    groupdel -f mysql 2>/dev/null || true
+    userdel -f mysql || true
+    groupdel -f mysql || true
 
     log_success "MySQL卸载完成"
 }
@@ -630,9 +631,8 @@ function prepare_dof() {
         return
     fi
 
-    log_error "===================================================="
+    clear
     log_error "=============准备安装环境,按任意键继续=============="
-    log_error "===================================================="
     read -n 1 -s -r
 
     check_system
@@ -645,9 +645,7 @@ function prepare_dof() {
     download_files
 
     touch $PREPARE_DOF_FILE
-    log_error "===================================================="
     log_error "==========DOF安装环境初始化成功,按任意键重启=========="
-    log_error "===================================================="
     read -n 1 -s -r
     reboot
 }

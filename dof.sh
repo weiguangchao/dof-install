@@ -378,6 +378,7 @@ function install_game_server() {
     # 给 run 和 stop 脚本授予可执行权限
     chmod +x ./run
     chmod +x ./stop
+    chmod +x ./GameRestart
 
     log_success "Game Server安装完成, 服务器IP: $server_ip"
 }

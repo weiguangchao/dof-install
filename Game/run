@@ -1,20 +1,43 @@
 #!/bin/bash
 
+# 定义颜色
+RED='\033[0;31m'    # RED
+GREEN='\033[0;32m'  # GREEN
+YELLOW='\033[0;33m' # YELLOW
+BLUE='\033[0;34m'   # BLUE
+NC='\033[0m'        # NC
+
+function log_error() {
+    echo -e "${RED}$1${NC}"
+}
+
+function log_success() {
+    echo -e "${GREEN}$1${NC}"
+}
+
+function log_warning() {
+    echo -e "${YELLOW}$1${NC}"
+}
+
+function log_info() {
+    echo -e "${BLUE}$1${NC}"
+}
+
 clear
 
 # 检查pvf
 if [ ! -f /home/neople/game/Script.pvf ]; then
-    echo "Script.pvf 不存在!!!"
+    log_error "Script.pvf 不存在!!!"
     exit 1
 fi
 # 检查df_game_r
 if [ ! -f /home/neople/game/df_game_r ]; then
-    echo "df_game_r 不存在!!!"
+    log_error "df_game_r 不存在!!!"
     exit 1
 fi
 # 检查publickey.pem
 if [ ! -f /home/neople/game/publickey.pem ]; then
-    echo "publickey.pem 不存在!!!"
+    log_error "publickey.pem 不存在!!!"
     exit 1
 fi
 
@@ -23,7 +46,7 @@ chmod -R 755 *
 rm -f /home/neople/channel/pid/*.pid
 rm -rf /home/neople/channel/log/*
 LD_PRELOAD=/lib/libhook.so ./df_channel_r channel start &
-echo "================================Channel 	Srv Start"
+log_success "================================Channel 	Srv Start"
 
 sleep 2
 cd /home/neople/relay
@@ -31,7 +54,7 @@ chmod -R 755 *
 rm -f /home/neople/relay/pid/*.pid
 rm -rf /home/neople/relay/log/*
 ./df_relay_r relay start &
-echo "================================Relay 	Srv Start"
+log_success "================================Relay 	Srv Start"
 
 sleep 2
 cd /home/neople/stun
@@ -39,7 +62,7 @@ chmod -R 755 *
 rm -f /home/neople/stun/pid/*.pid
 rm -rf /home/neople/stun/log/*
 ./df_stun_r start &
-echo "================================Stun 		Srv Start"
+log_success "================================Stun 		Srv Start"
 
 sleep 2
 cd /home/neople/manager
@@ -69,7 +92,7 @@ chmod -R 755 *
 rm -f /home/neople/coserver/pid/*.pid
 rm -rf /home/neople/coserver/log/*
 LD_PRELOAD=/lib/libhook.so ./df_coserver_r coserver start &
-echo "================================Common 	Srv Start"
+log_success "================================Common 	Srv Start"
 
 # 拍卖行
 # sleep 2
@@ -132,7 +155,7 @@ chmod -R 755 *
 rm -f /home/neople/statics/pid/*.pid
 rm -rf /home/neople/statics/log/*
 LD_PRELOAD=/lib/libhook.so ./df_statics_r statics start &
-echo "================================App 		Srv Start"
+log_success "================================App 		Srv Start"
 
 #TP
 sleep 2
@@ -149,7 +172,7 @@ rm -f /home/neople/secsvr/zergsvr/*.pid
 
 ./secagent &
 ./zergsvr -t30 -i1 &
-echo "================================TP 		Srv Start"
+log_success "================================TP 		Srv Start"
 
 sleep 2
 cd /home/neople/game
@@ -159,4 +182,4 @@ rm -rf /home/neople/game/pid/*
 # ./df_game_r siroco11 start &
 #LD_PRELOAD=/dp2/libdp2pre.so ./df_game_r siroco11 start &
 LD_PRELOAD=/lib/libhook.so ./df_game_r siroco11 start &
-echo "================================Game 		Srv Start"
+log_success "================================Game 		Srv Start"

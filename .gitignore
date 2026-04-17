@@ -31,6 +31,8 @@ libtss_sdk.so.1.0.394
 DNFAntiCpX.hsb
 HSPub.key
 
+TeaEncrypt
+
 *.dat
 *.so
 *.ttf

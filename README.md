@@ -46,7 +46,7 @@ cd /root && ./dof.sh
 
 #### 方案一
 
-百度网盘 base64
+百度网盘 base64(推荐)
 
 ```
 6YCa6L+H572R55uY5YiG5Lqr55qE5paH5Lu277yaZG9mLWluc3RhbGwK6ZO+5o6lOiBodHRwczovL3Bhbi5iYWlkdS5jb20vcy8xcnVFdHVVTG9xWVlNWi0zZnAydWRDQT9wd2Q9MnJ5YSDmj5Dlj5bnoIE6IDJyeWEgCi0t5p2l6Ieq55m+5bqm572R55uY6LaF57qn5Lya5ZGYdjHnmoTliIbkuqs=

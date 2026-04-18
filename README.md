@@ -36,27 +36,34 @@ sudo systemctl disable firewalld
 
 安装完成之后，默认会禁用 `game` 用户以 `uu5!^%jg` 默认密码登录数据库，如果有 gm 需求，可以手动查看随机生成的 gm 用户名、密码
 
-```
+```bash
 cd /root && ./dof.sh
-
 ```
 
 ![](./image/Snipaste_2025-12-06_12-34-57.png)
 
 ### 安装服务端
 
-#### 方案一(本地安装)
+#### 方案一
 
-从 Release 中下载 dof.sh, Game.tar.gz, MySQL.tar.gz 一并上传到/root 目录下, 执行下面这段命令
+百度网盘 base64
 
-```bash
-chmod +x ./dof.sh && ./dof.sh
+```
+6YCa6L+H572R55uY5YiG5Lqr55qE5paH5Lu277yaZG9mLWluc3RhbGwK6ZO+5o6lOiBodHRwczovL3Bhbi5iYWlkdS5jb20vcy8xcnVFdHVVTG9xWVlNWi0zZnAydWRDQT9wd2Q9MnJ5YSDmj5Dlj5bnoIE6IDJyeWEgCi0t5p2l6Ieq55m+5bqm572R55uY6LaF57qn5Lya5ZGYdjHnmoTliIbkuqs=
 ```
 
 #### 方案二(联网安装)
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
+```
+
+#### 方案三(本地安装)
+
+从 Release 中下载 dof.sh, Game.tar.gz, MySQL.tar.gz 一并上传到/root 目录下, 执行下面这段命令
+
+```bash
+chmod +x ./dof.sh && ./dof.sh
 ```
 
 ### 启动服务端

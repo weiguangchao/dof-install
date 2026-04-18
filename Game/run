@@ -174,7 +174,7 @@ rm -f /home/neople/secsvr/zergsvr/*.pid
 ./zergsvr -t30 -i1 &
 log_success "================================TP 		Srv Start"
 
-sleep 2
+sleep 5
 cd /home/neople/game
 chmod -R 755 *
 rm -rf /home/neople/game/log/*

@@ -181,5 +181,5 @@ rm -rf /home/neople/game/log/*
 rm -rf /home/neople/game/pid/*
 # ./df_game_r siroco11 start &
 # LD_PRELOAD="/dp2/libdp2pre.so" ./df_game_r siroco11 start &
-# LD_PRELOAD="/lib/libhook.so" ./df_game_r siroco11 start &
+LD_PRELOAD="/lib/libhook.so" ./df_game_r siroco11 start &
 log_success "================================Game 		Srv Start"

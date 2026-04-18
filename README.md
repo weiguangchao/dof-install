@@ -34,7 +34,7 @@ sudo systemctl disable firewalld
 
 #### 查看 gm 用户名、密码
 
-安装完成之后，默认会禁用 `game` 用户以 `uu5!^%jg` 默认密码登录数据库，如果有 gm 需求，可以手动查看随机生成的 gm 用户名、密码
+安装完成之后，默认会禁用 `game` 用户以 `uu5!^%jg` 默认密码远程登录数据库，如果有 gm 需求，可以手动查看随机生成的 gm 用户名、密码
 
 ```bash
 cd /root && ./dof.sh

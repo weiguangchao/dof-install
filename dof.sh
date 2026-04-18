@@ -690,7 +690,9 @@ function reinstall_game_server() {
     remove_game_server_install_files
 
     log_success "Game Server 安装完成"
-    log_warning "请及时修改 run 脚本, 避免 dp2 或者 firda 挂载失败"
+    log_warning "请及时修改 run 脚本, 避免 dp2 或者 frida 挂载失败"
+    log_warning "请及时修改 run 脚本, 避免 dp2 或者 frida 挂载失败"
+    log_warning "请及时修改 run 脚本, 避免 dp2 或者 frida 挂载失败"
 }
 
 function reinstall_database() {

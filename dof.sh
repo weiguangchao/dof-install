@@ -72,6 +72,27 @@ function random_string() {
     echo
 }
 
+# 校验IP地址格式 (IPv4)
+function is_valid_ip() {
+    local ip="$1"
+
+    # 校验基本格式 (x.x.x.x)
+    if ! echo "$ip" | grep -qE '^([0-9]{1,3}\.){3}[0-9]{1,3}$'; then
+        return 1
+    fi
+
+    # 校验每个数值范围 (0-255)
+    local IFS='.'
+    read -ra octets <<<"$ip"
+    for octet in "${octets[@]}"; do
+        if [ "$octet" -gt 255 ]; then
+            return 1
+        fi
+    done
+
+    return 0
+}
+
 # 格式化存储单位（MB -> GB/TB 等）
 function format_size() {
     local size_mb="$1"
@@ -653,6 +674,11 @@ function reinstall_game_server() {
     read -p "输入服务器IP: " server_ip
     if [ -z "$server_ip" ]; then
         log_error "服务器IP不能为空"
+        exit 1
+    fi
+
+    if ! is_valid_ip "$server_ip"; then
+        log_error "服务器IP格式不正确，请输入有效的IPv4地址"
         exit 1
     fi
 

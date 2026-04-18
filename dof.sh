@@ -72,6 +72,27 @@ function random_string() {
     echo
 }
 
+# 校验IP地址格式 (IPv4)
+function is_valid_ip() {
+    local ip="$1"
+
+    # 校验基本格式 (x.x.x.x)
+    if ! echo "$ip" | grep -qE '^([0-9]{1,3}\.){3}[0-9]{1,3}$'; then
+        return 1
+    fi
+
+    # 校验每个数值范围 (0-255)
+    local IFS='.'
+    read -ra octets <<<"$ip"
+    for octet in "${octets[@]}"; do
+        if [ "$octet" -gt 255 ]; then
+            return 1
+        fi
+    done
+
+    return 0
+}
+
 # 格式化存储单位（MB -> GB/TB 等）
 function format_size() {
     local size_mb="$1"
@@ -645,14 +666,19 @@ function prepare_dof() {
 
 function install_all() {
     reinstall_database
-    reinstall_dofserver
+    reinstall_game_server
 }
 
-function reinstall_dofserver() {
+function reinstall_game_server() {
     local server_ip=""
     read -p "输入服务器IP: " server_ip
     if [ -z "$server_ip" ]; then
         log_error "服务器IP不能为空"
+        exit 1
+    fi
+
+    if ! is_valid_ip "$server_ip"; then
+        log_error "服务器IP格式不正确，请输入有效的IPv4地址"
         exit 1
     fi
 
@@ -662,6 +688,9 @@ function reinstall_dofserver() {
     init_game_database "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT" "root" "$ROOT_PASSWORD"
 
     remove_game_server_install_files
+
+    log_success "Game Server 安装完成"
+    log_warning "请及时修改 run 脚本, 避免 dp2 或者 firda 挂载失败"
 }
 
 function reinstall_database() {
@@ -709,7 +738,7 @@ function read_menu_command() {
         install_all
         ;;
     2)
-        reinstall_dofserver
+        reinstall_game_server
         ;;
     3)
         reinstall_database

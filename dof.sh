@@ -645,10 +645,10 @@ function prepare_dof() {
 
 function install_all() {
     reinstall_database
-    reinstall_dofserver
+    reinstall_game_server
 }
 
-function reinstall_dofserver() {
+function reinstall_game_server() {
     local server_ip=""
     read -p "输入服务器IP: " server_ip
     if [ -z "$server_ip" ]; then
@@ -662,6 +662,9 @@ function reinstall_dofserver() {
     init_game_database "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT" "root" "$ROOT_PASSWORD"
 
     remove_game_server_install_files
+
+    log_success "Game Server 安装完成"
+    log_warning "请及时修改 run 脚本, 避免 dp2 或者 firda 挂载失败"
 }
 
 function reinstall_database() {
@@ -709,7 +712,7 @@ function read_menu_command() {
         install_all
         ;;
     2)
-        reinstall_dofserver
+        reinstall_game_server
         ;;
     3)
         reinstall_database

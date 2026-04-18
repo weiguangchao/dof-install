@@ -44,26 +44,36 @@ cd /root && ./dof.sh
 
 ### 安装服务端
 
-#### 方案一
+#### 方案一(本地安装)
 
-百度网盘 base64(推荐)
+下载
+
+将安装文件 dof.sh, Game.tar.gz, MySQL.tar.gz 下载下来
+
+1. 百度网盘 base64(推荐)
 
 ```
 6YCa6L+H572R55uY5YiG5Lqr55qE5paH5Lu277yaZG9mLWluc3RhbGwK6ZO+5o6lOiBodHRwczovL3Bhbi5iYWlkdS5jb20vcy8xcnVFdHVVTG9xWVlNWi0zZnAydWRDQT9wd2Q9MnJ5YSDmj5Dlj5bnoIE6IDJyeWEgCi0t5p2l6Ieq55m+5bqm572R55uY6LaF57qn5Lya5ZGYdjHnmoTliIbkuqs=
+```
+
+2. GitHub Release
+
+```
+https://github.com/weiguangchao/dof-install/releases/tag/1.0
+```
+
+安装
+
+将下载好的 dof.sh, Game.tar.gz, MySQL.tar.gz 文件一并上传到 `/root` 目录下, 执行下面这段命令
+
+```bash
+chmod +x ./dof.sh && ./dof.sh
 ```
 
 #### 方案二(联网安装)
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
-```
-
-#### 方案三(本地安装)
-
-从 Release 中下载 dof.sh, Game.tar.gz, MySQL.tar.gz 一并上传到/root 目录下, 执行下面这段命令
-
-```bash
-chmod +x ./dof.sh && ./dof.sh
 ```
 
 ### 启动服务端

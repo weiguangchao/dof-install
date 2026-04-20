@@ -458,7 +458,7 @@ function init_server_group() {
     find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_IP/$mysql_ip/g" {} +
     find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_PORT/$mysql_port/g" {} +
 
-    log_success "${SERVER_GROUP_NAME}频道初始化完成"
+    log_success "${SERVER_GROUP_NAME} 频道初始化完成"
 }
 
 function init_game_database() {

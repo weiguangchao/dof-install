@@ -50,7 +50,7 @@ cd /root && ./dof.sh
 
 下载
 
-将安装文件 dof.sh, Game.tar.gz, MySQL.tar.gz 下载下来
+将安装文件 dof.sh, Game.tar.gz, MySQL.tar.gz 下载下来, 渠道如下:
 
 1. 百度网盘 base64(推荐)
 

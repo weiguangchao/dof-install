@@ -108,6 +108,15 @@ cd /root && ./stop
 | 2312 | UDP | df_stun_r 组队端口 |
 | 2313 | UDP | df_stun_r 组队端口 |
 
+## FAQ
+
+### 服务器 IP 填错了怎么办
+
+将下面配置文件中的值改为真实 IP
+
+- `/home/neople/channel/cfg/channel.cfg` 中 this_ip
+- `/home/neople/game/cfg/频道名称.cfg` 中 ip， stun_ip
+
 ## 免责声明
 
 ```

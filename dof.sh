@@ -676,7 +676,7 @@ function reinstall_game_server() {
     fi
 
     remove_game_server
-    install_game_server "$server_ip"
+    install_game_server
     init_server_group "$server_ip" "$DEFAULT_SERVER_GROUP" "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT"
     init_game_database "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT" "root" "$ROOT_PASSWORD"
 

@@ -382,13 +382,7 @@ function remove_game_server() {
 }
 
 function install_game_server() {
-    log_info "开始安装Game Server..."
-
-    local server_ip="$1"
-    if [ -z "$server_ip" ]; then
-        log_error "服务器IP不能为空"
-        exit 1
-    fi
+    log_info "开始安装 Game Server..."
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz --no-overwrite-dir --no-same-owner
@@ -396,12 +390,11 @@ function install_game_server() {
     mv ./usr/lib/* /usr/lib
     mv ./home/* /home
 
-    # 给 run 和 stop 脚本授予可执行权限
     chmod +x ./run
     chmod +x ./stop
     chmod +x ./GameRestart
 
-    log_success "Game Server安装完成, 服务器IP: $server_ip"
+    log_success "Game Server 安装完成"
 }
 
 function remove_game_server_install_files() {

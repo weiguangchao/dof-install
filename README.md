@@ -8,10 +8,7 @@
 
 ## 系统适配
 
-请使用 CentOS 7 系统
-
-- CentOS 7.6 ✅
-- CentOS 7.9 ✅
+- CentOS 7.x ✅
 
 ## 功能特性
 

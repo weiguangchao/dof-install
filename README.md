@@ -4,7 +4,7 @@
 
 基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化
 
-默认开启希洛克大区，此脚本不提供 Script.pvf、df_game_r、publickey.pem 以及 dp、frida 配套，有需要自行处理
+默认开启希洛克大区，此脚本不提供 _Script.pvf_, _登录器_, _publickey.pem_, _df_game_r_, _dp_, _frida_ 配套，有需要自行处理
 
 ## 系统适配
 

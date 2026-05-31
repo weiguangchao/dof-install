@@ -1,39 +1,41 @@
-# DOF 一键端
+**Languages:** English | [简体中文](README.zh-CN.md)
 
-## 概述
+# DOF One-Click Install
 
-基于 [1995chen/dnf](https://github.com/1995chen/dnf)，去 Docker 化
+## Overview
 
-默认开启希洛克大区，此脚本不提供 _Script.pvf_, _登录器_, _publickey.pem_, _df_game_r_, _dp_, _frida_ 配套，有需要自行处理
+Based on [1995chen/dnf](https://github.com/1995chen/dnf), Docker-free deployment.
 
-## 系统适配
+The Sirocco region is enabled by default. This script does **not** include _Script.pvf_, _launcher_, _publickey.pem_, _df_game_r_, _dp_, or _frida_ — please obtain those separately as needed.
+
+## System Support
 
 - CentOS 7.x ✅
 
-## 功能特性
+## Features
 
-- 安装服务端
-- 安装数据库
-- 备份数据库
-- 恢复数据库
-- 清理日志文件
+- Install server
+- Install database
+- Back up database
+- Restore database
+- Clean up log files
 
-## 食用指南
+## Getting Started
 
-### 准备工作
+### Prerequisites
 
-#### 禁用防火墙
+#### Disable firewall
 
-简单粗暴，如果有需求可以根据下方列表自行开放端口
+The simplest approach — if you need finer control, open only the ports listed in the [Ports](#ports) section below.
 
 ```
 sudo systemctl stop firewalld
 sudo systemctl disable firewalld
 ```
 
-#### 查看 gm 用户名、密码
+#### View GM username and password
 
-安装完成之后，默认会禁用 `game` 用户以 `uu5!^%jg` 默认密码远程登录数据库，如果有 gm 需求，可以手动查看随机生成的 gm 用户名、密码
+After installation, remote database login for the `game` user with the default password `uu5!^%jg` is disabled. To use GM features, you can look up the randomly generated GM credentials:
 
 ```bash
 cd /root && ./dof.sh
@@ -41,15 +43,15 @@ cd /root && ./dof.sh
 
 ![](./image/Snipaste_2025-12-06_12-34-57.png)
 
-### 安装服务端
+### Install Server
 
-#### 方案一(本地安装)
+#### Option 1: Local install
 
-下载
+**Download**
 
-将安装文件 dof.sh, Game.tar.gz, MySQL.tar.gz 下载下来, 渠道如下:
+Download the installation files `dof.sh`, `Game.tar.gz`, and `MySQL.tar.gz` from one of the following sources:
 
-1. 百度网盘 base64(推荐)
+1. Baidu Netdisk link (base64, recommended)
 
 ```
 6YCa6L+H572R55uY5YiG5Lqr55qE5paH5Lu277yaZG9mLWluc3RhbGwK6ZO+5o6lOiBodHRwczovL3Bhbi5iYWlkdS5jb20vcy8xcnVFdHVVTG9xWVlNWi0zZnAydWRDQT9wd2Q9MnJ5YSDmj5Dlj5bnoIE6IDJyeWEgCi0t5p2l6Ieq55m+5bqm572R55uY6LaF57qn5Lya5ZGYdjHnmoTliIbkuqs=
@@ -61,67 +63,75 @@ cd /root && ./dof.sh
 https://github.com/weiguangchao/dof-install/releases/tag/1.0
 ```
 
-安装
+**Install**
 
-将下载好的 dof.sh, Game.tar.gz, MySQL.tar.gz 文件一并上传到 `/root` 目录下, 执行下面这段命令
+Upload `dof.sh`, `Game.tar.gz`, and `MySQL.tar.gz` to the `/root` directory, then run:
 
 ```bash
 chmod +x ./dof.sh && ./dof.sh
 ```
 
-#### 方案二(联网安装)
+#### Option 2: Online install
 
 ```bash
 cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
-### 启动服务端
+### Start Server
 
 ```bash
 cd /root && ./run
 ```
 
-### 停止服务端
+### Stop Server
 
 ```bash
 cd /root && ./stop
 ```
 
-### 端口汇总
+### Ports
 
-实测需要开放的端口：
-| 端口 | 类型 | 描述 |
-| ----------- | ----------- |----------- |
-| 7001 | TCP | df_channel_r 服务器选择端口 |
-| 30011 | TCP | df_game_r[ch.11] 频道端口 |
+Minimum ports required:
+| Port | Type | Description |
+| ----------- | ----------- | ----------- |
+| 7001 | TCP | df_channel_r — server selection |
+| 30011 | TCP | df_game_r[ch.11] — channel |
 
-如果需要组队的话，df_stun_r 端口只需要放开一个就行。比如说 2311 端口
+For party play, you only need to open one `df_stun_r` port, e.g. port 2311.
 
-所有端口汇总：
-| 端口 | 类型 | 描述 |
+All ports:
+| Port | Type | Description |
 | ----- | ---- | ---------------- |
 | 3306 | TCP | MySQL |
-| 7001 | TCP | df_channel_r 服务器选择端口 |
-| 30011 | TCP | df_game_r[ch.11] 频道端口 |
-| 2311 | UDP | df_stun_r 组队端口 |
-| 2312 | UDP | df_stun_r 组队端口 |
-| 2313 | UDP | df_stun_r 组队端口 |
+| 7001 | TCP | df_channel_r — server selection |
+| 30011 | TCP | df_game_r[ch.11] — channel |
+| 2311 | UDP | df_stun_r — party |
+| 2312 | UDP | df_stun_r — party |
+| 2313 | UDP | df_stun_r — party |
 
 ## FAQ
 
-### 服务器 IP 填错了怎么办
+### What if I entered the wrong server IP?
 
-将下面配置文件中的值改为真实 IP
+Update the value to the correct IP in the following config files:
 
-- `/home/neople/channel/cfg/channel.cfg` 中 this_ip
-- `/home/neople/game/cfg/频道名称.cfg` 中 ip， stun_ip
+- `this_ip` in `/home/neople/channel/cfg/channel.cfg`
+- `ip` and `stun_ip` in `/home/neople/game/cfg/<channel-name>.cfg`
 
-## 免责声明
+## Disclaimer
 
 ```
-本软件完全免费且仅供学习交流，如作他用所承受的法律责任应由使用者本人独自承担，与作者无关（下载使用即代表你同意上述观点）。源文件发布之初安全无病毒，使用者在经任何渠道下载与使用本软件进行学习前请仔细甄别文件是否安全。
+This software is completely free and intended for learning and exchange purposes only.
+Any legal liability arising from other uses shall be borne solely by the user and has
+nothing to do with the author (downloading and using constitutes agreement to the above).
+The source files were safe and virus-free at the time of release; please verify the
+integrity of any file before downloading from any channel.
 
-虽然支持外网，但是千万别拿来开服。只能拿来学习使用!!!
-虽然支持外网，但是千万别拿来开服。只能拿来学习使用!!!
-虽然支持外网，但是千万别拿来开服。只能拿来学习使用!!!
+External network access is supported, but DO NOT use this to run a public server. For learning only!!!
+External network access is supported, but DO NOT use this to run a public server. For learning only!!!
+External network access is supported, but DO NOT use this to run a public server. For learning only!!!
 ```
+
+## License
+
+[MIT](LICENSE) © 2025 wggc

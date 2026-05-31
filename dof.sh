@@ -382,13 +382,7 @@ function remove_game_server() {
 }
 
 function install_game_server() {
-    log_info "开始安装Game Server..."
-
-    local server_ip="$1"
-    if [ -z "$server_ip" ]; then
-        log_error "服务器IP不能为空"
-        exit 1
-    fi
+    log_info "开始安装 Game Server..."
 
     cd $BASE_DIR
     tar -zxvf Game.tar.gz --no-overwrite-dir --no-same-owner
@@ -396,12 +390,11 @@ function install_game_server() {
     mv ./usr/lib/* /usr/lib
     mv ./home/* /home
 
-    # 给 run 和 stop 脚本授予可执行权限
     chmod +x ./run
     chmod +x ./stop
     chmod +x ./GameRestart
 
-    log_success "Game Server安装完成, 服务器IP: $server_ip"
+    log_success "Game Server 安装完成"
 }
 
 function remove_game_server_install_files() {
@@ -465,7 +458,7 @@ function init_server_group() {
     find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_IP/$mysql_ip/g" {} +
     find . -type f \( -name "*.cfg" -o -name "*.tbl" \) -exec sed -i "s/MYSQL_PORT/$mysql_port/g" {} +
 
-    log_success "${SERVER_GROUP_NAME}频道初始化完成"
+    log_success "${SERVER_GROUP_NAME} 频道初始化完成"
 }
 
 function init_game_database() {
@@ -602,6 +595,41 @@ function restore_database() {
     log_success "数据库恢复完成"
 }
 
+function change_server_ip() {
+    local server_ip=""
+    read -p "输入新的服务器IP: " server_ip
+
+    if [ -z "$server_ip" ]; then
+        log_error "服务器IP不能为空"
+        exit 1
+    fi
+
+    if ! is_valid_ip "$server_ip"; then
+        log_error "服务器IP格式不正确，请输入有效的IPv4地址"
+        exit 1
+    fi
+
+    if [ ! -f "$NEOPLE_DIR/channel/cfg/channel.cfg" ]; then
+        log_error "$NEOPLE_DIR/channel/cfg/channel.cfg 不存在，请先安装服务端"
+        exit 1
+    fi
+
+    if ! ls "$NEOPLE_DIR/game/cfg"/*.cfg >/dev/null 2>&1; then
+        log_error "$NEOPLE_DIR/game/cfg/*.cfg 不存在，请先安装服务端"
+        exit 1
+    fi
+
+    sed -i "s/^this_ip[[:space:]]*=.*/this_ip = $server_ip/" "$NEOPLE_DIR/channel/cfg/channel.cfg"
+
+    for cfg_file in "$NEOPLE_DIR/game/cfg"/*.cfg; do
+        sed -i "s/^ip[[:space:]]*=.*/ip = $server_ip/" "$cfg_file"
+        sed -i "s/^relay_ip[[:space:]]*=.*/relay_ip = $server_ip/" "$cfg_file"
+        sed -i "s/^stun_ip[[:space:]]*=.*/stun_ip= $server_ip/" "$cfg_file"
+    done
+
+    log_success "服务器 IP 已更换为: $server_ip"
+}
+
 function download_files() {
     download_mysql
     download_dofserver
@@ -683,7 +711,7 @@ function reinstall_game_server() {
     fi
 
     remove_game_server
-    install_game_server "$server_ip"
+    install_game_server
     init_server_group "$server_ip" "$DEFAULT_SERVER_GROUP" "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT"
     init_game_database "$DEFAULT_MYSQL_IP" "$DEFAULT_MYSQL_PORT" "root" "$ROOT_PASSWORD"
 
@@ -722,9 +750,10 @@ function echo_menu() {
     log_success "3) 安装数据库"
     log_info "以上命令均可重复执行, 多次可重装"
     log_warning "———————————————其他———————————————"
-    log_success "4) 清理日志文件"
+    log_success "4) 更换服务器 IP"
     log_success "5) 备份数据库"
     log_success "6) 恢复数据库"
+    log_success "7) 清理日志文件"
     log_warning "——————————————————————————————————"
     log_success "0) 退出脚本"
     log_warning "——————————————————————————————————"
@@ -734,7 +763,7 @@ function echo_menu() {
 }
 
 function read_menu_command() {
-    read -p "请输入数字 [0-6]:" num
+    read -p "请输入数字 [0-7]:" num
     case "${num}" in
     1)
         install_all
@@ -746,7 +775,7 @@ function read_menu_command() {
         reinstall_database
         ;;
     4)
-        clean_log_files
+        change_server_ip
         ;;
     5)
         backup_database
@@ -755,6 +784,9 @@ function read_menu_command() {
         log_error "将备份文件(dof_bakup.sql)放到 $BASE_DIR 目录下, 按任意键继续..."
         read -n 1 -s -r
         restore_database
+        ;;
+    7)
+        clean_log_files
         ;;
     *)
         exit 1

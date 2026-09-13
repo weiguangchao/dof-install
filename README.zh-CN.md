@@ -60,7 +60,7 @@ cd /root && ./dof.sh
 2. GitHub Release
 
 ```
-https://github.com/weiguangchao/dof-install/releases/tag/1.0
+https://github.com/weiguangchao/dof-install/releases/latest
 ```
 
 安装
@@ -74,7 +74,7 @@ chmod +x ./dof.sh && ./dof.sh
 #### 方案二(联网安装)
 
 ```bash
-cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
+cd /root; curl -o dof.sh https://ghfast.top/https://github.com/weiguangchao/dof-install/releases/latest/download/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
 ### 启动服务端

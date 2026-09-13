@@ -2,10 +2,10 @@
 
 set -e
 
-PACKAGE_VERSION="1.0"
 GITHUB_PROXY="https://ghfast.top/"
-GAME_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
-MYSQL_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/MySQL.tar.gz"
+RELEASE_DOWNLOAD_BASE="https://github.com/weiguangchao/dof-install/releases/latest/download"
+GAME_DOWNLOAD_URL="${GITHUB_PROXY}${RELEASE_DOWNLOAD_BASE}/Game.tar.gz"
+MYSQL_DOWNLOAD_URL="${GITHUB_PROXY}${RELEASE_DOWNLOAD_BASE}/MySQL.tar.gz"
 
 # 定义颜色
 RED='\033[0;31m'    # RED
@@ -208,13 +208,12 @@ function check_disk_space() {
 function install_yum_dependency() {
     log_info "开始安装yum依赖..."
 
-    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
-    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-
+    # mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+    # curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
     yum clean all
     yum makecache
-    yum update -y
 
+    yum update -y
     yum install -y \
         perl \
         autoconf \

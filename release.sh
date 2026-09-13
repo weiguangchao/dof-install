@@ -22,7 +22,7 @@ else
     echo "创建 Release $TAG ..."
     gh release create "$TAG" "${ASSETS[@]}" \
         --title "dof-install" \
-        --notes "当前安装包。每次发布覆盖同一 Release。"
+        --notes "最新安装包：dof.sh、Game.tar.gz、MySQL.tar.gz。"
 fi
 
 echo "发布完成: https://github.com/weiguangchao/dof-install/releases/latest"

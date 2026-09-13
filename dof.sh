@@ -208,13 +208,12 @@ function check_disk_space() {
 function install_yum_dependency() {
     log_info "开始安装yum依赖..."
 
-    mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
-    curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
-
+    # mv /etc/yum.repos.d/CentOS-Base.repo /etc/yum.repos.d/CentOS-Base.repo.bak
+    # curl -o /etc/yum.repos.d/CentOS-Base.repo https://mirrors.aliyun.com/repo/Centos-7.repo
     yum clean all
     yum makecache
-    yum update -y
 
+    yum update -y
     yum install -y \
         perl \
         autoconf \

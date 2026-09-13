@@ -60,7 +60,7 @@ Download the installation files `dof.sh`, `Game.tar.gz`, and `MySQL.tar.gz` from
 2. GitHub Release
 
 ```
-https://github.com/weiguangchao/dof-install/releases/tag/1.0
+https://github.com/weiguangchao/dof-install/releases/latest
 ```
 
 **Install**
@@ -74,7 +74,7 @@ chmod +x ./dof.sh && ./dof.sh
 #### Option 2: Online install
 
 ```bash
-cd /root; curl -o dof.sh https://raw.githubusercontent.com/weiguangchao/dof-install/master/dof.sh && chmod +x ./dof.sh && ./dof.sh
+cd /root; curl -o dof.sh https://ghfast.top/https://github.com/weiguangchao/dof-install/releases/latest/download/dof.sh && chmod +x ./dof.sh && ./dof.sh
 ```
 
 ### Start Server

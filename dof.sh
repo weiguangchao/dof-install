@@ -2,10 +2,10 @@
 
 set -e
 
-PACKAGE_VERSION="1.0"
 GITHUB_PROXY="https://ghfast.top/"
-GAME_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/Game.tar.gz"
-MYSQL_DOWNLOAD_URL=$GITHUB_PROXY"https://github.com/weiguangchao/dof-install/releases/download/$PACKAGE_VERSION/MySQL.tar.gz"
+RELEASE_DOWNLOAD_BASE="https://github.com/weiguangchao/dof-install/releases/latest/download"
+GAME_DOWNLOAD_URL="${GITHUB_PROXY}${RELEASE_DOWNLOAD_BASE}/Game.tar.gz"
+MYSQL_DOWNLOAD_URL="${GITHUB_PROXY}${RELEASE_DOWNLOAD_BASE}/MySQL.tar.gz"
 
 # 定义颜色
 RED='\033[0;31m'    # RED

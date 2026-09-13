@@ -75,17 +75,9 @@ function pack_dir() {
     fi
 }
 
-function write_checksums() {
-    if command -v sha256sum >/dev/null 2>&1; then
-        sha256sum Game.tar.gz MySQL.tar.gz dof.sh >SHA256SUMS
-    else
-        shasum -a 256 Game.tar.gz MySQL.tar.gz dof.sh >SHA256SUMS
-    fi
-}
-
 echo "开始打包安装文件: Game.tar.gz、MySQL.tar.gz"
 check_required_files
-rm -f Game.tar.gz MySQL.tar.gz SHA256SUMS
+rm -f Game.tar.gz MySQL.tar.gz
 clean_macos_junk
 
 echo "打包 Game.tar.gz..."
@@ -94,10 +86,6 @@ pack_dir Game Game.tar.gz
 echo "打包 MySQL.tar.gz..."
 pack_dir MySQL MySQL.tar.gz
 
-write_checksums
-
 echo "打包完成: Game.tar.gz、MySQL.tar.gz"
 echo "文件大小:"
 ls -lh Game.tar.gz MySQL.tar.gz
-echo "SHA256:"
-cat SHA256SUMS

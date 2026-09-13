@@ -6,7 +6,7 @@ ROOT_DIR="$(cd "$(dirname "$0")" && pwd)"
 cd "$ROOT_DIR"
 
 TAG="${RELEASE_TAG:-release}"
-ASSETS=(Game.tar.gz MySQL.tar.gz dof.sh SHA256SUMS)
+ASSETS=(Game.tar.gz MySQL.tar.gz dof.sh)
 
 if ! command -v gh >/dev/null 2>&1; then
     echo "需要安装 GitHub CLI: https://cli.github.com/"
